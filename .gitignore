@@ -27,4 +27,3 @@ dist/**/*
 
 ## built vscode extensions
 *.vsix
-package-lock.json
