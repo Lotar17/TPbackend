@@ -1,8 +1,15 @@
 import { Router } from 'express';
-import { getAll, getOne, add } from './persona.controller.js';
+import {
+  getAll,
+  getOne,
+  add,
+  update,
+  sanitizeCharacterInput,
+} from './persona.controller.js';
 
 export const personaRouter = Router();
 
 personaRouter.get('/', getAll);
 personaRouter.get('/:id', getOne);
-personaRouter.post('/', add);
+personaRouter.post('/', sanitizeCharacterInput, add);
+personaRouter.put('/:id', update);
