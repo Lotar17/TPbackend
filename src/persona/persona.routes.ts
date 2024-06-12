@@ -1,3 +1,8 @@
 import { Router } from 'express';
+import { getAll, getOne, add } from './persona.controller.js';
 
-const personaRouter = Router();
+export const personaRouter = Router();
+
+personaRouter.get('/', getAll);
+personaRouter.get('/:id', getOne);
+personaRouter.post('/', add);

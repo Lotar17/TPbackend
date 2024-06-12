@@ -13,8 +13,13 @@ export class PersonaRepository implements Repository<Persona> {
   }
 
   add(item: Persona): Persona | undefined {
-    personas.push(item);
-    return item;
+    const personaExistente = personas.find((persona) => persona.id === item.id);
+    if (personaExistente) {
+      return undefined;
+    } else {
+      personas.push(item);
+      return item;
+    }
   }
   delete(item: { id: string }): Persona | undefined {
     const dniPersonaDeleted = personas.findIndex(
@@ -24,5 +29,17 @@ export class PersonaRepository implements Repository<Persona> {
       const personasDeleted = personas.splice(dniPersonaDeleted, 1);
       return personasDeleted[0];
     }
+  }
+  update(item: Persona): Persona | undefined {
+    const indexPersonaUpdated = personas.findIndex((persona) => {
+      persona.id === item.id;
+    });
+    if (indexPersonaUpdated !== -1) {
+      personas[indexPersonaUpdated] = {
+        ...personas[indexPersonaUpdated],
+        ...item,
+      };
+    }
+    return personas[indexPersonaUpdated];
   }
 }
