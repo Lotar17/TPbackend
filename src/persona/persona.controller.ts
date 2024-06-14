@@ -64,4 +64,16 @@ function update(req: Request, res: Response) {
     .json({ message: 'Persona updated succesfully', data: persona });
 }
 
+function remove(req: Request,res:Response){
+  const id = req.params.id
+  const persRemoved = repository.delete({id:id}) 
+  if(!persRemoved){
+      return res.status(404).json({ message: 'Persona not found' });
+  }else{
+      return res.status(200).json(
+          {message: 'Persona REMOVED succesfully',
+          data: persRemoved});
+  }
+}
+
 export { getAll, getOne, add, update, sanitizeCharacterInput };
