@@ -1,9 +1,12 @@
 import express from 'express';
+import { personaRouter } from './persona/persona.routes.js';
 
 const app = express();
+app.use(express.json());
 
-app.use('/', (req, res) => {
-  res.send('<h1>Holaa</h1>');
+app.use('/api/personas', personaRouter);
+app.use((_, res) => {
+  res.status(404).json({ message: 'Resource not found' });
 });
 
 app.listen(3000, () => {
