@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { ObjectId } from 'mongodb';
 
 export class Persona {
   constructor(
@@ -6,6 +7,7 @@ export class Persona {
     public apellido: string,
     public telefono: string,
     public mail: string,
-    public id = crypto.randomUUID()
+    public _id ?: ObjectId
   ) {}
 }
+

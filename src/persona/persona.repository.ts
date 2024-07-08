@@ -1,45 +1,41 @@
 import { Repository } from '../shared/repository.js';
 import { Persona } from './persona.entity.js';
+import { db } from '../shared/db/conn.js';
+import { ObjectId, ReturnDocument } from 'mongodb';
 
-const personas: Persona[] = [];
+const personas = db.collection<Persona>('personas')
 
 export class PersonaRepository implements Repository<Persona> {
-  getAll(): Persona[] | undefined {
-    return personas;
+
+  async getAll(): Promise <Persona[] | undefined> {
+    return await personas.find().toArray();
   }
 
-  getOne(item: { id: string }): Persona | undefined {
-    return personas.find((persona) => persona.id === item.id);
+  async getOne(item: { id: string }): Promise <Persona | undefined> {
+    const _id = new ObjectId(item.id)
+    return (await personas.findOne({_id})) || undefined
   }
 
-  add(item: Persona): Persona | undefined {
-    const personaExistente = personas.find((persona) => persona.id === item.id);
+  async add(id:string,item: Persona): Promise <Persona | undefined> {
+    const _id = new ObjectId(id)
+    const personaExistente = await personas.findOne({_id});
     if (personaExistente) {
       return undefined;
     } else {
-      personas.push(item);
+      item._id = (await personas.insertOne(item)).insertedId;
       return item;
     }
   }
-  delete(item: { id: string }): Persona | undefined {
-    const dniPersonaDeleted = personas.findIndex(
-      (persona) => persona.id === item.id
-    );
-    if (dniPersonaDeleted !== -1) {
-      const personasDeleted = personas.splice(dniPersonaDeleted, 1);
-      return personasDeleted[0];
-    }
+
+  async update(id:string,item: Persona): Promise <Persona | undefined> {
+    const _id = new ObjectId(id)
+    return (await personas.findOneAndUpdate({_id},{$set: item}, {returnDocument:'after'})) || undefined
+    
   }
-  update(item: Persona): Persona | undefined {
-    const indexPersonaUpdated = personas.findIndex((persona) => {
-      persona.id === item.id;
-    });
-    if (indexPersonaUpdated !== -1) {
-      personas[indexPersonaUpdated] = {
-        ...personas[indexPersonaUpdated],
-        ...item,
-      };
-    }
-    return personas[indexPersonaUpdated];
+
+  async delete(item: { id: string }): Promise<Persona | undefined> {
+    const _id = new ObjectId(item.id)
+    return ( await personas.findOneAndDelete({_id})) || undefined
   }
+  
 }
