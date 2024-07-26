@@ -1,9 +1,9 @@
-import crypto from 'node:crypto';
-export class Producto{
-    constructor(
-        public descripcion : string,
-        public precio: number,
-        public stock: number,
-        public id = crypto.randomUUID()
-    ){}
+import { ObjectId } from 'mongodb';
+export class Producto {
+  constructor(
+    public descripcion: string,
+    public precio: number,
+    public stock: number,
+    public _id = ObjectId
+  ) {}
 }

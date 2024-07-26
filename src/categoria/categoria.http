@@ -1,0 +1,29 @@
+#### getAll() Categorias
+GET http://localhost:3000/api/categorias
+
+### getOne() Categorias
+GET http://localhost:3000/api/categorias/66a321752d521bb6eba0c4f7
+
+### Verificar rutas no definidas
+GET http://localhost:3000/api/perssss
+
+
+#### add() Categorias
+POST http://localhost:3000/api/categorias/
+Content-Type: application/json
+
+{
+  "descripcion": "Electrodomestico"
+}
+
+### update() Categorias
+PUT http://localhost:3000/api/categorias/66a321752d521bb6eba0c4f7
+Content-Type: application/json
+
+{
+  "descripcion": "Juguete"
+}
+
+### remove() Categoria
+DELETE http://localhost:3000/api/categorias/72c54602-8203-49a2-be5a-17cb2ff7b9df
+Content-Type: application/json

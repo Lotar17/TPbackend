@@ -1,0 +1,33 @@
+#### getAll() Personas
+GET http://localhost:3000/api/personas
+
+### getOne() Personas
+GET http://localhost:3000/api/personas/1
+
+### Verificar rutas no definidas
+GET http://localhost:3000/api/perssss
+
+
+#### add() Personas
+POST http://localhost:3000/api/personas/
+Content-Type: application/json
+
+{
+  "nombre": "Lotar",
+  "apellido": "Baigorria",
+  "telefono": "3413763333",
+  "mail": "lotar_17@hotmail.com"
+}
+
+### update() Personas
+PUT http://localhost:3000/api/personas/66a3208ec329759626d3508b
+Content-Type: application/json
+
+{
+  "id": "2001",
+  "nombre": "Carlos",
+  "apellido": "Lopez",
+  "telefono": "111111",
+  "mail": "carlopez@yahoo.com"
+}
+

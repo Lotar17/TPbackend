@@ -23,23 +23,24 @@ function sanitizeCharacterInput(
   next();
 }
 
-function getAll(req: Request, res: Response) {
-  return res.status(200).json({ data: repository.getAll() });
+async function getAll(req: Request, res: Response) {
+  return res.status(200).json({ data: await repository.getAll() });
 }
 
-function getOne(req: Request, res: Response) {
+async function getOne(req: Request, res: Response) {
   const id = req.params.id;
-  const categoria = repository.getOne({ id: id });
+  const categoria = await repository.getOne({ id: id });
   if (!categoria) {
     return res.status(404).json({ message: 'Categoria not found' });
   }
   return res.status(200).json({ data: categoria });
 }
 
-function add(req: Request, res: Response) {
-  const { descripcion } = req.body.sanitizedInput;
-  const categoriaInput = new Categoria(descripcion);
-  const categoria = repository.add(categoriaInput);
+async function add(req: Request, res: Response) {
+  const categoria = await repository.add(
+    req.params.id,
+    req.body.sanitizedInput
+  );
   if (!categoria) {
     return res.status(403).json({ message: 'Categoria creation failed' });
   } else {
@@ -50,9 +51,12 @@ function add(req: Request, res: Response) {
   }
 }
 
-function update(req: Request, res: Response) {
+async function update(req: Request, res: Response) {
   req.body.sanitizedInput.id = req.params.id;
-  const categoria = repository.update(req.body.sanitizedInput);
+  const categoria = await repository.update(
+    req.params.id,
+    req.body.sanitizedInput
+  );
   if (!categoria) {
     return res.status(404).json({ message: 'Categoria not found' });
   }
@@ -61,9 +65,9 @@ function update(req: Request, res: Response) {
     .json({ message: 'Categoria updated succesfully', data: categoria });
 }
 
-function remove(req: Request, res: Response) {
+async function remove(req: Request, res: Response) {
   const id = req.params.id;
-  const categoriaRemoved = repository.delete({ id: id });
+  const categoriaRemoved = await repository.delete({ id: id });
   if (!categoriaRemoved) {
     return res.status(404).json({ message: 'Categoria not found' });
   } else {

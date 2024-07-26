@@ -1,47 +1,44 @@
+import { ObjectId } from 'mongodb';
+import { db } from '../shared/db/conn.js';
 import { Repository } from '../shared/repository.js';
 import { Categoria } from './categoria.entity.js';
 
-const categorias: Categoria[] = [];
+const categorias = db.collection<Categoria>('categorias');
 
 export class CategoriaRepository implements Repository<Categoria> {
-  getAll(): Categoria[] | undefined {
-    return categorias;
+  public async getAll(): Promise<Categoria[] | undefined> {
+    return await categorias.find().toArray();
   }
 
-  getOne(item: { id: string }): Categoria | undefined {
-    return categorias.find((categoria) => categoria.id === item.id);
+  public async getOne(item: { id: string }): Promise<Categoria | undefined> {
+    const _id = new ObjectId(item.id);
+    return (await categorias.findOne({ _id })) || undefined;
   }
 
-  add(item: Categoria): Categoria | undefined {
-    const categoriaExistente = categorias.find(
-      (categoria) => categoria.id === item.id
-    );
-    if (categoriaExistente) {
-      return undefined;
-    } else {
-      categorias.push(item);
-      return item;
-    }
+  public async add(
+    id: string,
+    item: Categoria
+  ): Promise<Categoria | undefined> {
+    item._id = (await categorias.insertOne(item)).insertedId;
+    return item;
   }
-  delete(item: { id: string }): Categoria | undefined {
-    const idCategoriaDeleted = categorias.findIndex(
-      (categoria) => categoria.id === item.id
-    );
-    if (idCategoriaDeleted !== -1) {
-      const categoriasDeleted = categorias.splice(idCategoriaDeleted, 1);
-      return categoriasDeleted[0];
-    }
+
+  public async delete(item: { id: string }): Promise<Categoria | undefined> {
+    const _id = new ObjectId(item.id);
+    return (await categorias.findOneAndDelete({ _id })) || undefined;
   }
-  update(item: Categoria): Categoria | undefined {
-    const indexCategoriaUpdated = categorias.findIndex((categoria) => {
-      categoria.id === item.id;
-    });
-    if (indexCategoriaUpdated !== -1) {
-      categorias[indexCategoriaUpdated] = {
-        ...categorias[indexCategoriaUpdated],
-        ...item,
-      };
-    }
-    return categorias[indexCategoriaUpdated];
+
+  public async update(
+    id: string,
+    item: Categoria
+  ): Promise<Categoria | undefined> {
+    const _id = new ObjectId(id);
+    return (
+      (await categorias.findOneAndUpdate(
+        { _id },
+        { $set: item },
+        { returnDocument: 'after' }
+      )) || undefined
+    );
   }
 }
