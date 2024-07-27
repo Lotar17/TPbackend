@@ -7,7 +7,6 @@ export class Persona {
     public apellido: string,
     public telefono: string,
     public mail: string,
-    public _id ?: ObjectId
+    public _id?: ObjectId
   ) {}
 }
-

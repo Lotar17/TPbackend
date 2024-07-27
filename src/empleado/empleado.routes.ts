@@ -13,5 +13,5 @@ export const EmpleadoRouter = Router();
 EmpleadoRouter.get('/', getAll);
 EmpleadoRouter.get('/:id', getOne);
 EmpleadoRouter.post('/', sanitizeCharacterInput, add);
-EmpleadoRouter.put('/:id', update);
+EmpleadoRouter.put('/:id', sanitizeCharacterInput, update);
 EmpleadoRouter.delete('/:id', remove);

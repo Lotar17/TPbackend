@@ -21,10 +21,10 @@ export class ProductoRepository implements Repository<Producto> {
     id: string,
     item: Producto
   ): Promise<Producto | undefined> {
-    const _idd = new ObjectId(id);
+    /* const _idd = new ObjectId(id); */
     return (
       (await productos.findOneAndUpdate(
-        { _idd },
+        { id },
         { $set: item },
         { returnDocument: 'after' }
       )) || undefined

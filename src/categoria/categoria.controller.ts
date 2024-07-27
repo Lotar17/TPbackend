@@ -52,7 +52,6 @@ async function add(req: Request, res: Response) {
 }
 
 async function update(req: Request, res: Response) {
-  req.body.sanitizedInput.id = req.params.id;
   const categoria = await repository.update(
     req.params.id,
     req.body.sanitizedInput

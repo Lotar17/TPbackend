@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ### update() Categorias
-PUT http://localhost:3000/api/categorias/66a321752d521bb6eba0c4f7
+PUT http://localhost:3000/api/categorias/66a5597ec686ead908c25243
 Content-Type: application/json
 
 {

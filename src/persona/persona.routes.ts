@@ -13,5 +13,6 @@ export const personaRouter = Router();
 personaRouter.get('/', getAll);
 personaRouter.get('/:id', getOne);
 personaRouter.post('/', sanitizeCharacterInput, add);
-personaRouter.put('/:id', update);
+personaRouter.put('/:id', sanitizeCharacterInput, update);
+personaRouter.patch('/:id', sanitizeCharacterInput, update);
 personaRouter.delete('/:id', remove);

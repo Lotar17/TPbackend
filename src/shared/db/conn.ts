@@ -1,6 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
 
-const connectionStr = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/';
+const connectionStr =
+  process.env.MONGO_URI || 'mongodb://lotar:lotar@127.0.0.1:27017/';
 const connectionStrEmpleado =
   process.env.MONGO_URI_EMPLEADO || 'mongodb://127.0.0.1:27017/';
 
