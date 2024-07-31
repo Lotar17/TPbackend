@@ -41,7 +41,7 @@ async function getOne(req: Request, res: Response) {
     const producto = await em.findOneOrFail(
       Producto,
       { id },
-      { populate: ['categoria'] }
+      { populate: ['categoria', 'precios'] }
     );
     return res.status(200).json({ message: 'Producto finded', data: producto });
   } catch (error: any) {

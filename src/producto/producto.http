@@ -2,7 +2,7 @@
 GET http://localhost:3000/api/productos/
 
 ### GET ONE
-GET http://localhost:3000/api/productos/66a99706052e5cf8f8f5d6c0
+GET http://localhost:3000/api/productos/66a9987c052e5cf8f8f5d6c1
 
 ### CREATE 
 POST http://localhost:3000/api/productos/
@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### UPDATE
-PUT http://localhost:3000/api/productos/66a99706052e5cf8f8f5d6c0
+PUT http://localhost:3000/api/productos/66a9987c052e5cf8f8f5d6c1
 Content-Type: application/json
 
 {
@@ -26,5 +26,5 @@ Content-Type: application/json
 }
 
 ### REMOVE 
-DELETE http://localhost:3000/api/productos/66a9987c052e5cf8f8f5d6c1
+DELETE http://localhost:3000/api/productos/66a9987c052e5cf8f8f5d6c2
 Content-Type: application/json
