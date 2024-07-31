@@ -1,10 +1,19 @@
+import { Entity, Property } from '@mikro-orm/core';
 import crypto from 'node:crypto';
+import { BaseEntity } from '../shared/base-entity.entity.js';
 
-export class Persona {
-  constructor(
-    public nombre: string,
-    public apellido: string,
-    public telefono: string,
-    public mail: string
-  ) {}
+
+@Entity()
+export class Persona extends BaseEntity{
+
+    @Property({nullable:false,unique:false})
+    nombre !: string
+    @Property({nullable:false,unique:false})
+    apellido!: string
+    
+    @Property({nullable:true,unique:false})
+    telefono?: string
+    
+    @Property({nullable:true,unique:false})
+    mail!: string
 }

@@ -1,5 +1,9 @@
-import { Persona } from './persona.entity.js';
+import { Persona} from './persona.entity.js';
 import { Request, Response, NextFunction } from 'express';
+import { orm } from '../shared/db/orm.js';
+import { error } from 'console';
+
+const em = orm.em;
 
 function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
@@ -19,11 +23,36 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-async function getAll(req: Request, res: Response) {}
+async function getAll(req: Request, res: Response) {
+  try{ 
+    const persona = await em.find(Persona,{})
+    res.status(200).json({message:'found persons',data:persona})
 
-async function getOne(req: Request, res: Response) {}
+  }
+  catch(error: any){ res.status(500).json({message : error.data}) }
+}
 
-async function add(req: Request, res: Response) {}
+async function getOne(req: Request, res: Response) {
+  try{
+    const id = req.params.id
+    const persona = await em.findOneOrFail(Persona,{id})
+    res.status(200).json({message:'found person',data:persona})
+  }
+  catch(error:any){
+    res.status(500).json({message : error.data})
+  }
+}
+
+async function add(req: Request, res: Response) {
+  try{
+    const persona = em.create(Persona,req.body.sanitizedInput)
+    await em.flush()
+    res.status(200).json({message:'Person Created succesfully !',data:persona})
+  }
+  catch(error:any){
+
+  }
+}
 
 async function update(req: Request, res: Response) {}
 
