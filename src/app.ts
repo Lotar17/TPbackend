@@ -1,16 +1,23 @@
+import 'reflect-metadata';
 import express from 'express';
 import { personaRouter } from './persona/persona.routes.js';
 import { ProductoRouter } from './producto/producto.routes.js';
 import { categoriaRouter } from './categoria/categoria.routes.js';
 import { EmpleadoRouter } from './empleado/empleado.routes.js';
+import { orm } from './shared/db/orm.js';
+import { RequestContext } from '@mikro-orm/core';
 
 const app = express();
 app.use(express.json());
 
+app.use((req, res, next) => {
+  RequestContext.create(orm.em, next);
+});
+
 app.use('/api/personas', personaRouter);
 app.use('/api/productos', ProductoRouter);
 app.use('/api/categorias', categoriaRouter);
-app.use('/api/empleados',EmpleadoRouter)
+app.use('/api/empleados', EmpleadoRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });
