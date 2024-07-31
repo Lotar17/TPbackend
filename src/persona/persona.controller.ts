@@ -54,9 +54,30 @@ async function add(req: Request, res: Response) {
   }
 }
 
-async function update(req: Request, res: Response) {}
+async function update(req: Request, res: Response) {
+  try{
+    const id = req.params.id
+    const persona = em.getReference(Persona,id)
+    em.assign(persona,req.body)
+    await em.flush()
+    res.status(200).json({message:'Person updated succesfully !',data:persona})
+  }
+  catch(error:any){
+    res.status(500).json({message : error.data})
+  }
+}
 
-async function remove(req: Request, res: Response) {}
+async function remove(req: Request, res: Response) {
+  try{
+    const id = req.params.id
+    const persona = em.getReference(Persona,id)
+    await em.removeAndFlush(persona)
+    res.status(200).json({message:'Person deleted succesfully !',data:persona})
+  }
+  catch(error:any){
+    res.status(500).json({message : error.data})
+  }
+} 
 
 export {
   getAll,
