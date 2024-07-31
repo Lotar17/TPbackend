@@ -20,14 +20,14 @@ Content-Type: application/json
 }
 
 ### update() Personas
-PUT http://localhost:3000/api/personas/66a549ac6c4ca8c59081d29a
+PUT http://localhost:3000/api/personas/66aa5df0271b13f1c7bcfdfb
 Content-Type: application/json
 
 {
-  "nombre": "Carlos",
+  "nombre": "pedro",
   "apellido": "Lopez",
   "telefono": "111111",
-  "mail": "carlopez@yahoo.com"
+  "mail": "carlopsssez@yahoo.com"
 }
 
 ### update() Personas parcial
@@ -40,3 +40,7 @@ Content-Type: application/json
   "telefono": "777777",
   "mail": "tmontana@scarface.com"
 }
+
+###
+
+DELETE http://localhost:3000/api/personas/66aa5df0271b13f1c7bcfdfb
