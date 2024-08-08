@@ -1,8 +1,8 @@
-import { ProductoRepository } from './producto.repository.js';
 import { Request, Response, NextFunction, response } from 'express';
 import { Producto } from './producto.entity.js';
+import { orm } from '../shared/db/orm.js';
 
-const repository = new ProductoRepository();
+const em = orm.em;
 
 function sanitizeProductoInput(
   req: Request,
@@ -13,6 +13,7 @@ function sanitizeProductoInput(
     descripcion: req.body.descripcion,
     precio: req.body.precio,
     stock: req.body.stock,
+    categoria: req.body.categoria,
   };
   //more checks here
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -24,53 +25,64 @@ function sanitizeProductoInput(
 }
 
 async function getAll(req: Request, res: Response) {
-  return res.status(200).json({ data: await repository.getAll() });
+  try {
+    const productos = await em.find(Producto, {});
+    return res
+      .status(200)
+      .json({ message: 'Productos finded', data: productos });
+  } catch (error: any) {
+    return res.status(404).json({ message: error.message });
+  }
 }
 
 async function getOne(req: Request, res: Response) {
-  const id = req.params.id;
-  const producto = await repository.getOne({ id: id });
-  if (!producto) {
+  try {
+    const id = req.params.id;
+    const producto = await em.findOneOrFail(
+      Producto,
+      { id },
+      { populate: ['categoria', 'precios'] }
+    );
+    return res.status(200).json({ message: 'Producto finded', data: producto });
+  } catch (error: any) {
     return res.status(404).json({ message: 'Producto not found' });
-  } else {
-    return res.status(200).json({ data: producto });
   }
 }
 async function add(req: Request, res: Response) {
-  const producto = repository.add(req.params.id, req.body.sanitizedInput);
-  if (!producto) {
-    return res.status(403).json({ message: 'Producto creation failed' });
-  } else {
-    return res.status(201).json({
-      message: 'Producto created succesfully',
-      data: producto,
-    });
+  try {
+    const producto = em.create(Producto, req.body.sanitizedInput);
+    await em.flush();
+    return res
+      .status(201)
+      .json({ message: 'Producto created succesfully', data: producto });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
   }
 }
 async function update(req: Request, res: Response) {
-  req.body.sanitizedInput.id = req.params.id;
-  const prodModify = await repository.update(
-    req.params.id,
-    req.body.sanitizedInput
-  );
-  if (!prodModify) {
-    return res.status(404).json({ message: 'Producto not found' });
-  } else {
+  try {
+    const id = req.params.id;
+    const producto = await em.findOneOrFail(Producto, { id });
+    em.assign(producto, req.body.sanitizedInput);
+    await em.flush();
     return res
       .status(200)
-      .json({ message: 'Producto updated succesfully', data: prodModify });
+      .json({ message: 'Producto updated succesfully', data: producto });
+  } catch (error: any) {
+    return res.status(500).json({ message: 'Producto update failed' });
   }
 }
 
 async function remove(req: Request, res: Response) {
-  const id = req.params.id;
-  const prodRemoved = await repository.delete({ id: id });
-  if (!prodRemoved) {
-    return res.status(404).json({ message: 'Producto not found' });
-  } else {
+  try {
+    const id = req.params.id;
+    const producto = em.getReference(Producto, id);
+    await em.removeAndFlush(producto);
     return res
       .status(200)
-      .json({ message: 'Producto REMOVED succesfully', data: prodRemoved });
+      .json({ message: 'Producto deleted succesfully', data: producto });
+  } catch (error: any) {
+    return res.status(500).json({ message: 'Producto delete failed' });
   }
 }
 export { sanitizeProductoInput, getAll, getOne, add, update, remove };

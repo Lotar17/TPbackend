@@ -1,0 +1,30 @@
+### GET ALL 
+GET http://localhost:3000/api/productos/
+
+### GET ONE
+GET http://localhost:3000/api/productos/66a9987c052e5cf8f8f5d6c1
+
+### CREATE 
+POST http://localhost:3000/api/productos/
+Content-Type: application/json
+
+{
+  "descripcion": "Remera",
+  "precio": 400,
+  "stock": 30,
+  "categoria": "66a991e4f69972104ef25c7c"
+}
+
+### UPDATE
+PUT http://localhost:3000/api/productos/66a9987c052e5cf8f8f5d6c1
+Content-Type: application/json
+
+{
+  "descripcion": "Pantalon",
+  "precio": 401,
+  "stock": 29
+}
+
+### REMOVE 
+DELETE http://localhost:3000/api/productos/66a9987c052e5cf8f8f5d6c2
+Content-Type: application/json

@@ -1,0 +1,27 @@
+### GET ALL 
+GET http://localhost:3000/api/historico-precios/
+
+### GET ONE
+GET http://localhost:3000/api/historico-precios/66aa5c3a8b59051e68f40c4e
+
+### CREATE 
+POST http://localhost:3000/api/historico-precios/
+Content-Type: application/json
+
+{
+  "valor": 300,
+  "fechaDesde": "12/05/2024",
+  "producto": "66a9987c052e5cf8f8f5d6c1"
+}
+
+### UPDATE
+PUT http://localhost:3000/api/historico-precios/66aa5c3a8b59051e68f40c4e
+Content-Type: application/json
+
+{
+  "valor": 301
+}
+
+### REMOVE 
+DELETE http://localhost:3000/api/historico-precios/66a9987c052e5cf8f8f5d6c2
+Content-Type: application/json
