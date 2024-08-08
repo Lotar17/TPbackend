@@ -2,7 +2,7 @@
 GET http://localhost:3000/api/personas
 
 ### getOne() Personas
-GET http://localhost:3000/api/personas/66a3208ec329759626d3508b
+GET http://localhost:3000/api/personas/66abffd636c84d1bcc465c81
 
 ### Verificar rutas no definidas
 GET http://localhost:3000/api/perssss
@@ -13,21 +13,24 @@ POST http://localhost:3000/api/personas/
 Content-Type: application/json
 
 {
-  "nombre": "Ricardo",
-  "apellido": "Lopez",
-  "telefono": "3413333333",
-  "mail": "lotar_18@hotmail.com"
+  "nombre": "valen",
+  "apellido": "bertone",
+  "telefono": "3413112333333",
+  "mail": "lotar_18@hotmail.com",
+  "prods_publicados":[]
+  
 }
 
 ### update() Personas
-PUT http://localhost:3000/api/personas/66a549ac6c4ca8c59081d29a
+PUT http://localhost:3000/api/personas/66abffd636c84d1bcc465c81
 Content-Type: application/json
 
 {
-  "nombre": "Carlos",
+  "nombre": "juan",
   "apellido": "Lopez",
   "telefono": "111111",
-  "mail": "carlopez@yahoo.com"
+  "mail": "carlopsssez@yahoo.com",
+  "prods_publicados":["66ac015354ef7257fea422f8"]
 }
 
 ### update() Personas parcial
@@ -40,3 +43,7 @@ Content-Type: application/json
   "telefono": "777777",
   "mail": "tmontana@scarface.com"
 }
+
+###
+
+DELETE http://localhost:3000/api/personas/66abf927b3608613b49c3c12

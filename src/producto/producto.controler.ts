@@ -14,6 +14,7 @@ function sanitizeProductoInput(
     precio: req.body.precio,
     stock: req.body.stock,
     categoria: req.body.categoria,
+    persona: req.body.persona
   };
   //more checks here
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -41,7 +42,7 @@ async function getOne(req: Request, res: Response) {
     const producto = await em.findOneOrFail(
       Producto,
       { id },
-      { populate: ['categoria', 'precios'] }
+      { populate: ['categoria', 'hist_precios'] }
     );
     return res.status(200).json({ message: 'Producto finded', data: producto });
   } catch (error: any) {

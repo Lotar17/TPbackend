@@ -2,17 +2,18 @@
 GET http://localhost:3000/api/productos/
 
 ### GET ONE
-GET http://localhost:3000/api/productos/66a9987c052e5cf8f8f5d6c1
+GET http://localhost:3000/api/productos/66abe0fe619c2a3fa67baea9
 
 ### CREATE 
 POST http://localhost:3000/api/productos/
 Content-Type: application/json
 
 {
-  "descripcion": "Remera",
+  "descripcion": "campera",
   "precio": 400,
   "stock": 30,
-  "categoria": "66a991e4f69972104ef25c7c"
+  "categoria": "66a991e4f69972104ef25c7c",
+  "persona": "66abffd636c84d1bcc465c81"
 }
 
 ### UPDATE
@@ -26,5 +27,5 @@ Content-Type: application/json
 }
 
 ### REMOVE 
-DELETE http://localhost:3000/api/productos/66a9987c052e5cf8f8f5d6c2
+DELETE http://localhost:3000/api/productos/66abe0fe619c2a3fa67baea9
 Content-Type: application/json
