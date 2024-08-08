@@ -7,6 +7,7 @@ import { EmpleadoRouter } from './empleado/empleado.routes.js';
 import { orm } from './shared/db/orm.js';
 import { RequestContext } from '@mikro-orm/core';
 import { HistoricoPrecioRouter } from './historico_precio/historico_precio.routes.js';
+import { loginRouter } from './login/login.routes.js';
 
 const app = express();
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use('/api/productos', ProductoRouter);
 app.use('/api/categorias', categoriaRouter);
 app.use('/api/empleados', EmpleadoRouter);
 app.use('/api/historico-precios', HistoricoPrecioRouter);
+app.use('/login', loginRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });

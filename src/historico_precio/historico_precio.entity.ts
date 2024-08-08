@@ -6,6 +6,7 @@ import { Producto } from '../producto/producto.entity.js';
 export class HistoricoPrecio extends BaseEntity {
   @Property({ nullable: false })
   valor!: number;
+  
   @Property({ nullable: false })
   fechaDesde!: Date;
 

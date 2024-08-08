@@ -10,6 +10,7 @@ import {
 import { BaseEntity } from '../shared/base-entity.entity.js';
 import { Categoria } from '../categoria/categoria.entity.js';
 import { HistoricoPrecio } from '../historico_precio/historico_precio.entity.js';
+import { Persona } from '../persona/persona.entity.js';
 
 @Entity()
 export class Producto extends BaseEntity {
@@ -22,10 +23,15 @@ export class Producto extends BaseEntity {
   @ManyToOne(() => Categoria, { nullable: false })
   categoria!: Categoria;
 
+  @ManyToOne(() => Persona, {nullable: false})
+  persona!: Rel<Persona>;
+
   @OneToMany(
     () => HistoricoPrecio,
     (historico_precio) => historico_precio.producto,
     { cascade: [Cascade.ALL] }
   )
-  precios = new Collection<HistoricoPrecio>(this);
+  hist_precios = new Collection<HistoricoPrecio>(this);
+
+
 }
