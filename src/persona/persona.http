@@ -16,9 +16,9 @@ Content-Type: application/json
   "nombre": "valen",
   "apellido": "bertone",
   "telefono": "3413112333333",
-  "mail": "lotar_18@hotmail.com",
-  "prods_publicados":[]
-  
+  "mail": "lotar",
+  "prods_publicados":[],
+  "password": "lotar"
 }
 
 ### update() Personas
