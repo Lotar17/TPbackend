@@ -27,10 +27,10 @@ async function loginUser(req: Request, res: Response) {
   console.log(mail);
   try {
     const user = await em.findOne(Persona, { mail: mail });
-    if (!user) throw new ValidationError('El usuario no existe');
+    if (!user) throw new ValidationError('La contraseña o el usuario es incorrecto');
     const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid)
-      throw new ValidationError('La contraseña ingresada no es correcta');
+    if (!isValid || !user)
+      throw new ValidationError('La contraseña o el usuario es incorrecto');
     res.status(200).send({ message: 'Linda papi' });
   } catch (error) {
     if (error instanceof ValidationError)
