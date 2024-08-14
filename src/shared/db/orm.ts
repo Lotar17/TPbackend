@@ -6,7 +6,7 @@ export const orm = await MikroORM.init({
   entitiesTs: ['src/**/*.entity.ts'],
   dbName: 'tpbackend',
   type: 'mongo',
-  clientUrl: 'mongodb://lotar:lotar@127.0.0.1:27017',
+  clientUrl: 'mongodb://127.0.0.1:27017',
   highlighter: new MongoHighlighter(),
   debug: true,
   schemaGenerator: {

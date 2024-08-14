@@ -8,13 +8,21 @@ import { orm } from './shared/db/orm.js';
 import { RequestContext } from '@mikro-orm/core';
 import { HistoricoPrecioRouter } from './historico_precio/historico_precio.routes.js';
 import { loginRouter } from './login/login.routes.js';
+import { METHODS } from 'http';
+import cors from 'cors';
 
 const app = express();
+
 app.use(express.json());
 
 app.use((req, res, next) => {
   RequestContext.create(orm.em, next);
 });
+
+app.use(cors({
+  origin: ['http://localhost:4200'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+}))
 
 app.use('/api/personas', personaRouter);
 app.use('/api/productos', ProductoRouter);
