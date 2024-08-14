@@ -16,9 +16,9 @@ Content-Type: application/json
   "nombre": "valen",
   "apellido": "bertone",
   "telefono": "3413112333333",
-  "mail": "lotar",
+  "mail": "valen",
   "prods_publicados":[],
-  "password": "lotar"
+  "password": "valen"
 }
 
 ### update() Personas
