@@ -1,0 +1,12 @@
+#### add() empleados
+POST http://localhost:3000/api/empleados/
+Content-Type: application/json
+
+{
+  "nombre": "Ignacio",
+  "apellido": "Di Martino",
+  "telefono": "3465663411",
+  "email": "nachojdimartino@gmail.com",
+  "compras":[]
+  
+}

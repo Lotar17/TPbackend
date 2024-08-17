@@ -8,6 +8,7 @@ import { orm } from './shared/db/orm.js';
 import { RequestContext } from '@mikro-orm/core';
 import { HistoricoPrecioRouter } from './historico_precio/historico_precio.routes.js';
 import { loginRouter } from './login/login.routes.js';
+import { CompraRouter } from './compra/compra.routes.js';
 import { METHODS } from 'http';
 import cors from 'cors';
 
@@ -30,6 +31,8 @@ app.use('/api/categorias', categoriaRouter);
 app.use('/api/empleados', EmpleadoRouter);
 app.use('/api/historico-precios', HistoricoPrecioRouter);
 app.use('/login', loginRouter);
+app.use('/api/compras',CompraRouter)
+
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });

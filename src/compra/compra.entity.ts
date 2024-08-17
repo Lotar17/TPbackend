@@ -22,14 +22,14 @@ export class Compra extends BaseEntity {
     persona!: Rel<Persona>
 
     
-    @ManyToOne(() => Empleado, { nullable: false })
+   @ManyToOne(() => Empleado, { nullable: false })
    empleado!: Rel<Empleado>
 
     @Property({ nullable: false })
     cantidad_producto!: number
 
     @Property({ nullable: false })
-  fecha_hora_compra!: number
+  fecha_hora_compra!: string
 
   @Property({ nullable: false })
   descuento!: number

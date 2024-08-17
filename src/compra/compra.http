@@ -1,0 +1,17 @@
+#### getAll() Compra
+GET http://localhost:3000/api/compras
+
+#### add() Compras
+POST http://localhost:3000/api/compras/
+Content-Type: application/json
+
+{
+  "direccion_entrega": "Sarmiento 462",
+  "producto": "66c0bddc34088bbf80791763",
+  "persona": "66abffd636c84d1bcc465c81",
+  "empleado":"66c0bd7434088bbf80791762",
+  "cantidad_producto":567,
+  "fecha_hora_compra":"17/8/2024-12:16",
+  "descuento": 500
+
+}
