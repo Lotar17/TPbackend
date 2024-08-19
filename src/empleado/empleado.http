@@ -1,3 +1,11 @@
+
+#### getAll() Empleados
+GET http://localhost:3000/api/empleados
+
+### getOne() Empleados
+GET http://localhost:3000/api/empleados/66c0bd7434088bbf80791762
+
+
 #### add() empleados
 POST http://localhost:3000/api/empleados/
 Content-Type: application/json
@@ -10,3 +18,21 @@ Content-Type: application/json
   "compras":[]
   
 }
+
+### update() empleados
+PUT http://localhost:3000/api/empleados/66c0bd7434088bbf80791762
+Content-Type: application/json
+
+{
+    "nombre": "Nacho",
+  "apellido": "Di Martino",
+  "telefono": "3465663410",
+  "email": "nachojdimartino@gmail.com.ar",
+  "compras":[]
+  
+ 
+}
+
+###
+
+DELETE http://localhost:3000/api/empleados/66c0bd7434088bbf80791762
