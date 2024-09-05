@@ -2,7 +2,7 @@
 GET http://localhost:3000/api/personas
 
 ### getOne() Personas
-GET http://localhost:3000/api/personas/66abffd636c84d1bcc465c81
+GET http://localhost:3000/api/personas/66c0ba00c00a99a5c6e7ba2e
 
 ### Verificar rutas no definidas
 GET http://localhost:3000/api/perssss
@@ -22,7 +22,7 @@ Content-Type: application/json
 }
 
 ### update() Personas
-PUT http://localhost:3000/api/personas/66abffd636c84d1bcc465c81
+PUT http://localhost:3000/api/personas/66c0ba00c00a99a5c6e7ba2e
 Content-Type: application/json
 
 {
