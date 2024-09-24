@@ -1,0 +1,12 @@
+#### add() Personas
+POST http://localhost:3000/api/personas/
+Content-Type: application/json
+
+{
+    "nombre": "valen",
+    "apellido": "bertone",
+    "telefono": "3413112333333",
+    "mail": "valen",
+    "prods_publicados":[],
+    "password": "valen"
+}

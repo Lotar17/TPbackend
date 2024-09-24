@@ -11,6 +11,7 @@ import { loginRouter } from './login/login.routes.js';
 import { CompraRouter } from './compra/compra.routes.js';
 import { METHODS } from 'http';
 import cors from 'cors';
+import { registerRouter } from './register/register.routes.js';
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api/empleados', EmpleadoRouter);
 app.use('/api/historico-precios', HistoricoPrecioRouter);
 app.use('/login', loginRouter);
 app.use('/api/compras',CompraRouter)
+app.use('/register',registerRouter)
 
 
 app.use((_, res) => {
