@@ -22,7 +22,7 @@ Content-Type: application/json
 }
 
 ### update() Personas
-PUT http://localhost:3000/api/personas/66f3e9b94be92d4d11263d9b
+PUT http://localhost:3000/api/personas/66f71dce1964b9fb92d1e389
 Content-Type: application/json
 
 {
@@ -30,8 +30,7 @@ Content-Type: application/json
   "apellido": "Bertone",
   "telefono": "111111",
   "mail": "valen",
-  "password": "valen",
-  
+  "password": "valen"
 }
 
 ### update() Personas parcial
