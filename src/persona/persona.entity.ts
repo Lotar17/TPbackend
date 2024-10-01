@@ -19,7 +19,7 @@ export class Persona extends BaseEntity {
   @Property({ nullable: true, unique: false })
   telefono?: string;
 
-  @Property({ nullable: true, unique: false })
+  @Property({ nullable: true, unique: true })
   mail!: string;
 
   @Property({ nullable: false })
