@@ -9,11 +9,11 @@ POST http://localhost:3000/api/productos/
 Content-Type: application/json
 
 {
-  "descripcion": "campera",
-  "precio": 400,
-  "stock": 30,
+  "descripcion": "Chomba",
+  "precio": 5000,
+  "stock": 32,
   "categoria": "66a991e4f69972104ef25c7c",
-  "persona": "66abffd636c84d1bcc465c81"
+  "persona": "66f727d965016d88d9335251"
 }
 
 ### UPDATE

@@ -28,9 +28,8 @@ Content-Type: application/json
 {
   "nombre": "Valen",
   "apellido": "Bertone",
-  "telefono": "111111",
-  "mail": "valen",
-  "password": "valen"
+  "telefono": "2222",
+  "mail": "valen"
 }
 
 ### update() Personas parcial
