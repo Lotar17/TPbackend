@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, response } from 'express';
 import { Producto } from './producto.entity.js';
 import { orm } from '../shared/db/orm.js';
 import { Categoria } from '../categoria/categoria.entity.js';
+import { Persona } from '../persona/persona.entity.js';
 
 const em = orm.em;
 
@@ -15,7 +16,7 @@ function sanitizeProductoInput(
     precio: req.body.precio,
     stock: req.body.stock,
     categoria: req.body.categoria,
-    persona: req.body.persona
+    persona: req.body.personaId
   };
   //more checks here
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -53,18 +54,22 @@ async function getOne(req: Request, res: Response) {
 async function add(req: Request, res: Response) {
   try {
     console.log('Cuerpo de la solicitud:', req.body); // Agregar este log
-    const { descripcion,precio,stock, categoria: categoriaNombre, persona } = req.body.sanitizedInput;
+    const { descripcion,precio,stock, categoria: categoriaNombre, persona:personaId } = req.body.sanitizedInput;
     console.log('Buscando categoría:', categoriaNombre);
-    const categoria = await em.findOne(Categoria, { descripcion: categoriaNombre });
-    if (!categoria) {
+    const categoriaentidad = await em.findOne(Categoria, { descripcion: categoriaNombre });
+    if (!categoriaentidad) {
       return res.status(400).json({ message: 'Categoría no encontrada' });
+    }
+    const personaEntity = await em.findOne(Persona, { _id: personaId });
+    if (!personaEntity) {
+      return res.status(400).json({ message: 'Persona no encontrada' });
     }
     const producto = em.create(Producto, {
       descripcion,
       precio,
       stock,
-      categoria,
-      persona,
+      categoria: categoriaentidad,
+      persona: personaEntity,
     });
     await em.persistAndFlush(producto);
     return res.status(201).json({ message: 'Producto creado exitosamente', data: producto });
