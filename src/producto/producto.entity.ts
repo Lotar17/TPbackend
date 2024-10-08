@@ -18,6 +18,9 @@ export class Producto extends BaseEntity {
   @Property({ nullable: false, unique: true })
   descripcion!: string;
 
+  @Property({ nullable: false, unique: true })
+  precio!: number;
+
   @ManyToOne(() => Persona, {nullable: false})
   persona!: Rel<Persona>;
 

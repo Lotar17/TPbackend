@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, response } from 'express';
 import { Producto } from './producto.entity.js';
 import { orm } from '../shared/db/orm.js';
+import { Categoria } from '../categoria/categoria.entity.js';
 
 const em = orm.em;
 
@@ -51,11 +52,22 @@ async function getOne(req: Request, res: Response) {
 }
 async function add(req: Request, res: Response) {
   try {
-    const producto = em.create(Producto, req.body.sanitizedInput);
-    await em.flush();
-    return res
-      .status(201)
-      .json({ message: 'Producto created succesfully', data: producto });
+    console.log('Cuerpo de la solicitud:', req.body); // Agregar este log
+    const { descripcion,precio,stock, categoria: categoriaNombre, persona } = req.body.sanitizedInput;
+    console.log('Buscando categoría:', categoriaNombre);
+    const categoria = await em.findOne(Categoria, { descripcion: categoriaNombre });
+    if (!categoria) {
+      return res.status(400).json({ message: 'Categoría no encontrada' });
+    }
+    const producto = em.create(Producto, {
+      descripcion,
+      precio,
+      stock,
+      categoria,
+      persona,
+    });
+    await em.persistAndFlush(producto);
+    return res.status(201).json({ message: 'Producto creado exitosamente', data: producto });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
