@@ -14,7 +14,8 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
     telefono: req.body.telefono,
     mail: req.body.mail,
     prods_publicados: req.body.prods_publicados,
-    password: bcrypt.hashSync(req.body.password, 10),
+    password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined, // Si en el put o en el patch no se pone un password tira error
+    rol: req.body.rol,
   };
   //more checks here
 

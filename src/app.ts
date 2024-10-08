@@ -21,10 +21,12 @@ app.use((req, res, next) => {
   RequestContext.create(orm.em, next);
 });
 
-app.use(cors({
-  origin: ['http://localhost:4200'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
-}))
+app.use(
+  cors({
+    origin: ['http://localhost:4200'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  })
+);
 
 app.use('/api/personas', personaRouter);
 app.use('/api/productos', ProductoRouter);
@@ -32,9 +34,8 @@ app.use('/api/categorias', categoriaRouter);
 app.use('/api/empleados', EmpleadoRouter);
 app.use('/api/historico-precios', HistoricoPrecioRouter);
 app.use('/login', loginRouter);
-app.use('/api/compras',CompraRouter)
-app.use('/register',registerRouter)
-
+app.use('/api/compras', CompraRouter);
+app.use('/register', registerRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });

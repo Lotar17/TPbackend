@@ -2,7 +2,7 @@
 GET http://localhost:3000/api/personas
 
 ### getOne() Personas
-GET http://localhost:3000/api/personas/66c0ba00c00a99a5c6e7ba2e
+GET http://localhost:3000/api/personas/66d73827e20b62007bbd91db
 
 ### Verificar rutas no definidas
 GET http://localhost:3000/api/perssss
@@ -13,24 +13,24 @@ POST http://localhost:3000/api/personas/
 Content-Type: application/json
 
 {
-  "nombre": "valen",
-  "apellido": "bertone",
-  "telefono": "3413112333333",
-  "mail": "valen",
-  "prods_publicados":[],
-  "password": "valen"
+  "nombre": "Lotar",
+  "apellido": "Baigorria",
+  "telefono": "11111",
+  "mail": "lotar",
+  "password": "lotar",
+  "rol": "Administrador"
 }
 
 ### update() Personas
-PUT http://localhost:3000/api/personas/66c0ba00c00a99a5c6e7ba2e
+PUT http://localhost:3000/api/personas/66f71dce1964b9fb92d1e389
 Content-Type: application/json
 
 {
-  "nombre": "juan",
-  "apellido": "Lopez",
+  "nombre": "Valen",
+  "apellido": "Bertone",
   "telefono": "111111",
-  "mail": "carlopsssez@yahoo.com",
-  "prods_publicados":["66ac015354ef7257fea422f8"]
+  "mail": "valen",
+  "password": "valen"
 }
 
 ### update() Personas parcial
@@ -46,4 +46,4 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/api/personas/66abf927b3608613b49c3c12
+DELETE http://localhost:3000/api/personas/66f3e74a4be92d4d11263d9a
