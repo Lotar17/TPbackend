@@ -27,14 +27,20 @@ async function loginUser(req: Request, res: Response) {
   console.log(mail);
   try {
     const user = await em.findOne(Persona, { mail: mail });
-    if (!user) throw new ValidationError('La contraseña o el usuario es incorrecto');
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid ) // || !user
+    if (!user)
       throw new ValidationError('La contraseña o el usuario es incorrecto');
-    res.status(200).send({ message: 'Linda papi',result: true,usuarioId:user._id?.toString(),});
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid)
+      // || !user
+      throw new ValidationError('La contraseña o el usuario es incorrecto');
+    res.status(200).send({
+      message: 'Usuario logeado',
+      result: true,
+      usuarioId: user._id?.toString(),
+    });
   } catch (error) {
     if (error instanceof ValidationError)
-      res.status(401).send({ message: error.message,result: false });
+      res.status(401).send({ message: error.message, result: false });
   }
 }
 

@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   Property,
+  QueryOrder,
   Rel,
 } from '@mikro-orm/core';
 import { BaseEntity } from '../shared/base-entity.entity.js';
@@ -18,10 +19,7 @@ export class Producto extends BaseEntity {
   @Property({ nullable: false, unique: true })
   descripcion!: string;
 
-  @Property({ nullable: false, unique: true })
-  precio!: number;
-
-  @ManyToOne(() => Persona, {nullable: false})
+  @ManyToOne(() => Persona, { nullable: false })
   persona!: Rel<Persona>;
 
   @Property()
@@ -33,14 +31,12 @@ export class Producto extends BaseEntity {
   @OneToMany(() => Compra, (compra) => compra.producto, {
     cascade: [Cascade.ALL],
   })
-compras = new Collection<Compra>(this)
+  compras = new Collection<Compra>(this);
 
   @OneToMany(
     () => HistoricoPrecio,
     (historico_precio) => historico_precio.producto,
-    { cascade: [Cascade.ALL] }
+    { cascade: [Cascade.ALL], orderBy: { fechaDesde: QueryOrder.ASC } }
   )
   hist_precios = new Collection<HistoricoPrecio>(this);
-
-
 }

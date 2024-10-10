@@ -1,0 +1,39 @@
+
+#### getAll() Formas de pago
+GET http://localhost:3000/api/formas-de-pago
+
+
+
+### getOne() Formas de pago
+GET http://localhost:3000/api/formas-de-pago/6705f6b185dc3775e6d32632
+
+
+
+### Verificar rutas no definidas
+GET http://localhost:3000/api/perssss
+
+
+
+
+#### add() Formas de pago
+POST http://localhost:3000/api/formas-de-pago/
+Content-Type: application/json
+
+{
+  "descripcion": "Visa"
+}
+
+
+
+
+### update() Formas de pago
+PUT http://localhost:3000/api/formas-de-pago/6705f6b185dc3775e6d32632
+Content-Type: application/json
+
+{
+  "descripcion": "Mercado Pago"
+}
+
+### remove() Categoria
+DELETE http://localhost:3000/api/formas-de-pago/6705f6b185dc3775e6d32632
+Content-Type: application/json
