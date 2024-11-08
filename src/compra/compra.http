@@ -20,7 +20,7 @@ Content-Type: application/json
 }
 
 ### update() Compras
-PUT http://localhost:3000/api/compras/66c3bb36a40253008338f5eb
+PUT http://localhost:3000/api/compras/66d1e4513f46336da71a26a2
 Content-Type: application/json
 
 {
@@ -48,4 +48,4 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/api/compras/66c3bb36a40253008338f5eb
+DELETE http://localhost:3000/api/compras/66d1e4513f46336da71a26a2

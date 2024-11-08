@@ -13,8 +13,8 @@ POST http://localhost:3000/api/personas/
 Content-Type: application/json
 
 {
-  "nombre": "valen",
-  "apellido": "bertone",
+  "nombre": "scaloni",
+  "apellido": "leonel",
   "telefono": "3413112333333",
   "mail": "valen",
   "prods_publicados":[],
