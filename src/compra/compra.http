@@ -9,13 +9,13 @@ POST http://localhost:3000/api/compras/
 Content-Type: application/json
 
 {
-  "direccion_entrega": "Sarmiento 462",
+  "direccion_entrega": "Zeballos 1281",
   "producto": "66c0bddc34088bbf80791763",
   "persona": "66abffd636c84d1bcc465c81",
   "empleado":"66c0bd7434088bbf80791762",
   "cantidad_producto":567,
-  "fecha_hora_compra":"17/8/2024-12:16",
-  "descuento": 500
+  "fecha_hora_compra":"17/8/2024-12:16"
+
 
 }
 
@@ -30,7 +30,7 @@ Content-Type: application/json
   "empleado":"66c0bd7434088bbf80791762",
   "cantidad_producto":700,
   "fecha_hora_compra":"17/8/2024-12:16",
-  "descuento": 200
+  
 
 }
 
@@ -41,7 +41,7 @@ Content-Type: application/json
 {
    "cantidad_producto":800,
   "fecha_hora_compra":"19/8/2024-12:16",
-  "descuento": 100
+  
 
   
 }

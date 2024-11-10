@@ -10,10 +10,10 @@ POST http://localhost:3000/api/empleados/
 Content-Type: application/json
 
 {
-  "nombre": "Ruben",
-  "apellido": "Di Martino",
+  "nombre": "Martin",
+  "apellido": "Palermo",
   "telefono": "3465663412",
-  "email": "ruben@200",
+  "email": "palermo@yahoo.com.ar",
   "compras":[]
   
 }
@@ -35,3 +35,6 @@ Content-Type: application/json
 ###
 
 DELETE http://localhost:3000/api/empleados/66d1e4a43f46336da71a26a3
+
+###
+GET http://localhost:3000/api/empleados/employ/palermo@yahoo.com.ar
