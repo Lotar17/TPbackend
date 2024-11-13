@@ -9,9 +9,9 @@ POST http://localhost:3000/api/historico-precios/
 Content-Type: application/json
 
 {
-  "valor": 10000,
-  "fechaDesde": "10/9/2025",
-  "producto": "66fda8c28e6f95f4dbd168f7"
+  "valor": 15000,
+  "fechaDesde": "10/11/2024",
+  "producto": "66fda8c28e6f95f4dbd168f6"
 }
 
 ### UPDATE
@@ -27,4 +27,4 @@ DELETE http://localhost:3000/api/historico-precios/66a9987c052e5cf8f8f5d6c2
 Content-Type: application/json
 
 ###GETHISTORICOPRODUCTO
-GET http://localhost:3000/api/historico-precios/producto/66fda8c28e6f95f4dbd168f7
+GET http://localhost:3000/api/historico-precios/producto/66fda8c28e6f95f4dbd168f6
