@@ -82,5 +82,34 @@ async function remove(req: Request, res: Response) {
     return res.status(500).json({ message: 'Precio delete failed' });
   }
 }
+async function getPreciosHistoricos(req: Request, res: Response) {
+  try {
+    const productoId = req.params.productoId;
+    
+  
+    const preciosHistoricos = await em.find(HistoricoPrecio, {
+      producto: productoId, 
+    }, {
+      orderBy: {
+        fechaDesde: 'DESC', 
+      },
+    });
 
-export { getAll, getOne, add, update, sanitizePrecioInput, remove };
+    if (preciosHistoricos.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron precios históricos para este producto' });
+    }
+
+    const precioActual = preciosHistoricos[0];
+    
+    return res.status(200).json({
+      message: 'Precio actual encontrado',
+      data: precioActual,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al buscar precios históricos' });
+  }
+}
+
+
+
+export { getAll, getOne, add, update, sanitizePrecioInput, remove,getPreciosHistoricos};

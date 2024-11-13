@@ -3,18 +3,17 @@
 GET http://localhost:3000/api/empleados
 
 ### getOne() Empleados
-GET http://localhost:3000/api/empleados/66c0bd7434088bbf80791762
-
+GET http://localhost:3000/api/empleados/66d1e4a43f46336da71a26a3
 
 #### add() empleados
 POST http://localhost:3000/api/empleados/
 Content-Type: application/json
 
 {
-  "nombre": "Ignacio",
-  "apellido": "Di Martino",
-  "telefono": "3465663411",
-  "email": "nachojdimartino@gmail.com",
+  "nombre": "Martin",
+  "apellido": "Palermo",
+  "telefono": "3465663412",
+  "email": "palermo@yahoo.com.ar",
   "compras":[]
   
 }
@@ -35,4 +34,7 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/api/empleados/66c0bd7434088bbf80791762
+DELETE http://localhost:3000/api/empleados/66d1e4a43f46336da71a26a3
+
+###
+GET http://localhost:3000/api/empleados/employ/palermo@yahoo.com.ar

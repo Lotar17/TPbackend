@@ -103,6 +103,27 @@ async function add(req: Request, res: Response) {
       return res.status(500).json({ message: error.data });
     }
   }
+
+  async function getempleadoByEmail(req:Request, res:Response) {
+    try{
+const email=req.params.email
+if (!email) {
+  return res.status(400).json({ message: 'Email is required' });
+}
+const empleado = await em.findOne(Empleado, { email });
+
+if (!empleado) {
+  return res.status(404).json({ message: 'Empleado not found' });
+}
+
+
+return res.status(200).json({ message:'Employ founded', data: empleado });
+} catch (error:any) {
+return res.status(500).json({ message: 'Internal server error'});
+}
+    }
+    
+  
   
   export {
     getAll,
@@ -111,4 +132,5 @@ async function add(req: Request, res: Response) {
     update,
     sanitizeEmpleadoInput as sanitizeCharacterInput,
     remove,
+    getempleadoByEmail
   };

@@ -31,8 +31,6 @@ export class Compra extends BaseEntity {
     @Property({ nullable: false })
   fecha_hora_compra!: string
 
-  @Property({ nullable: false })
-  descuento!: number
 
 
 }
