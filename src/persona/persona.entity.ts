@@ -19,8 +19,11 @@ export class Persona extends BaseEntity {
   @Property({ nullable: true, unique: false })
   telefono?: string;
 
-  @Property({ nullable: true, unique: false })
+  @Property({ nullable: true, unique: true })
   mail!: string;
+
+  @Property({ nullable: false })
+  rol?: string;
 
   @OneToMany(() => Compra, (compra) => compra.persona, {
     cascade: [Cascade.ALL],
@@ -31,7 +34,6 @@ export class Persona extends BaseEntity {
     cascade: [Cascade.ALL],
   })
   prods_publicados = new Collection<Producto>(this);
-
 
   @Property({ nullable: false, hidden: true })
   password!: string;

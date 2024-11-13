@@ -1,11 +1,18 @@
+
 #### getAll() Categorias
 GET http://localhost:3000/api/categorias
+
+
 
 ### getOne() Categorias
 GET http://localhost:3000/api/categorias/66a321752d521bb6eba0c4f7
 
+
+
 ### Verificar rutas no definidas
 GET http://localhost:3000/api/perssss
+
+
 
 
 #### add() Categorias
@@ -15,6 +22,9 @@ Content-Type: application/json
 {
   "descripcion": "Ropa"
 }
+
+
+
 
 ### update() Categorias
 PUT http://localhost:3000/api/categorias/66a991e4f69972104ef25c7c

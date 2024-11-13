@@ -15,7 +15,7 @@ function sanitizeCompraInput(
 ) {
   req.body.sanitizedInput = {
     direccion_entrega: req.body.direccion_entrega,
-   cantidad_producto: req.body.cantidad_producto,
+    cantidad_producto: req.body.cantidad_producto,
     fecha_hora_compra: req.body.fecha_hora_compra,
 //descuento: req.body.descuento,
     persona: req.body.persona,
