@@ -3,8 +3,13 @@ import { orm } from '../shared/db/orm.js';
 import { Persona } from '../persona/persona.entity.js';
 import { ValidationError } from './loginErrors.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const em = orm.em;
+const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY || 'nachovalenlotar';
 
 function sanitizeLoginInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
@@ -33,8 +38,27 @@ async function loginUser(req: Request, res: Response) {
     if (!isValid)
       // || !user
       throw new ValidationError('La contraseña o el usuario es incorrecto');
+    const token = jwt.sign(
+      {
+        id: user._id,
+        mail: user.mail,
+        nombre: user.nombre,
+        apellido: user.apellido,
+        rol: user.rol,
+      },
+      SECRET_JWT_KEY,
+      {
+        expiresIn: '1h',
+      }
+    );
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+    });
     res.status(200).send({
-      message: 'Usuario logeado',
+      message: 'Usuario logueado',
       result: true,
       usuarioId: user._id?.toString(),
     });

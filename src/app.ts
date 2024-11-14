@@ -13,10 +13,12 @@ import { METHODS } from 'http';
 import cors from 'cors';
 import { registerRouter } from './register/register.routes.js';
 import { formaDePagoRouter } from './formaDePago/formasDePago.routes.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   RequestContext.create(orm.em, next);
@@ -26,6 +28,7 @@ app.use(
   cors({
     origin: ['http://localhost:4200'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
   })
 );
 
