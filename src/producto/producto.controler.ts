@@ -102,11 +102,9 @@ async function add(req: Request, res: Response) {
     };
     const historicoPrecioNuevo = em.create(HistoricoPrecio, histPrecio);
     await em.flush();
-    return res
-      .status(201)
-      .json({ message: 'Producto created succesfully', data: producto });
+    res.status(201).send({ message: 'Registro exitoso', result: true });
   } catch (error: any) {
-    return res.status(500).json({ message: error.message });
+    res.status(500).send({ message: 'Error interno del servidor', result: false })
   }
 }
 async function update(req: Request, res: Response) {
