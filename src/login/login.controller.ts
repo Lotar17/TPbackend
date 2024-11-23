@@ -3,13 +3,14 @@ import { orm } from '../shared/db/orm.js';
 import { Persona } from '../persona/persona.entity.js';
 import { ValidationError } from './loginErrors.js';
 import bcrypt from 'bcrypt';
+import session from 'express-session';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const em = orm.em;
-const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY || 'nachovalenlotar';
+export const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY || 'nachovalenlotar';
 
 function sanitizeLoginInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
@@ -54,8 +55,9 @@ async function loginUser(req: Request, res: Response) {
     res.cookie('access_token', token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60,
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none',
+      secure: true,
+      signed: true,
     });
     res.status(200).send({
       message: 'Usuario logueado',
@@ -68,4 +70,15 @@ async function loginUser(req: Request, res: Response) {
   }
 }
 
-export { sanitizeLoginInput, loginUser };
+async function getRolByCookie(req: Request, res: Response) {
+  const { user } = req.session;
+  console.log(
+    `El usuario conectado es ${user?.nombre} ${user?.apellido} con rol de ${user?.rol}`
+  );
+  res.status(200).send({
+    message: 'Rol encontrado con exito',
+    data: user?.rol,
+  });
+}
+
+export { sanitizeLoginInput, loginUser, getRolByCookie };
