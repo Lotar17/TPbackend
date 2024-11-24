@@ -27,21 +27,39 @@ function sanitizeProductoInput(
 }
 
 async function getAll(req: Request, res: Response) {
-  try {
-    const productos = await em.find(
-      Producto,
-      {},
-      {
-        populate: ['persona', 'categoria', 'hist_precios'],
+    try {
+      const descripcion = req.query.descripcion as string;
+  
+      let productos;
+  
+      if (descripcion) {
+        // Si se proporciona una descripción, buscar productos que coincidan parcialmente
+        productos = await em.find(
+          Producto,
+          {
+            descripcion: new RegExp(descripcion, 'i')// Coincidencia parcial, insensible a mayúsculas/minúsculas
+          },
+          {
+            populate: ['persona', 'categoria', 'hist_precios'],
+          }
+        );
+      } else {
+        // Si no se proporciona descripción, devolver todos los productos
+        productos = await em.find(
+          Producto,
+          {},
+          {
+            populate: ['persona', 'categoria', 'hist_precios'],
+          }
+        );
       }
-    );
-    return res
-      .status(200)
-      .json({ message: 'Productos finded', data: productos });
-  } catch (error: any) {
-    return res.status(404).json({ message: error.message });
+  
+      return res.status(200).json({ message: 'Productos encontrados', data: productos });
+    } catch (error: any) {
+      return res.status(500).json({ message: 'Error al buscar productos', error: error.message });
+    }
   }
-}
+  
 
 async function getOne(req: Request, res: Response) {
   try {
@@ -56,6 +74,21 @@ async function getOne(req: Request, res: Response) {
     return res.status(404).json({ message: 'Producto not found' });
   }
 }
+
+async function getbydescription(req:Request,res:Response){
+  try{
+    const descripcion = req.query.descripcion as string;
+    if(descripcion){
+    const producto = em.findOneOrFail(Producto,descripcion)
+    return res.status(200).json({ message: 'Productos found', data: producto });
+    }
+  }
+  catch (error: any) {
+    console.error(error);
+    return res.status(404).json({ message: 'Error al buscar productos' });
+  }
+}
+
 async function add(req: Request, res: Response) {
   try {
     console.log(req.body.sanitizedInput);
@@ -69,11 +102,9 @@ async function add(req: Request, res: Response) {
     };
     const historicoPrecioNuevo = em.create(HistoricoPrecio, histPrecio);
     await em.flush();
-    return res
-      .status(201)
-      .json({ message: 'Producto created succesfully', data: producto });
+    res.status(201).send({ message: 'Registro exitoso', result: true });
   } catch (error: any) {
-    return res.status(500).json({ message: error.message });
+    res.status(500).send({ message: 'Error interno del servidor', result: false })
   }
 }
 async function update(req: Request, res: Response) {
@@ -122,4 +153,4 @@ async function remove(req: Request, res: Response) {
     return res.status(500).json({ message: 'Producto delete failed' });
   }
 }
-export { sanitizeProductoInput, getAll, getOne, add, update, remove };
+export { sanitizeProductoInput,getbydescription, getAll, getOne, add, update, remove };

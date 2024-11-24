@@ -13,6 +13,7 @@ function sanitizeRegisterInput(req:Request,res:Response,next:NextFunction){
         telefono: req.body.telefono,
         mail: req.body.mail,
         password: bcrypt.hashSync(req.body.password, 10),
+        rol: req.body.rol,
     };
     Object.keys(req.body.sanitizedInput).forEach((key) => {
         if (req.body.sanitizedInput[key] === undefined) {
@@ -24,12 +25,12 @@ function sanitizeRegisterInput(req:Request,res:Response,next:NextFunction){
 }
 async function registerUser(req: Request, res: Response) {
     console.log('Datos recibidos:', req.body.sanitizedInput); // Para ver los datos recibidos
-    const { nombre,apellido,mail, telefono, password } = req.body.sanitizedInput;
+    const { nombre,apellido,mail, telefono, password,rol } = req.body.sanitizedInput;
     
     try {
         const user = await em.findOne(Persona, { mail: mail });
         if (user) throw new ValidationError('El mail ya se encuentra en uso');
-        const newUser = em.create(Persona, { nombre, apellido, password, mail, telefono});
+        const newUser = em.create(Persona, { nombre, apellido, password, mail, telefono,rol});
         console.log('Nueva persona a crear:', newUser);
         await em.persistAndFlush(newUser);
         res.status(201).send({ message: 'Registro exitoso', result: true });
