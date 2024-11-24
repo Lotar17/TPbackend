@@ -9,11 +9,11 @@ POST http://localhost:3000/api/productos/
 Content-Type: application/json
 
 {
-  "descripcion": "Buzo de Boca",
+  "descripcion": "Buzo ",
   "precio": 500,
   "stock": 20,
-  "categoria": "66a991e4f69972104ef25c7c",
-  "persona": "66f727d965016d88d9335251"
+  "categoria": "67365f0084281b88225d49a7",
+  "persona": "6706f21e81b79fdfc13a3200"
 }
 
 ### UPDATE
