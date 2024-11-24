@@ -9,11 +9,11 @@ POST http://localhost:3000/api/productos/
 Content-Type: application/json
 
 {
-  "descripcion": "remera oversize",
-  "precio": 400,
-  "stock": 30,
-  "categoria": "66a991e4f69972104ef25c7c",
-  "persona": "66abffd636c84d1bcc465c81"
+  "descripcion": "Buzo ",
+  "precio": 500,
+  "stock": 20,
+  "categoria": "67365f0084281b88225d49a7",
+  "persona": "6706f21e81b79fdfc13a3200"
 }
 
 ### UPDATE
