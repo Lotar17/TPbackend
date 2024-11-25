@@ -2,6 +2,7 @@ import { HistoricoPrecio } from './historico_precio.entity.js';
 import { Request, Response, NextFunction } from 'express';
 import { orm } from '../shared/db/orm.js';
 
+
 const em = orm.em;
 
 function sanitizePrecioInput(req: Request, res: Response, next: NextFunction) {
@@ -83,12 +84,15 @@ async function remove(req: Request, res: Response) {
   }
 }
 async function getPreciosHistoricos(req: Request, res: Response) {
+  
+
   try {
     const productoId = req.params.productoId;
-    
+ 
   
     const preciosHistoricos = await em.find(HistoricoPrecio, {
       producto: productoId, 
+      
     }, {
       orderBy: {
         fechaDesde: 'DESC', 
@@ -109,6 +113,7 @@ async function getPreciosHistoricos(req: Request, res: Response) {
     return res.status(500).json({ message: 'Error al buscar precios históricos' });
   }
 }
+
 
 
 

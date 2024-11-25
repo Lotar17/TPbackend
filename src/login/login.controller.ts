@@ -63,6 +63,7 @@ async function loginUser(req: Request, res: Response) {
       message: 'Usuario logueado',
       result: true,
       usuarioId: user._id?.toString(),
+      userRol: user.rol?.toString()
     });
   } catch (error) {
     if (error instanceof ValidationError)
