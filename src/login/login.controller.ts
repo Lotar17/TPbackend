@@ -41,7 +41,7 @@ async function loginUser(req: Request, res: Response) {
       throw new ValidationError('La contraseña o el usuario es incorrecto');
     const token = jwt.sign(
       {
-        id: user._id,
+        id: user.id,
         mail: user.mail,
         nombre: user.nombre,
         apellido: user.apellido,
@@ -63,7 +63,7 @@ async function loginUser(req: Request, res: Response) {
       message: 'Usuario logueado',
       result: true,
       usuarioId: user._id?.toString(),
-      userRol: user.rol?.toString()
+      userRol: user.rol?.toString(),
     });
   } catch (error) {
     if (error instanceof ValidationError)
