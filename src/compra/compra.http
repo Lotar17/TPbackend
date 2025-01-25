@@ -49,3 +49,6 @@ Content-Type: application/json
 ###
 
 DELETE http://localhost:3000/api/compras/66d1e4513f46336da71a26a2
+
+###GETCOMPRAPERSONA
+GET http://localhost:3000/api/compras/persona/6707d172945bb2b6bd18061a

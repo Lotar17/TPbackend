@@ -17,13 +17,13 @@ Content-Type: application/json
 }
 
 ### UPDATE
-PUT http://localhost:3000/api/productos/66c0bddc34088bbf80791763
+PUT http://localhost:3000/api/productos/66fda8c28e6f95f4dbd168f6
 Content-Type: application/json
 
 {
-  "descripcion": "Pantalon",
-  "precio": 401,
-  "stock": 29
+  "descripcion": "Camisa",
+  "precio": 401
+
 }
 
 ### REMOVE 

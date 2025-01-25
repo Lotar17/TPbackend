@@ -96,4 +96,24 @@ async function getOne(req: Request, res: Response) {
       return res.status(500).json({ message: 'Compra delete failed' });
     }
   }
-  export { sanitizeCompraInput, getAll, getOne, add, update, remove };
+
+  async function getComprasByPersona(req: Request, res: Response) {
+    const personaId = req.params.personaId;
+    try {
+      // Buscar las compras asociadas al personaId
+      const compras = await em.find(Compra, { persona: personaId });
+  
+      if (compras.length === 0) {
+        return res.status(404).json({ message: 'Compra not found' });
+      }
+  
+      return res.status(200).json({
+        message: 'Compras found',
+        data: compras
+      });
+    } catch (error) {
+      return res.status(500).json({ message: 'Error al obtener compras', error });
+    }
+  }
+  
+  export { sanitizeCompraInput, getAll, getOne, add, update, remove,getComprasByPersona };

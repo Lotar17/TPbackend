@@ -6,6 +6,7 @@ import {
   add,
   update,
   remove,
+  getComprasByPersona
 } from './compra.controler.js';
 
 export const CompraRouter = Router();
@@ -16,3 +17,4 @@ CompraRouter.post('/', sanitizeCompraInput, add);
 CompraRouter.put('/:id', sanitizeCompraInput, update);
 CompraRouter.patch('/:id', sanitizeCompraInput, update);
 CompraRouter.delete('/:id', remove);
+CompraRouter.get('/persona/:personaId',getComprasByPersona)
