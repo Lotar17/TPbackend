@@ -32,7 +32,7 @@ export class Producto extends BaseEntity {
   categoria!: Categoria;
 
   @OneToMany(() => Compra, (compra) => compra.producto, {
-    cascade: [Cascade.ALL],
+    cascade: [Cascade.ALL], // propaga 
   })
   compras = new Collection<Compra>(this);
 
