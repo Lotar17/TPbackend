@@ -8,6 +8,7 @@ import {
 import { BaseEntity } from '../shared/base-entity.entity.js';
 import { Producto } from '../producto/producto.entity.js';
 import { Compra } from '../compra/compra.entity.js';
+import { Item } from '../item/item.entity.js';
 
 @Entity()
 export class Persona extends BaseEntity {
@@ -34,6 +35,11 @@ export class Persona extends BaseEntity {
     cascade: [Cascade.ALL],
   })
   prods_publicados = new Collection<Producto>(this);
+
+  @OneToMany(() => Item, (item) => item.persona, {
+    cascade: [Cascade.ALL],
+  })
+  carrito = new Collection<Item>(this);
 
   @Property({ nullable: false, hidden: true })
   password!: string;

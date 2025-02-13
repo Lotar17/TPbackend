@@ -13,10 +13,12 @@ import { METHODS } from 'http';
 import cors from 'cors';
 import { registerRouter } from './register/register.routes.js';
 import { formaDePagoRouter } from './formaDePago/formasDePago.routes.js';
+import { ItemRouter } from './item/item.routes.js';
 import session from 'express-session';
 import { SECRET_JWT_KEY } from './login/login.controller.js';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
+
 
 type UserCookie = {
   id: number;
@@ -89,6 +91,8 @@ app.use('/login', loginRouter);
 app.use('/api/compras', CompraRouter);
 app.use('/register', registerRouter);
 app.use('/api/formas-de-pago', formaDePagoRouter);
+app.use('/api/item', ItemRouter);
+
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });

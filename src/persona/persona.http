@@ -18,7 +18,9 @@ Content-Type: application/json
   "telefono": "3413112333333",
   "mail": "valen",
   "prods_publicados":[],
-  "password": "valen"
+  "password": "valen",
+  "carrito":[],
+  "rol":"usuario"
 }
 
 ### update() Personas

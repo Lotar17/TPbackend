@@ -17,7 +17,6 @@ function sanitizeLoginInput(req: Request, res: Response, next: NextFunction) {
     mail: req.body.mail,
     password: req.body.password,
   };
-  //more checks here
 
   Object.keys(req.body.sanitizedInput).forEach((key) => {
     if (req.body.sanitizedInput[key] === undefined) {
