@@ -110,36 +110,50 @@ async function add(req: Request, res: Response) {
 async function update(req: Request, res: Response) {
   try {
     const id = req.params.id;
+
+    // Encuentra el producto por su ID, incluyendo su historial de precios
     const producto = await em.findOneOrFail(
       Producto,
       { id },
       { populate: ['hist_precios'] }
     );
-    const precioExiste = producto.hist_precios.find(
-      (precio) => precio.valor === req.body.sanitizedInput.precio
-    );
-    em.assign(producto, req.body.sanitizedInput);
-    if (precioExiste) {
-      const idPrecio = precioExiste.id;
-      const precio = await em.findOneOrFail(HistoricoPrecio, { id: idPrecio });
-      em.assign(precio, { fechaDesde: new Date() });
-    } else {
-      const precio: HistoricoPrecio = {
-        valor: req.body.sanitizedInput.precio,
-        fechaDesde: new Date(),
-        producto: producto,
-      };
-      em.create(HistoricoPrecio, precio);
+
+    // Actualizar el producto con los campos enviados en el cuerpo de la solicitud (parciales)
+    const sanitizedInput = req.body.sanitizedInput;
+    em.assign(producto, sanitizedInput);  // Asigna de forma parcial lo que se pasa en sanitizedInput
+
+    // Si el precio está siendo actualizado, maneja el historial de precios
+    if (sanitizedInput.precio !== undefined) {
+      const precioExiste = producto.hist_precios.find(
+        (precio) => precio.valor === sanitizedInput.precio
+      );
+      
+      // Si ya existe ese precio, actualiza la fecha
+      if (precioExiste) {
+        const idPrecio = precioExiste.id;
+        const precio = await em.findOneOrFail(HistoricoPrecio, { id: idPrecio });
+        em.assign(precio, { fechaDesde: new Date() });
+      } else {
+        // Si no existe ese precio, crea un nuevo historial de precio
+        const precio: HistoricoPrecio = {
+          valor: sanitizedInput.precio,
+          fechaDesde: new Date(),
+          producto: producto,
+        };
+        em.create(HistoricoPrecio, precio);
+      }
     }
+
+    // Persiste todos los cambios
     await em.flush();
-    return res
-      .status(200)
-      .json({ message: 'Producto updated succesfully', data: producto });
+
+    return res.status(200).json({ message: 'Producto updated successfully', data: producto });
   } catch (error: any) {
     console.log(error);
     return res.status(500).json({ message: 'Producto update failed' });
   }
 }
+
 
 async function remove(req: Request, res: Response) {
   try {

@@ -2,27 +2,26 @@
 GET http://localhost:3000/api/productos/
 
 ### GET ONE
-GET http://localhost:3000/api/productos/66c0bddc34088bbf80791763
-
+GET http://localhost:3000/api/productos/674470dee02ee91fd1b5f449
 ### CREATE 
 POST http://localhost:3000/api/productos/
 Content-Type: application/json
 
 {
-  "descripcion": "Buzo ",
+  "descripcion": "zapatoo  amarillo",
   "precio": 500,
   "stock": 20,
   "categoria": "67365f0084281b88225d49a7",
-  "persona": "6706f21e81b79fdfc13a3200"
+  "persona": "674060e8f89e116e306c67d0"
 }
 
 ### UPDATE
-PUT http://localhost:3000/api/productos/66fda8c28e6f95f4dbd168f6
+PATCH   http://localhost:3000/api/productos/674470dee02ee91fd1b5f449
 Content-Type: application/json
 
 {
-  "descripcion": "Camisa",
-  "precio": 401
+ 
+ "stock":30
 
 }
 

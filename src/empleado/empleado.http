@@ -3,8 +3,7 @@
 GET http://localhost:3000/api/empleados
 
 ### getOne() Empleados
-GET http://localhost:3000/api/empleados/66d1e4a43f46336da71a26a3
-
+GET http://localhost:3000/api/empleados/6707d157945bb2b6bd180619
 #### add() empleados
 POST http://localhost:3000/api/empleados/
 Content-Type: application/json

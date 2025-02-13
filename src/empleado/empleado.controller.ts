@@ -32,7 +32,7 @@ function sanitizeEmpleadoInput(
 
 async function getAll(req: Request, res: Response) {
   try {
-    const empleado = await em.find(Empleado, {}, { populate: ['compras'] });
+    const empleado = await em.find(Empleado, {}, );
 
     return res
       .status(200)
@@ -48,7 +48,7 @@ async function getOne(req: Request, res: Response) {
     const empleado = await em.findOneOrFail(
       Empleado,
       { id },
-      { populate: ['compras'] }
+      
     );
 
     return res.status(200).json({ message: 'found employ', data: empleado });
