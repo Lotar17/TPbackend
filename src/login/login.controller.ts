@@ -71,14 +71,47 @@ async function loginUser(req: Request, res: Response) {
 }
 
 async function getRolByCookie(req: Request, res: Response) {
+  req.sessionStore.get(req.cookies.session_token, (error, session) => {
+    if (error) {
+      console.log('Sesion no encontrada');
+    }
+    if (session) {
+      return session;
+    }
+  });
   const { user } = req.session;
   console.log(
     `El usuario conectado es ${user?.nombre} ${user?.apellido} con rol de ${user?.rol}`
   );
   res.status(200).send({
-    message: 'Rol encontrado con exito',
+    message: user ? 'Rol encontrado con exito' : 'Usuario no encontrado',
     data: user?.rol,
   });
+  console.log(`Preguntaron por el rol del usuario ${user?.nombre}`);
 }
 
-export { sanitizeLoginInput, loginUser, getRolByCookie };
+async function getUserInformation(req: Request, res: Response) {
+  const sid = req.signedCookies.session_token;
+  console.log(sid);
+  if (sid !== undefined) {
+    req.sessionStore.get(sid, (error, session) => {
+      if (session) {
+        const user = session.user;
+        console.log(
+          `El usuario conectado es ${user?.nombre} ${user?.apellido} con rol de ${user?.rol}`
+        );
+        res.status(200).send({
+          message: 'Usuario encontrado con exito',
+          data: user,
+        });
+        console.log(`Preguntaron por el rol del usuario ${user?.nombre}`);
+      }
+    });
+  } else {
+    res.status(200).send({
+      message: 'Usuario no encontrado',
+    });
+  }
+}
+
+export { sanitizeLoginInput, loginUser, getRolByCookie, getUserInformation };
