@@ -1,0 +1,28 @@
+#### add() Item
+POST http://localhost:3000/api/item/
+Content-Type: application/json
+
+{
+ 
+  "producto": "674470dee02ee91fd1b5f449",
+  "persona": "67a12692fa0044f148f9b1fe"
+  
+
+}
+
+
+### getCart
+
+GET http://localhost:3000/api/item/persona/67a12692fa0044f148f9b1fe
+
+### decrementQuantity
+POST http://localhost:3000/api/item/decrementa
+Content-Type: application/json
+
+{
+  "producto": "67a12980ac175681c548b8e5",
+  "persona": "674060e8f89e116e306c67d0"
+}
+
+### removeItem
+DELETE http://localhost:3000/api/item/67a2af573b4801a16d2f23d3

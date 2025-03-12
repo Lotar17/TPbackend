@@ -24,9 +24,6 @@ export class Empleado extends BaseEntity {
  @Property({ nullable: false })
  email!: string
 
- @OneToMany(() => Compra, (compra) => compra.empleado, {
-  cascade: [Cascade.ALL],
-})
-compras = new Collection<Compra>(this)
+
 
 }

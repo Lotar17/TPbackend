@@ -16,6 +16,7 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
     prods_publicados: req.body.prods_publicados,
     password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined, // Si en el put o en el patch no se pone un password tira error
     rol: req.body.rol,
+    carrito:req.body.carrito
   };
   //more checks here
 
@@ -33,7 +34,8 @@ async function getAll(req: Request, res: Response) {
     const persona = await em.find(
       Persona,
       {},
-      { populate: ['prods_publicados'] }
+      { populate: ['prods_publicados','carrito']
+       }
     );
 
     return res

@@ -10,13 +10,13 @@ Content-Type: application/json
 
 {
   "direccion_entrega": "Zeballos 1281",
-  "producto": "66c0bddc34088bbf80791763",
-  "persona": "66abffd636c84d1bcc465c81",
-  "empleado":"66c0bd7434088bbf80791762",
-  "cantidad_producto":567,
-  "fecha_hora_compra":"17/8/2024-12:16"
-
-
+  "fecha_hora_compra": "17/8/2024-12:17",
+  "persona": "67a12692fa0044f148f9b1fe",
+  "items": [
+ 
+    { "producto":"674470dee02ee91fd1b5f449", "cantidad_producto":7}
+    
+  ]
 }
 
 ### update() Compras
@@ -46,6 +46,11 @@ Content-Type: application/json
   
 }
 
-###
+###GET
 
-DELETE http://localhost:3000/api/compras/66d1e4513f46336da71a26a2
+GET http://localhost:3000/api/compras/67aa82aaa5d7f0cc58cd3826
+
+DELETE http://localhost:3000/api/compras/67a8bfafbe12abfb5c8db158
+
+###GETCOMPRAPERSONA
+GET http://localhost:3000/api/compras/persona/67a12692fa0044f148f9b1fe
