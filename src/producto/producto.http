@@ -2,13 +2,16 @@
 GET http://localhost:3000/api/productos/
 
 ### GET ONE
+GET http://localhost:3000/api/productos/persona/67a12692fa0044f148f9b1fe
+
+### GET ONE
 GET http://localhost:3000/api/productos/674470dee02ee91fd1b5f449
 ### CREATE 
 POST http://localhost:3000/api/productos/
 Content-Type: application/json
 
 {
-  "descripcion": "zapatoo  amarillo",
+  "descripcion": "zapatoo blanco",
   "precio": 500,
   "stock": 20,
   "categoria": "67365f0084281b88225d49a7",
@@ -16,7 +19,7 @@ Content-Type: application/json
 }
 
 ### UPDATE
-PATCH   http://localhost:3000/api/productos/674470dee02ee91fd1b5f449
+PATCH   http://localhost:3000/api/productos/674471dbe02ee91fd1b5f44d
 Content-Type: application/json
 
 {
@@ -27,3 +30,27 @@ Content-Type: application/json
 
 ### REMOVE 
 DELETE http://localhost:3000/api/productos/66c0bddc34088bbf80791763
+### UPDATE
+PUT    http://localhost:3000/api/productos/stock
+Content-Type: application/json
+
+{
+  "productos": [
+    {
+      
+      "descripcion": "Buzo",
+      "precio": 3500,
+      
+      "categoriaId": "67365f0084281b88225d49a7",
+      "personaId": "6706f21e81b79fdfc13a3200"
+    },
+    {
+      
+      "descripcion": "Campera Nike",
+      "precio": 4500,
+ 
+      "categoriaId": "67365f0084281b88225d49a7",
+      "personaId": "6706f21e81b79fdfc13a3200"
+    }
+  ]
+}

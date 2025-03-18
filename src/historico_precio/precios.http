@@ -27,4 +27,4 @@ DELETE http://localhost:3000/api/historico-precios/66a9987c052e5cf8f8f5d6c2
 Content-Type: application/json
 
 ###GETHISTORICOPRODUCTO
-GET http://localhost:3000/api/historico-precios/producto/673751ae6117b2ce291eae95
+GET http://localhost:3000/api/historico-precios/producto/66fea8a746538f2290efe6b4

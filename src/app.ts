@@ -14,6 +14,7 @@ import cors from 'cors';
 import { registerRouter } from './register/register.routes.js';
 import { formaDePagoRouter } from './formaDePago/formasDePago.routes.js';
 import { ItemRouter } from './item/item.routes.js';
+import { DevolucionRouter } from './devolucion/devolucion.routes.js';
 import session from 'express-session';
 import { SECRET_JWT_KEY } from './login/login.controller.js';
 import jwt from 'jsonwebtoken';
@@ -92,6 +93,7 @@ app.use('/api/compras', CompraRouter);
 app.use('/register', registerRouter);
 app.use('/api/formas-de-pago', formaDePagoRouter);
 app.use('/api/item', ItemRouter);
+app.use('/api/devolucion',DevolucionRouter)
 
 
 app.use((_, res) => {

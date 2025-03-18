@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { orm } from '../shared/db/orm.js';
 import { Persona} from '../persona/persona.entity.js';
 import { Producto } from '../producto/producto.entity.js';
-
+import { HistoricoPrecio } from '../historico_precio/historico_precio.entity.js';
 const em = orm.em;
 
 function sanitizeItemInput(req: Request, res: Response, next: NextFunction) {
@@ -13,6 +13,7 @@ function sanitizeItemInput(req: Request, res: Response, next: NextFunction) {
     precio:req.body.precio,
     producto: req.body.producto,
     persona: req.body.persona,
+    compra:req.body.compra
     
   };
 
@@ -32,7 +33,7 @@ try {
     const item = await em.findOneOrFail(
       Item,
       { id },
-      { populate: ['producto.descripcion'] }
+      { populate: ['producto','compra'] }
     );
     return res.status(200).json({ message: 'item finded', data: item });
   } catch (error: any) {
@@ -62,23 +63,19 @@ try {
         const personaId = req.params.personaId;
         try {
             
-            const items = await em.find(Item, { persona: personaId,compra:null }, { populate: ['producto'] });
+            const items = await em.find(Item, { persona: personaId,compra:null }, { populate: ['producto.hist_precios','compra',] });
     
             
             if (items.length === 0) {
                 return res.status(404).json({ message: 'Carrito no encontrado' });
             }
-    
             
-            const itemsWithProductDescription = items.map(item => ({
-                ...item,
-                productoDescripcion: item.producto?.descripcion ,
-                producto_id: item.producto?.id
-            }));
+         
+           
     
             return res.status(200).json({
                 message: 'Carrito encontrado',
-                data: itemsWithProductDescription,
+                data: items,
             });
         } catch (error) {
             return res.status(500).json({ message: 'Error al obtener carrito', error });
@@ -99,7 +96,7 @@ try {
           }
       
           
-          let item= await em.findOne(Item, { persona, producto, compra: null });
+          let item= await em.findOne(Item, { persona, producto, compra :null });
 
 if (item) {
   
@@ -154,7 +151,34 @@ if (item) {
             res.status(500).json({ message: 'Error al actualizar el carrito', error });
         }
     }
+async function createItem(req:Request, res:Response) {
+  
+  try{
+  const  personaId = req.body.sanitizedInput.persona;
+  const productoId=req.body.sanitizedInput.producto;
+  const cantidad_producto=req.body.sanitizedInput.cantidad_producto
 
+  const persona = await em.findOne(Persona, { id: personaId });
+  const producto = await em.findOne(Producto, { id: productoId });
+  if (!persona || !producto) {
+    return res.status(404).json({ message: 'Persona o producto no encontrado' });
+  }
+
+  let newItem = em.create(Item, {
+    persona,
+    producto,
+    cantidad_producto,
+    
+});
+await em.persistAndFlush(newItem);
+return res.status(200).json({ message: 'Producto updated successfully', data: newItem });
+}
+catch (error) {
+  console.error(error);
+  res.status(500).json({ message: 'Error al actualizar el carrito', error });
+}
+
+}
     
 
 
@@ -162,4 +186,4 @@ if (item) {
     
       
 
-      export{sanitizeItemInput,addToCart,getOne, remove,getCarrito,decrementQuantity}
+      export{sanitizeItemInput,addToCart,getOne, remove,getCarrito,decrementQuantity,createItem}

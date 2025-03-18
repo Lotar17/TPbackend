@@ -4,6 +4,7 @@ import { Producto } from '../producto/producto.entity.js';
 import { Compra } from '../compra/compra.entity.js';
 import { Persona } from '../persona/persona.entity.js';
 import { compare } from 'bcrypt';
+import { Devolucion } from '../devolucion/devolucion.entity.js';
 
 @Entity()
 export class Item extends BaseEntity {
@@ -17,7 +18,9 @@ export class Item extends BaseEntity {
 
   @ManyToOne(() => Compra, { nullable: true })
   compra?: Rel<Compra>;
- 
+  
+  @ManyToOne(() => Devolucion, { nullable: true })
+  devolucion?: Rel<Compra>;
 
   @ManyToOne(() => Persona, { nullable: false })
   persona!: Rel<Persona>;

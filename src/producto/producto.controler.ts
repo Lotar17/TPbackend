@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, response } from 'express';
 import { Producto } from './producto.entity.js';
 import { orm } from '../shared/db/orm.js';
 import { HistoricoPrecio } from '../historico_precio/historico_precio.entity.js';
+import { ObjectId } from '@mikro-orm/mongodb';
 
 const em = orm.em;
 
@@ -11,11 +12,13 @@ function sanitizeProductoInput(
   next: NextFunction
 ) {
   req.body.sanitizedInput = {
+    id:req.body.id,
     descripcion: req.body.descripcion,
     precio: req.body.precio,
     stock: req.body.stock,
     categoria: req.body.categoriaId,
     persona: req.body.personaId,
+
   };
   //more checks here
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -167,4 +170,65 @@ async function remove(req: Request, res: Response) {
     return res.status(500).json({ message: 'Producto delete failed' });
   }
 }
-export { sanitizeProductoInput,getbydescription, getAll, getOne, add, update, remove };
+async function actualizarStock(req: Request, res: Response) {
+  try {
+    console.log("✅ Body recibido en el backend:");
+    console.log(JSON.stringify(req.body, null, 2)); // Verifica qué datos llegan
+
+    if (!Array.isArray(req.body)) {
+      return res.status(400).json({ message: "El formato de datos es incorrecto, debe ser un array de productos." });
+    }
+
+    for (const productoData of req.body) {
+      console.log("🔹 Procesando producto:", productoData);
+
+      if (!productoData.id) {
+        console.error("🚨 ERROR: Producto sin ID", productoData);
+        return res.status(400).json({ message: "Cada producto debe incluir un ID para actualizarlo." });
+      }
+
+      const producto = await em.findOne(Producto, { _id: new ObjectId(productoData.id) });
+
+      if (!producto) {
+        console.error("⚠ Producto no encontrado con ID:", productoData.id);
+        return res.status(404).json({ message: `Producto con ID ${productoData.id} no encontrado` });
+      }
+
+      console.log(`✅ Producto encontrado (${productoData.id}), actualizando stock...`);
+      em.assign(producto, { stock: productoData.stock });
+      em.persist(producto);
+    }
+
+    await em.flush();
+    res.status(200).json({ message: "Stock actualizado correctamente" });
+  } catch (error) {
+    console.error("❌ Error al actualizar stock:", error);
+    res.status(500).json({ message: "Error al actualizar stock" });
+  }
+}
+
+async function getProductsByUser(req:Request, res:Response) {
+  try { const idUser=req.params.idPersona
+  const productos= await em.find(Producto,{
+    persona:idUser
+  }
+
+  )
+  
+  if (productos.length === 0) {
+    return res.status(404).json({ message: 'No se encontraron productos para ese usuario' });
+  }
+  return res.status(200).json({
+    message: 'Productos para el usuario encontrados',
+    data: productos,
+  });
+  
+}catch(error){
+  return res.status(500).json({ message: 'Error al obtener productos' });
+
+}
+}
+
+
+
+export { sanitizeProductoInput,getbydescription, getAll, getOne,actualizarStock, add, update, remove,getProductsByUser};

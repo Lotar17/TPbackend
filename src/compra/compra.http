@@ -2,7 +2,7 @@
 GET http://localhost:3000/api/compras
 
 ### getOne() Compras
-GET http://localhost:3000/api/compras/
+GET http://localhost:3000/api/compras/67b5fde6b00f16fc64739b48
 
 #### add() Compras
 POST http://localhost:3000/api/compras/
@@ -14,7 +14,7 @@ Content-Type: application/json
   "persona": "67a12692fa0044f148f9b1fe",
   "items": [
  
-    { "producto":"674470dee02ee91fd1b5f449", "cantidad_producto":7}
+    { "producto":"674471dbe02ee91fd1b5f44d", "cantidad_producto":2}
     
   ]
 }
@@ -54,3 +54,20 @@ DELETE http://localhost:3000/api/compras/67a8bfafbe12abfb5c8db158
 
 ###GETCOMPRAPERSONA
 GET http://localhost:3000/api/compras/persona/67a12692fa0044f148f9b1fe
+
+### update
+
+PUT   http://localhost:3000/api/compras/67aa82aaa5d7f0cc58cd3826
+Content-Type: application/json
+
+{
+   "direccion_entrega":"Laprida 900",
+  "persona":"67a12692fa0044f148f9b1fe",
+ "fecha_hora_compra":"2025/18/02",
+ "total_compra":1200
+
+  
+}
+###
+PUT  http://localhost:3000/api/compras/stock/67b791d68c993b923f20fa7f
+

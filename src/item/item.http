@@ -25,4 +25,18 @@ Content-Type: application/json
 }
 
 ### removeItem
-DELETE http://localhost:3000/api/item/67a2af573b4801a16d2f23d3
+DELETE http://localhost:3000/api/item/67a8cd8e32e6f0f104f3cbc9
+
+
+#### add() Item
+POST http://localhost:3000/api/item/create
+Content-Type: application/json
+
+{
+ 
+  "producto": "674470dee02ee91fd1b5f449",
+  "persona": "67a12692fa0044f148f9b1fe",
+  "cantidad_producto":10
+  
+
+}
