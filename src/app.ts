@@ -14,12 +14,10 @@ import cors from 'cors';
 import { registerRouter } from './register/register.routes.js';
 import { formaDePagoRouter } from './formaDePago/formasDePago.routes.js';
 import { ItemRouter } from './item/item.routes.js';
-import { DevolucionRouter } from './devolucion/devolucion.routes.js';
 import session from 'express-session';
 import { SECRET_JWT_KEY } from './login/login.controller.js';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
-
 
 type UserCookie = {
   id: number;
@@ -62,15 +60,13 @@ app.use(
     cookie: {
       httpOnly: true,
       maxAge: 1000 * 60 * 60,
-      sameSite: 'none',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
     },
   })
 );
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   const token = req.signedCookies.access_token;
-  console.log('Lo que tiene la cookies firmadas es', req.signedCookies);
   req.session.user = undefined;
   if (token) {
     try {
@@ -80,6 +76,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
       console.log(error);
     }
   }
+  console.log('Pasó por aca');
   next(); // -> seguir a la siguiente ruta o middleware
 });
 
@@ -93,8 +90,6 @@ app.use('/api/compras', CompraRouter);
 app.use('/register', registerRouter);
 app.use('/api/formas-de-pago', formaDePagoRouter);
 app.use('/api/item', ItemRouter);
-app.use('/api/devolucion',DevolucionRouter)
-
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });

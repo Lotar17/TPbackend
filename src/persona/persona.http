@@ -2,7 +2,7 @@
 GET http://localhost:3000/api/personas
 
 ### getOne() Personas
-GET http://localhost:3000/api/personas/66d73827e20b62007bbd91db
+GET http://localhost:3000/api/personas/67acbb331443b4bd7becf3b1
 
 ### Verificar rutas no definidas
 GET http://localhost:3000/api/perssss
