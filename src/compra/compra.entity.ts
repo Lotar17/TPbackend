@@ -32,5 +32,6 @@ export class Compra extends BaseEntity {
   @Property({ nullable: false })
     total_compra!: number
 
-
+    @Property({ nullable: false })
+    estado!: string
 }

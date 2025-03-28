@@ -25,7 +25,7 @@ function sanitizeCompraInput(
     persona: req.body.persona,
     items:req.body.items,
     total_compra: req.body.total_compra,
-
+    estado: req.body.estado,
     
     
   };
@@ -55,7 +55,22 @@ async function getOne(req: Request, res: Response) {
 
   async function add(req: Request, res: Response) {
     try {
-        const { personaId, items, direccion_entrega, fecha_hora_compra } = req.body;
+      const { persona, items, direccion_entrega, fecha_hora_compra } = req.body.sanitizedInput;
+      console.log('Datos recibidos para la compra:', req.body.sanitizedInput);
+      // Verificamos que los items estén presentes y sean correctos
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ message: "No se enviaron items para la compra" });
+      }
+    
+      const compra = em.create(Compra, {
+        direccion_entrega,
+        fecha_hora_compra,
+        persona,
+        total_compra: 0,
+        estado: 'en curso'
+      });
+  
+      let totalCompra = 0;
 
         console.log('Datos recibidos para la compra:', req.body);
 
