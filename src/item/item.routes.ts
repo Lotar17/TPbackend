@@ -6,7 +6,8 @@ import {
    remove,
     getCarrito,
    decrementQuantity,
-   createItem
+   createItem,
+   updateItem
    
   } from './item.controller.js';
 
@@ -18,4 +19,5 @@ import {
   ItemRouter.delete('/:idItem', remove);
   ItemRouter.get('/persona/:personaId',getCarrito);
   ItemRouter.post('/decrementa',sanitizeItemInput,decrementQuantity);
-  ItemRouter.post('/create',sanitizeItemInput,createItem)
+  ItemRouter.post('/create',sanitizeItemInput,createItem);
+  ItemRouter.put('/update/:idItem',sanitizeItemInput,updateItem)

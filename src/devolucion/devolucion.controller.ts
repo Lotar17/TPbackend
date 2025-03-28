@@ -16,7 +16,8 @@ function sanitizeDevolucionInput(req: Request, res: Response, next: NextFunction
     estado:req.body.estado,
 codigoConfirmacion: req.body.codigoConfirmacion,
 fechaSolicitud:req.body.fechaSolicitud,
-fechaConfirmacion:req.body.fechaConfirmacion
+fechaConfirmacion:req.body.fechaConfirmacion,
+cantidad_devuelta:req.body.cantidad_devuelta
     
   };
 
@@ -33,68 +34,51 @@ fechaConfirmacion:req.body.fechaConfirmacion
 
 async function CreateDevolutionRequest(req: Request, res: Response) {
   try {
-    // Obtenemos el item y el motivo desde el cuerpo de la solicitud
-    const item = req.body.item;
-    const motivo = req.body.motivo;
+    const { itemId, motivo,cantidad_devuelta } = req.body; // Ahora recibimos itemId en lugar de item completo
 
-  
-    // Validamos que el item exista y tenga los datos necesarios
-    if (!item || !item.persona || !item.producto) {
-      return res.status(400).json({ message: 'Item o datos incompletos' });
+    if (!itemId || !motivo || !cantidad_devuelta) {
+      return res.status(400).json({ message: 'Item,cantidad devuelta y motivo son obligatorios' });
     }
 
-    // Validamos que el motivo de la devolución esté presente
-    if (!motivo) {
-      return res.status(400).json({ message: 'Motivo de devolución es obligatorio' });
+    // Buscar el item en la base de datos
+    const item = await em.findOne(Item, { id: itemId }, { populate: ['producto', 'persona'] });
+
+    if (!item) {
+      return res.status(400).json({ message: 'Item no encontrado' });
     }
 
-    const producto = await em.findOne(Producto, { id: item.producto });
-const persona = await em.findOne(Persona, { id: item.persona });
-
-
-    const comprador = persona;
+    const producto = item.producto;
+    const comprador = item.persona;
     const vendedor = producto?.persona;
+
     if (!comprador || !vendedor) {
-      return res.status(400).json({ message: 'Item o datos incompletos' });
+      return res.status(400).json({ message: 'Datos del comprador o vendedor no encontrados' });
     }
 
-
-    // Verificar que el comprador y el vendedor no sean los mismos
     if (comprador.id === vendedor.id) {
       return res.status(400).json({ message: 'El comprador y el vendedor no pueden ser la misma persona' });
     }
 
-   
-
-
-    
-
-    
     const fechaSolicitud = new Date().toISOString();
 
-    // Creamos la solicitud de devolución
+    // Crear la devolución referenciando el item existente
     const solicitud = em.create(Devolucion, {
-      item,  // Solo un ítem por solicitud
+      item,  
       motivo,
       comprador,
       vendedor,
       estado: 'pendiente',
-      codigoConfirmacion:0,
+      codigoConfirmacion: 0,
       fechaSolicitud,
-      fechaConfirmacion:null
+      fechaConfirmacion: null,
+      cantidad_devuelta
     });
 
     await em.persistAndFlush(solicitud);
 
-    // Notificar al vendedor (puedes hacerlo con un WebSocket o un sistema de notificaciones)
-    // Aquí puedes agregar la lógica de notificación a través de correo electrónico o WebSocket si es necesario
-    // Nota: Esto es solo un ejemplo, necesitas tener una forma de notificar al vendedor
-
-    // Respuesta de éxito
     return res.status(201).json({
       message: 'Solicitud de devolución creada correctamente',
-      solicitudId: solicitud.id, // O el identificador único que uses para las solicitudes
-      // Devolvemos el código de confirmación al comprador
+      solicitudId: solicitud.id
     });
 
   } catch (error) {
@@ -102,6 +86,7 @@ const persona = await em.findOne(Persona, { id: item.persona });
     return res.status(500).json({ message: 'Error interno del servidor' });
   }
 }
+
 
 async function makeDecission(req:Request, res:Response) {
   try {
@@ -113,7 +98,7 @@ async function makeDecission(req:Request, res:Response) {
     return res.status(404).json({ message: "Solicitud de devolución no encontrada" });
   }
 
-if(estado==='Codigo Enviado'){
+if(estado==='Aprobada'){
 
   solicitud.codigoConfirmacion = Math.floor(Math.random() * 1000000); // Código entre 0 y 999999
  
@@ -151,6 +136,50 @@ async function buyerDecission(req:Request, res:Response) {
   }
 }
 
-export { sanitizeDevolucionInput,CreateDevolutionRequest,makeDecission };
+async function getRequestbyVendedor(req:Request, res:Response) {
+  try{
+const idVendedor= req.params.idVendedor
+const solicitudesVendedor= await em.find(Devolucion,{vendedor:idVendedor},{ populate: ['vendedor','item','item.compra','item.producto'] })
+
+if (solicitudesVendedor.length === 0) {
+  return res.status(404).json({ message: 'No se encontraron solicitudes de devolucion para este vendedor' });
+}
+
+return res.status(200).json({
+  message: 'Solicitudes del vendedor encontradas',
+  data: solicitudesVendedor,
+});
+
+  }
+  catch(error){
+    return res.status(500).json({ message: 'Error al obtener solicitudes del vendedor' });
+
+
+
+  }
+}
+async function getRequestbyComprador(req:Request, res:Response) {
+  try{
+const idComprador= req.params.idComprador
+const solicitudesComprador= await em.find(Devolucion,{comprador:idComprador},{ populate: ['comprador','item','item.compra','item.producto'] })
+
+if (solicitudesComprador.length === 0) {
+  return res.status(404).json({ message: 'No se encontraron solicitudes de devolucion para este vendedor' });
+}
+
+return res.status(200).json({
+  message: 'Solicitudes del vendedor encontradas',
+  data: solicitudesComprador,
+});
+
+  }
+  catch(error){
+    return res.status(500).json({ message: 'Error al obtener solicitudes del vendedor' });
+
+
+
+  }
+}
+export { sanitizeDevolucionInput,CreateDevolutionRequest,makeDecission,getRequestbyVendedor,getRequestbyComprador };
 
 

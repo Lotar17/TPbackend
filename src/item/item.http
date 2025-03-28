@@ -13,7 +13,7 @@ Content-Type: application/json
 
 ### getCart
 
-GET http://localhost:3000/api/item/persona/67a12692fa0044f148f9b1fe
+GET http://localhost:3000/api/item/persona/67acbb331443b4bd7becf3b1
 
 ### decrementQuantity
 POST http://localhost:3000/api/item/decrementa
@@ -25,7 +25,7 @@ Content-Type: application/json
 }
 
 ### removeItem
-DELETE http://localhost:3000/api/item/67a8cd8e32e6f0f104f3cbc9
+DELETE http://localhost:3000/api/item/67a12692fa0044f148f9b1fe
 
 
 #### add() Item
@@ -37,6 +37,21 @@ Content-Type: application/json
   "producto": "674470dee02ee91fd1b5f449",
   "persona": "67a12692fa0044f148f9b1fe",
   "cantidad_producto":10
+  
+
+}
+
+### getOne
+GET http://localhost:3000/api/item/67d9b373ea4ab65f935e5d74
+
+#### add() Item
+PUT  http://localhost:3000/api/item/update/67e5f69f88ec773eba8e9f17
+Content-Type: application/json
+
+{
+ 
+  "cantidad_devuelta": 2
+ 
   
 
 }

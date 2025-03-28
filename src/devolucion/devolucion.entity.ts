@@ -34,5 +34,8 @@ export class Devolucion extends BaseEntity {
   @Property({ nullable: true })
   fechaConfirmacion!: string|null;
 
+  @Property({ nullable: true })
+  cantidad_devuelta!: number;
+
 }
 

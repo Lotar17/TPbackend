@@ -70,7 +70,7 @@ async function getOne(req: Request, res: Response) {
     const producto = await em.findOneOrFail(
       Producto,
       { id },
-      { populate: ['categoria', 'hist_precios'] }
+      { populate: ['categoria', 'hist_precios','persona'] }
     );
     return res.status(200).json({ message: 'Producto finded', data: producto });
   } catch (error: any) {
@@ -118,7 +118,7 @@ async function update(req: Request, res: Response) {
     const producto = await em.findOneOrFail(
       Producto,
       { id },
-      { populate: ['hist_precios'] }
+      { populate: ['hist_precios','persona'] }
     );
 
     // Actualizar el producto con los campos enviados en el cuerpo de la solicitud (parciales)

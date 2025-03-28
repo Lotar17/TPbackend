@@ -9,6 +9,7 @@ import { RequestContext } from '@mikro-orm/core';
 import { HistoricoPrecioRouter } from './historico_precio/historico_precio.routes.js';
 import { loginRouter } from './login/login.routes.js';
 import { CompraRouter } from './compra/compra.routes.js';
+import { DevolucionRouter } from './devolucion/devolucion.routes.js';
 import { METHODS } from 'http';
 import cors from 'cors';
 import { registerRouter } from './register/register.routes.js';
@@ -90,6 +91,7 @@ app.use('/api/compras', CompraRouter);
 app.use('/register', registerRouter);
 app.use('/api/formas-de-pago', formaDePagoRouter);
 app.use('/api/item', ItemRouter);
+app.use('/api/devolucion',DevolucionRouter)
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });

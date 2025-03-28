@@ -33,7 +33,7 @@ try {
     const item = await em.findOneOrFail(
       Item,
       { id },
-      { populate: ['producto','compra'] }
+      { populate: ['producto','producto.persona'] }
     );
     return res.status(200).json({ message: 'item finded', data: item });
   } catch (error: any) {
@@ -63,7 +63,7 @@ try {
         const personaId = req.params.personaId;
         try {
             
-            const items = await em.find(Item, { persona: personaId,compra:null }, { populate: ['producto.hist_precios','compra',] });
+            const items = await em.find(Item, { persona: personaId,compra:null }, { populate: ['producto.hist_precios','producto','compra','producto.persona'] });
     
             
             if (items.length === 0) {
@@ -88,7 +88,7 @@ try {
           const productoId=req.body.sanitizedInput.producto;
          
           
-          const persona = await em.findOne(Persona, { id: personaId });
+          const persona = await em.findOne(Persona, { id: personaId },);
           const producto = await em.findOne(Producto, { id: productoId });
       
           if (!persona || !producto) {
@@ -179,6 +179,34 @@ catch (error) {
 }
 
 }
+
+async function updateItem(req:Request,res:Response){
+try{
+const idItem=req.params.idItem
+const cantidad_devuelta=req.body.cantidad_devuelta
+
+const item= await em.findOne(Item,{id:idItem})
+if(item?.cantidad_producto){
+const NuevaCantidad= item?.cantidad_producto - cantidad_devuelta
+
+if(item?.cantidad_producto && item)
+em.assign(item,{cantidad_producto:NuevaCantidad})}
+await em.flush();
+
+    return res.status(200).json({ message: 'Producto updated successfully', data: item });
+
+}
+catch(error){
+console.error(error);
+res.status(500).json({message:'Eerror al actualziar el item',error})
+
+
+
+}
+
+
+
+}
     
 
 
@@ -186,4 +214,4 @@ catch (error) {
     
       
 
-      export{sanitizeItemInput,addToCart,getOne, remove,getCarrito,decrementQuantity,createItem}
+      export{sanitizeItemInput,addToCart,getOne, remove,getCarrito,decrementQuantity,createItem,updateItem}
