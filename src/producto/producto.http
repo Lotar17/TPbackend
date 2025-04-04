@@ -5,7 +5,7 @@ GET http://localhost:3000/api/productos/
 GET http://localhost:3000/api/productos/persona/67a12692fa0044f148f9b1fe
 
 ### GET ONE
-GET http://localhost:3000/api/productos/674470dee02ee91fd1b5f449
+GET http://localhost:3000/api/productos/67e49a200abb8a3c72bf7f6d
 ### CREATE 
 POST http://localhost:3000/api/productos/
 Content-Type: application/json
@@ -19,17 +19,18 @@ Content-Type: application/json
 }
 
 ### UPDATE
-PATCH   http://localhost:3000/api/productos/674471dbe02ee91fd1b5f44d
+PATCH   http://localhost:3000/api/productos/67e1518c323f750865b11a5d
 Content-Type: application/json
 
 {
  
- "stock":30
-
+ "stock":30,
+ "descripcion":"Campera Nike Tiempo",
+ "categoria":"67eae96c6f32144ca3132b55"
 }
 
 ### REMOVE 
-DELETE http://localhost:3000/api/productos/66c0bddc34088bbf80791763
+DELETE http://localhost:3000/api/productos/67e49a200abb8a3c72bf7f6d
 ### UPDATE
 PUT    http://localhost:3000/api/productos/stock
 Content-Type: application/json

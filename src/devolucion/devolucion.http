@@ -5,7 +5,7 @@ Content-Type: application/json
 
 {
 
-    "itemId":"67e490e20abb8a3c72bf7f65",
+    "itemId":"67ed29e8f9c3a9f74e6b57af",
 
     "motivo":"Realizo la devolucion porque encuentro defectos",
     "cantidad_devuelta":2
@@ -18,7 +18,7 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:3000/api/devolucion/67e1522f323f750865b11a64
+PUT http://localhost:3000/api/devolucion/67ed2f8812ebae29c0d58e0d
 Content-Type: application/json
 
 {
@@ -31,4 +31,4 @@ Content-Type: application/json
 GET http://localhost:3000/api/devolucion/67acbb331443b4bd7becf3b1
 
 ### getByVendedor
-GET http://localhost:3000/api/devolucion/comprador/67a12692fa0044f148f9b1fe
+GET http://localhost:3000/api/devolucion/comprador/67acbb331443b4bd7becf3b1

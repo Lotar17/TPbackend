@@ -4,6 +4,7 @@ import { orm } from '../shared/db/orm.js';
 import { Item } from '../item/item.entity.js';
 import { Producto } from '../producto/producto.entity.js';
 import { Persona } from '../persona/persona.entity.js';
+import { populate } from 'dotenv';
 const em = orm.em;
 
 function sanitizeDevolucionInput(req: Request, res: Response, next: NextFunction) {
@@ -41,7 +42,7 @@ async function CreateDevolutionRequest(req: Request, res: Response) {
     }
 
     // Buscar el item en la base de datos
-    const item = await em.findOne(Item, { id: itemId }, { populate: ['producto', 'persona'] });
+    const item = await em.findOne(Item, { id: itemId }, { populate: ['producto', 'persona','compra','compra.items'] });
 
     if (!item) {
       return res.status(400).json({ message: 'Item no encontrado' });
@@ -76,9 +77,10 @@ async function CreateDevolutionRequest(req: Request, res: Response) {
 
     await em.persistAndFlush(solicitud);
 
-    return res.status(201).json({
+    return res.status(200).json({
       message: 'Solicitud de devolución creada correctamente',
-      solicitudId: solicitud.id
+      solicitudId: solicitud.id,
+      data:solicitud
     });
 
   } catch (error) {
@@ -93,7 +95,7 @@ async function makeDecission(req:Request, res:Response) {
     const idSolicitud=req.params.id
   const estado= req.body.estado
 
-  const solicitud= await em.findOne(Devolucion,{id: idSolicitud})
+  const solicitud= await em.findOne(Devolucion,{id: idSolicitud},{populate:['item']})
   if (!solicitud) {
     return res.status(404).json({ message: "Solicitud de devolución no encontrada" });
   }
@@ -113,7 +115,8 @@ await em.persistAndFlush(solicitud);
 return res.status(200).json({
   message: `Solicitud de devolución ${estado} correctamente`,
   solicitudId: solicitud.id,
-  codigo: solicitud.codigoConfirmacion
+  codigo: solicitud.codigoConfirmacion,
+  data:solicitud
 });
 
 
@@ -139,7 +142,7 @@ async function buyerDecission(req:Request, res:Response) {
 async function getRequestbyVendedor(req:Request, res:Response) {
   try{
 const idVendedor= req.params.idVendedor
-const solicitudesVendedor= await em.find(Devolucion,{vendedor:idVendedor},{ populate: ['vendedor','item','item.compra','item.producto'] })
+const solicitudesVendedor= await em.find(Devolucion,{vendedor:idVendedor},{ populate: ['vendedor','item','item.compra.items','item.producto',] })
 
 if (solicitudesVendedor.length === 0) {
   return res.status(404).json({ message: 'No se encontraron solicitudes de devolucion para este vendedor' });

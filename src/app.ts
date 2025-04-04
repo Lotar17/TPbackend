@@ -19,7 +19,10 @@ import session from 'express-session';
 import { SECRET_JWT_KEY } from './login/login.controller.js';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
-
+import { EstadoSeguimientoRouter } from './estado_seguimiento/estado_seguimiento.routes.js';
+import { SeguimientoRouter } from './seguimiento/seguimiento.routes.js';
+import { LocalidadRouter } from './localidad/localidad.routes.js';
+import { DireccionRouter } from './direccion/direccion.routes.js';
 type UserCookie = {
   id: number;
   apellido: string;
@@ -91,7 +94,11 @@ app.use('/api/compras', CompraRouter);
 app.use('/register', registerRouter);
 app.use('/api/formas-de-pago', formaDePagoRouter);
 app.use('/api/item', ItemRouter);
-app.use('/api/devolucion',DevolucionRouter)
+app.use('/api/devolucion',DevolucionRouter);
+app.use('/api/estado-seguimiento',EstadoSeguimientoRouter);
+app.use('/api/seguimiento',SeguimientoRouter)
+app.use('/api/localidad',LocalidadRouter)
+app.use('/api/direccion',DireccionRouter)
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });

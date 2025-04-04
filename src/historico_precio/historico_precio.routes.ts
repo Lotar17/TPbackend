@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   sanitizePrecioInput,
+  create,
   getAll,
   getOne,
   add,
@@ -9,8 +10,9 @@ import {
   getPreciosHistoricos
 } from './historico_precio.controller.js';
 
-export const HistoricoPrecioRouter = Router();
 
+export const HistoricoPrecioRouter = Router();
+HistoricoPrecioRouter.post('/create',sanitizePrecioInput,create)
 HistoricoPrecioRouter.get('/', getAll);
 HistoricoPrecioRouter.get('/:id', getOne);
 HistoricoPrecioRouter.post('/', sanitizePrecioInput, add);

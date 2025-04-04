@@ -26,7 +26,7 @@ function sanitizeCompraInput(
     items:req.body.items,
     total_compra: req.body.total_compra,
     estado: req.body.estado,
-    
+    personaId:req.body.personaId
     
   };
   //more checks here
@@ -53,104 +53,84 @@ async function getOne(req: Request, res: Response) {
     }
   }
 
+  
   async function add(req: Request, res: Response) {
     try {
-      const { persona, items, direccion_entrega, fecha_hora_compra } = req.body.sanitizedInput;
+      const { personaId, items, direccion_entrega, fecha_hora_compra } = req.body.sanitizedInput;
+  
       console.log('Datos recibidos para la compra:', req.body.sanitizedInput);
-      // Verificamos que los items estén presentes y sean correctos
-      if (!items || !Array.isArray(items) || items.length === 0) {
-        return res.status(400).json({ message: "No se enviaron items para la compra" });
+  
+      // Verificar si la persona existe
+      const personaExistente = await em.findOne(Persona, { id: personaId });
+      if (!personaExistente) {
+        return res.status(404).json({ message: `Persona no encontrada con ID ${personaId}` });
       }
-    
+  
+      // Crear la compra
       const compra = em.create(Compra, {
         direccion_entrega,
         fecha_hora_compra,
-        persona,
+        persona: personaExistente,
         total_compra: 0,
-        estado: 'en curso'
+        estado: 'en curso',
+        
       });
   
       let totalCompra = 0;
-
-        console.log('Datos recibidos para la compra:', req.body);
-
-        if (!personaId) {
-            return res.status(400).json({ message: "No se proporcionó un ID de persona válido" });
+  
+      for (const itemData of items) {
+        const productoId = itemData.producto.id;
+        const cantidad_producto = itemData.cantidad_producto;
+  
+        console.log(`Buscando producto con ID: ${productoId}`);
+  
+        const producto = await em.findOne(Producto, { id: productoId });
+        if (!producto) {
+          return res.status(404).json({ message: `Producto no encontrado con ID ${productoId}` });
         }
-
-        if (!items || !Array.isArray(items) || items.length === 0) {
-            return res.status(400).json({ message: "No se enviaron items para la compra" });
+  
+        // Obtener el precio actual del producto
+        const precioActual = await em.findOne(HistoricoPrecio, 
+          { producto: productoId }, 
+          { orderBy: { fechaDesde: 'DESC' } }
+        );
+  
+        if (!precioActual) {
+          return res.status(404).json({ message: `No se encontró historial de precios para el producto ${productoId}` });
         }
-
-        // Buscamos la persona en la base de datos
-        const persona = await em.findOne(Persona, { id: personaId });
-        if (!persona) {
-            return res.status(404).json({ message: `Persona no encontrada con ID ${personaId}` });
+  
+        const totalItem = cantidad_producto * precioActual.valor;
+        totalCompra += totalItem;
+  
+        let existingItem = await em.findOne(Item, { producto: productoId, persona: personaExistente, compra: null });
+  
+        if (!existingItem) {
+          existingItem = em.create(Item, {
+            cantidad_producto,
+            producto,
+            persona: personaExistente,
+            compra
+          });
+        } else {
+          existingItem.compra = compra;
         }
-
-        const compra = em.create(Compra, {
-            direccion_entrega,
-            fecha_hora_compra,
-            persona,
-            total_compra: 0,
-        });
-
-        let totalCompra = 0;
-
-        for (const itemData of items) {
-            if (!itemData.producto || (!itemData.producto.id && !itemData.producto._id)) {
-                return res.status(400).json({ message: "El item no tiene un producto válido" });
-            }
-
-            const productoId = itemData.producto.id || itemData.producto._id;
-            const cantidad_producto = itemData.cantidad_producto;
-
-            console.log(`Buscando producto con ID: ${productoId}`);
-
-            const producto = await em.findOne(Producto, { id: productoId });
-            if (!producto) {
-                return res.status(404).json({ message: `Producto no encontrado con ID ${productoId}` });
-            }
-
-            const precioActual = await em.findOne(HistoricoPrecio, 
-                { producto: productoId }, 
-                { orderBy: { fechaDesde: 'DESC' } }
-            );
-            if (!precioActual) {
-                return res.status(404).json({ message: `No se encontró historial de precios para el producto ${productoId}` });
-            }
-
-            const totalItem = cantidad_producto * precioActual.valor;
-            totalCompra += totalItem;
-
-            let existingItem = await em.findOne(Item, { producto: productoId, persona, compra: null });
-
-            if (!existingItem) {
-                existingItem = em.create(Item, {
-                    cantidad_producto,
-                    producto,
-                    persona,
-                    compra
-                });
-            } else {
-                existingItem.compra = compra;
-            }
-
-            compra.items.add(existingItem);
-            await em.persistAndFlush(existingItem);
-        }
-
-        compra.total_compra = totalCompra;
-        await em.persistAndFlush(compra);
-
-        return res.status(201).json({ message: 'Compra creada exitosamente', data: compra });
+  
+        compra.items.add(existingItem);
+        await em.persistAndFlush(existingItem);
+      }
+  
+      // Asignar el total de la compra antes de guardar
+      compra.total_compra = totalCompra;
+      await em.persistAndFlush(compra);
+  
+      return res.status(201).json({ message: 'Compra creada exitosamente', data: compra });
+  
     } catch (error: any) {
-        console.error('Error al crear la compra:', error);
-        return res.status(500).json({ message: error.message });
+      console.error('Error al crear la compra:', error);
+      return res.status(500).json({ message: error.message });
     }
-}
-
-
+  }
+  
 
 async function getComprasByPersona(req: Request, res: Response) {
   const personaId = req.params.personaId;
@@ -195,7 +175,7 @@ async function getComprasByPersona(req: Request, res: Response) {
   async function update(req: Request, res: Response) {
     try {
       const id = req.params.id;
-      const compra = await em.findOneOrFail(Compra, { id });
+      const compra = await em.findOneOrFail(Compra, { id },{ populate: ['items'] });
       em.assign(compra, req.body.sanitizedInput);
       await em.flush();
       return res

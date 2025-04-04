@@ -45,12 +45,12 @@ Content-Type: application/json
 GET http://localhost:3000/api/item/67d9b373ea4ab65f935e5d74
 
 #### add() Item
-PUT  http://localhost:3000/api/item/update/67e5f69f88ec773eba8e9f17
+PUT  http://localhost:3000/api/item/update/67ee84759edb91a1d2da88d4
 Content-Type: application/json
 
 {
  
-  "cantidad_devuelta": 2
+  "cantidad_devuelta": 1
  
   
 

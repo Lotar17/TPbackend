@@ -13,7 +13,8 @@ function sanitizeItemInput(req: Request, res: Response, next: NextFunction) {
     precio:req.body.precio,
     producto: req.body.producto,
     persona: req.body.persona,
-    compra:req.body.compra
+    compra:req.body.compra,
+    cantidad_devuelta:req.body.cantidad_devuelta
     
   };
 
@@ -183,7 +184,7 @@ catch (error) {
 async function updateItem(req:Request,res:Response){
 try{
 const idItem=req.params.idItem
-const cantidad_devuelta=req.body.cantidad_devuelta
+const cantidad_devuelta=req.body.sanitizedInput.cantidad_devuelta
 
 const item= await em.findOne(Item,{id:idItem})
 if(item?.cantidad_producto){

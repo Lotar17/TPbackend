@@ -3,24 +3,22 @@ GET http://localhost:3000/api/compras
 
 ### getOne() Compras
 GET http://localhost:3000/api/compras/67b5fde6b00f16fc64739b48
-
-#### add() Compras
+###
 POST http://localhost:3000/api/compras/
 Content-Type: application/json
 
 {
+  "personaId": "67dc870a0ac21dd263b069a0",
   "direccion_entrega": "Zeballos 1281",
   "fecha_hora_compra": "17/8/2024-12:17",
-  "persona": "67a12692fa0044f148f9b1fe",
   "items": [
- 
-    { "producto":"674471dbe02ee91fd1b5f44d", "cantidad_producto":2}
-    
+    { "producto": "67e1518c323f750865b11a5d", "cantidad_producto": 2 }
   ]
 }
 
+
 ### update() Compras
-PUT http://localhost:3000/api/compras/66d1e4513f46336da71a26a2
+PUT http://localhost:3000/api/compras/67ec452c54d8f0019e5f0171
 Content-Type: application/json
 
 {
@@ -29,7 +27,7 @@ Content-Type: application/json
   "persona": "66abffd636c84d1bcc465c81",
   "empleado":"66c0bd7434088bbf80791762",
   "cantidad_producto":700,
-  "fecha_hora_compra":"17/8/2024-12:16",
+  "fecha_hora_compra":"17/8/2024-12:16"
   
 
 }
@@ -69,5 +67,5 @@ Content-Type: application/json
   
 }
 ###
-PUT  http://localhost:3000/api/compras/stock/67b791d68c993b923f20fa7f
+PUT  http://localhost:3000/api/compras/stock/67e85af67899f5b4c52b6f49
 

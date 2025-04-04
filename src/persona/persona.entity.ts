@@ -4,11 +4,14 @@ import {
   Entity,
   OneToMany,
   Property,
+  ManyToOne,
+  Rel
 } from '@mikro-orm/core';
 import { BaseEntity } from '../shared/base-entity.entity.js';
 import { Producto } from '../producto/producto.entity.js';
 import { Compra } from '../compra/compra.entity.js';
 import { Item } from '../item/item.entity.js';
+import { Direccion } from '../direccion/direccion.entity.js';
 
 @Entity()
 export class Persona extends BaseEntity {
@@ -43,4 +46,8 @@ export class Persona extends BaseEntity {
 
   @Property({ nullable: false, hidden: true })
   password!: string;
+
+  
+        @ManyToOne(() => Direccion, { nullable: true })
+        direccion?: Rel<Direccion>
 }
