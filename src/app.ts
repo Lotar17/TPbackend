@@ -23,6 +23,7 @@ import { EstadoSeguimientoRouter } from './estado_seguimiento/estado_seguimiento
 import { SeguimientoRouter } from './seguimiento/seguimiento.routes.js';
 import { LocalidadRouter } from './localidad/localidad.routes.js';
 import { DireccionRouter } from './direccion/direccion.routes.js';
+import { CorreoRouter } from './correo/correo.routes.js';
 type UserCookie = {
   id: number;
   apellido: string;
@@ -50,7 +51,7 @@ app.use((req, res, next) => {
 app.use(
   cors({
     origin: ['http://localhost:4200'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT','PATCH', 'DELETE'],
     credentials: true,
   })
 );
@@ -99,6 +100,7 @@ app.use('/api/estado-seguimiento',EstadoSeguimientoRouter);
 app.use('/api/seguimiento',SeguimientoRouter)
 app.use('/api/localidad',LocalidadRouter)
 app.use('/api/direccion',DireccionRouter)
+app.use('/api/correo',CorreoRouter)
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });

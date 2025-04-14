@@ -1,9 +1,11 @@
-import { Entity,OneToMany,Property,Rel,OneToOne} from "@mikro-orm/core";
+import { Entity,OneToMany,Property,Rel,OneToOne,ManyToOne} from "@mikro-orm/core";
 import { BaseEntity } from "../shared/base-entity.entity.js";
 import { EstadoSeguimiento } from "../estado_seguimiento/estado_seguimiento.entity.js";
 import { Cascade } from "@mikro-orm/core";
 import { Collection } from "@mikro-orm/core";
-import { Compra } from "../compra/compra.entity.js";
+
+import { Persona } from "../persona/persona.entity.js";
+import { Item } from "../item/item.entity.js";
 @Entity()
 export class Seguimiento extends BaseEntity{
     @Property({ nullable: true })
@@ -18,7 +20,10 @@ export class Seguimiento extends BaseEntity{
       })
       estados = new Collection<EstadoSeguimiento>(this);
 
- @OneToOne(() => Compra, { nullable: true })
-  compra?: Rel<Compra>;
+ @OneToOne(() => Item, { nullable: true })
+  item?: Rel<Item>;
+  
+@ManyToOne(()=>Persona,{nullable:true})
+cliente?: Rel<Persona>
 
 }

@@ -23,10 +23,6 @@ export class Empleado extends BaseEntity {
  @Property({ nullable: false })
  email!: string
 
- @OneToMany(() => EstadoSeguimiento, (estado) => estado.empleado, {
-  cascade: [Cascade.ALL],
-})
-estadosEmpleado = new Collection<EstadoSeguimiento>(this);
 
 
 }

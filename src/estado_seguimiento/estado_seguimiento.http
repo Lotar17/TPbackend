@@ -1,0 +1,30 @@
+### Add estado_seguimiento
+POST http://localhost:3000/api/estado-seguimiento/
+Content-Type: application/json
+
+{
+ 
+  "empleado":"67fbd07a9eae2eaab19696bb",
+  "seguimiento":"67fbd1559eae2eaab19696c4"
+
+
+
+}
+
+### BUSCA EMPLEADO estado_seguimiento
+GET  http://localhost:3000/api/estado-seguimiento/67f0395b6779d65a745c26f0
+
+
+### BUSCA estados del empleado
+GET  http://localhost:3000/api/estado-seguimiento/empleado/67f855de1c57979b51bda6a3
+
+### Add estado_seguimiento
+PATCH  http://localhost:3000/api/estado-seguimiento/67f855de1c57979b51bda6a3
+
+{
+ 
+  "condicion":"Cerrado"
+ 
+
+
+}

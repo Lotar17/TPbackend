@@ -10,3 +10,23 @@ Content-Type: application/json
     "prods_publicados":[],
     "password": "valen"
 }
+
+### REGISTER
+POST http://localhost:3000/register/
+Content-Type: application/json
+
+{
+  "nombre": "Nacho",
+  "apellido": "Di Martino",
+  "telefono": "3413112333333",
+  "mail": "Ignacio73",
+  "prods_publicados":[],
+  "password": "123",
+  "carrito":[],
+  "rol":"Usuario",
+  "calle":"Av siempre Viva",
+  "numero":"123",
+  "localidadId":"67f0395b6779d65a745c26f0"
+  
+ 
+}

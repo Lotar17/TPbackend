@@ -5,10 +5,11 @@ import { BaseEntity } from "../shared/base-entity.entity.js";
 export class Localidad extends BaseEntity{
 
     @Property({ nullable: true })
-    nombre!: number;
+    nombre!: string;
 
     @Property({ nullable: true })
     codigoPostal!: number;
 
-
+    @Property({ nullable: true })
+    provincia!: string;
 }

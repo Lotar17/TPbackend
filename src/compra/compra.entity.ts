@@ -13,13 +13,12 @@ import { Producto } from '../producto/producto.entity.js'
 import { Persona } from '../persona/persona.entity.js'
  import { Empleado } from '../empleado/empleado.entity.js'
 import { Item } from '../item/item.entity.js'
-import { Seguimiento } from '../seguimiento/seguimiento.entity.js'
+
 import { Direccion } from '../direccion/direccion.entity.js'
 import { Localidad } from '../localidad/localidad.entity.js'
 @Entity()
 export class Compra extends BaseEntity {
-    @Property({ nullable: false })
-    direccion_entrega!: string
+    
 
     
     @ManyToOne(() => Persona, { nullable: false })
@@ -39,8 +38,7 @@ export class Compra extends BaseEntity {
     @Property({ nullable: true })
     estado!: string
 
-     @OneToOne(() => Seguimiento, { nullable: true })
-      seguimiento?: Rel<Seguimiento>;
+     
 
       @ManyToOne(() => Direccion, { nullable: true })
       direccion?: Rel<Direccion>

@@ -1,0 +1,9 @@
+
+POST http://localhost:3000/api/direccion/
+Content-Type: application/json
+
+{
+  "calle": "Zeballos",
+"numero":1281,
+"localidad":"67f0395b6779d65a745c26f0"
+}

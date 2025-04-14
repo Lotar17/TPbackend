@@ -14,7 +14,7 @@ Content-Type: application/json
   "descripcion": "zapatoo blanco",
   "precio": 500,
   "stock": 20,
-  "categoria": "67365f0084281b88225d49a7",
+  "categoria": "ropa",
   "persona": "674060e8f89e116e306c67d0"
 }
 

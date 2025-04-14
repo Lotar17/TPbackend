@@ -2,7 +2,8 @@ import { Seguimiento } from './seguimiento.entity.js';
 import { Request, Response, NextFunction } from 'express';
 import { orm } from '../shared/db/orm.js';
 import { Compra } from '../compra/compra.entity.js';
-
+import { Persona } from '../persona/persona.entity.js';
+import { Item } from '../item/item.entity.js';
 const em = orm.em;
 
 function sanitizeSeguimientoInput(req: Request, res: Response, next: NextFunction) {
@@ -12,8 +13,8 @@ function sanitizeSeguimientoInput(req: Request, res: Response, next: NextFunctio
       calificacionServicio:req.body.calificacionServicio,
       estados: req.body.estados,
       compra: req.body.compra,
-  
-      
+  cliente:req.body.cliente,
+      item:req.body.item
     };
   
     Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -27,16 +28,21 @@ function sanitizeSeguimientoInput(req: Request, res: Response, next: NextFunctio
 
    async function  add(req:Request, res:Response){
 try{
-    const  idcompra = req.body.sanitizedInput.compra;
-     const compra = await em.findOne(Compra, { id: idcompra });
+
+  const idCliente=req.body.sanitizedInput.cliente
+  const cliente = await em.findOne(Persona, { id: idCliente });
+    const  idItem = req.body.sanitizedInput.item;
+     const item = await em.findOne(Item, { id: idItem },{populate:['producto.persona.direccion']});
 
      const codigoSeguimiento= Math.random()
-if(!compra){
-    return res.status(404).json({ message: 'Compra no encontrada' });
+if(!item || !cliente ){
+    return res.status(404).json({ message: 'Compra o cliente no encontrado/a' });
 }
+
      const seguimiento=em.create(Seguimiento,{
 codigoSeguimiento,
-compra
+item,
+cliente
   })
   await em.persistAndFlush(seguimiento);
   return res.status(200).json({ message: 'Seguimiento creado', data: seguimiento });
@@ -72,7 +78,31 @@ catch (error) {
 
 }
 
+async function getSeguimientosbyClient(req:Request, res:Response){
+  try{
+  const clienteId=req.params.idCliente
 
+  const seguimientosCliente = await em.find(Seguimiento, {cliente:clienteId}, {
+    populate: ['estados','cliente','item','item.producto.persona','estados.localidad','estados.empleado']
+  });
+  
+
+  
+  return res.status(200).json({
+    message: 'Estados encontrados',
+    data: seguimientosCliente,
+  });
+  
+  
+    
+  }
+  catch(error){
+  
+    console.error(error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+  
+    }
 
    
-   export {sanitizeSeguimientoInput,add}
+   export {sanitizeSeguimientoInput,add,muestraEstados,getSeguimientosbyClient}

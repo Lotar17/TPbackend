@@ -18,7 +18,9 @@ function sanitizeDevolucionInput(req: Request, res: Response, next: NextFunction
 codigoConfirmacion: req.body.codigoConfirmacion,
 fechaSolicitud:req.body.fechaSolicitud,
 fechaConfirmacion:req.body.fechaConfirmacion,
-cantidad_devuelta:req.body.cantidad_devuelta
+cantidad_devuelta:req.body.cantidad_devuelta,
+fechaCierre:req.body.fechaCierre,
+mensajeCierre:req.body.mensajeCierre
     
   };
 
@@ -127,17 +129,7 @@ catch (error) {
 }
 
 }
-async function buyerDecission(req:Request, res:Response) {
-  try{
-    
 
-
-  }
-  catch{
-
-
-  }
-}
 
 async function getRequestbyVendedor(req:Request, res:Response) {
   try{
@@ -183,6 +175,21 @@ return res.status(200).json({
 
   }
 }
-export { sanitizeDevolucionInput,CreateDevolutionRequest,makeDecission,getRequestbyVendedor,getRequestbyComprador };
+
+async function update(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    const devolucionToUpdate = await em.findOneOrFail(Devolucion, { id });
+    em.assign(devolucionToUpdate, req.body.sanitizedInput);
+    await em.flush();
+    return res
+      .status(200)
+      .json({ message: 'Devolucion updated succesfully !', data: devolucionToUpdate });
+  } catch (error: any) {
+    return res.status(500).json({ message: 'error' });
+  }
+}
+
+export { sanitizeDevolucionInput,CreateDevolutionRequest,makeDecission,getRequestbyVendedor,getRequestbyComprador,update };
 
 

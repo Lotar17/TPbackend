@@ -8,12 +8,15 @@ POST http://localhost:3000/api/compras/
 Content-Type: application/json
 
 {
-  "personaId": "67dc870a0ac21dd263b069a0",
-  "direccion_entrega": "Zeballos 1281",
+  "personaId": "67f81c2a10f4444c79f48086",
+  
   "fecha_hora_compra": "17/8/2024-12:17",
   "items": [
-    { "producto": "67e1518c323f750865b11a5d", "cantidad_producto": 2 }
-  ]
+    { "producto": "67f81c4510f4444c79f48087", "cantidad_producto": 2 }
+    ],
+ "calle":"Pte Roca",
+ "numero":900,
+ "localidadId":"67f0395b6779d65a745c26f0"
 }
 
 
@@ -46,12 +49,12 @@ Content-Type: application/json
 
 ###GET
 
-GET http://localhost:3000/api/compras/67aa82aaa5d7f0cc58cd3826
+GET http://localhost:3000/api/compras/67fa5ca7f4d649dcd73ab40e
 
 DELETE http://localhost:3000/api/compras/67a8bfafbe12abfb5c8db158
 
 ###GETCOMPRAPERSONA
-GET http://localhost:3000/api/compras/persona/67a12692fa0044f148f9b1fe
+GET http://localhost:3000/api/compras/persona/67f81c2a10f4444c79f48086
 
 ### update
 

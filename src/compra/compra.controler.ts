@@ -9,6 +9,7 @@ import { Producto } from '../producto/producto.entity.js';
 import { HistoricoPrecio } from '../historico_precio/historico_precio.entity.js';
 import { populate } from 'dotenv';
 import { Persona } from '../persona/persona.entity.js';
+import { Direccion } from '../direccion/direccion.entity.js';
 
 const em = orm.em;
 
@@ -26,8 +27,11 @@ function sanitizeCompraInput(
     items:req.body.items,
     total_compra: req.body.total_compra,
     estado: req.body.estado,
-    personaId:req.body.personaId
-    
+    personaId:req.body.personaId,
+    direccionId:req.body.direccionId,
+    localidadId:req.body.localidadId,
+    calle:req.body.calle,
+    numero:req.body.numero
   };
   //more checks here
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -45,7 +49,7 @@ async function getOne(req: Request, res: Response) {
       const compra = await em.findOneOrFail(
         Compra,
         { id },
-        { populate: [ 'persona','items.producto'] }
+        { populate: [ 'persona','items.producto.persona.direccion.localidad','direccion.localidad'] }
       );
       return res.status(200).json({ message: 'Compra finded', data: compra });
     } catch (error: any) {
@@ -56,8 +60,11 @@ async function getOne(req: Request, res: Response) {
   
   async function add(req: Request, res: Response) {
     try {
-      const { personaId, items, direccion_entrega, fecha_hora_compra } = req.body.sanitizedInput;
-  
+      const { personaId, items,  fecha_hora_compra,direccionId } = req.body.sanitizedInput;
+  let direccionExistente
+  let localidad
+  let calle
+  let numero
       console.log('Datos recibidos para la compra:', req.body.sanitizedInput);
   
       // Verificar si la persona existe
@@ -65,26 +72,41 @@ async function getOne(req: Request, res: Response) {
       if (!personaExistente) {
         return res.status(404).json({ message: `Persona no encontrada con ID ${personaId}` });
       }
-  
+
+       direccionExistente= await em.findOne(Direccion,{id:direccionId},{populate:['localidad']})
+      if (!direccionExistente) {
+
+calle=req.body.sanitizedInput.calle
+numero=req.body.sanitizedInput.numero
+localidad=req.body.sanitizedInput.localidadId
+direccionExistente= em.create(Direccion, {
+calle:calle,
+numero:numero,
+localidad:localidad
+});
+await em.persistAndFlush(direccionExistente);
+
+}
       // Crear la compra
       const compra = em.create(Compra, {
-        direccion_entrega,
+ 
         fecha_hora_compra,
         persona: personaExistente,
         total_compra: 0,
         estado: 'en curso',
+        direccion:direccionExistente
         
       });
   
       let totalCompra = 0;
   
       for (const itemData of items) {
-        const productoId = itemData.producto.id;
+        const productoId = itemData.producto.id;// 
         const cantidad_producto = itemData.cantidad_producto;
   
         console.log(`Buscando producto con ID: ${productoId}`);
   
-        const producto = await em.findOne(Producto, { id: productoId });
+        const producto = await em.findOne(Producto, { id: productoId },{populate:['persona']});
         if (!producto) {
           return res.status(404).json({ message: `Producto no encontrado con ID ${productoId}` });
         }
@@ -102,7 +124,7 @@ async function getOne(req: Request, res: Response) {
         const totalItem = cantidad_producto * precioActual.valor;
         totalCompra += totalItem;
   
-        let existingItem = await em.findOne(Item, { producto: productoId, persona: personaExistente, compra: null });
+        let existingItem = await em.findOne(Item, { producto: productoId, persona: personaExistente, compra: null },{populate:['producto.persona.direccion.localidad']});
   
         if (!existingItem) {
           existingItem = em.create(Item, {
@@ -138,7 +160,7 @@ async function getComprasByPersona(req: Request, res: Response) {
     const compras = await em.find(
       Compra,
       { persona: personaId },
-      { populate: ['items.producto'] }
+      { populate: ['items.producto.persona.direccion.localidad'] ,}
     );
 
     // Filtrar compras que tienen items vacíos

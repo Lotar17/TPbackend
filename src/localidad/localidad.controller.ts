@@ -9,6 +9,7 @@ function sanitizeLocalidadInput(req: Request, res: Response, next: NextFunction)
       
       nombre: req.body.nombre,
       codigoPostal:req.body.codigoPostal,
+      provincia:req.body.provincia
       
       
     };
@@ -32,5 +33,25 @@ function sanitizeLocalidadInput(req: Request, res: Response, next: NextFunction)
         return res.status(500).json({ message: 'Failed to add new Localidad' });
       }
     }
+    async function getAll(req:Request,res:Response){
+
+try{
+const localidades= await em.find(Localidad,{})
+if(localidades.length!==0){
+  return res
+          .status(201)
+          .json({ message: 'Localidades found succesfully', data: localidades });
+}
+
+
+}
+catch(error){
+  return res.status(500).json({ message: 'Failed to found Localidades' });
+
+
+}
+
+
+    }
   
-    export {sanitizeLocalidadInput,add}
+    export {sanitizeLocalidadInput,add,getAll}
