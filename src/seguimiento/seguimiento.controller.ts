@@ -13,7 +13,7 @@ function sanitizeSeguimientoInput(req: Request, res: Response, next: NextFunctio
       calificacionServicio:req.body.calificacionServicio,
       estados: req.body.estados,
       compra: req.body.compra,
-  cliente:req.body.cliente,
+      cliente:req.body.cliente,
       item:req.body.item
     };
   
@@ -32,9 +32,9 @@ try{
   const idCliente=req.body.sanitizedInput.cliente
   const cliente = await em.findOne(Persona, { id: idCliente });
     const  idItem = req.body.sanitizedInput.item;
-     const item = await em.findOne(Item, { id: idItem },{populate:['producto.persona.direccion']});
+    const item = await em.findOne(Item, { id: idItem },{populate:['producto.persona.direccion']});
 
-     const codigoSeguimiento= Math.random()
+    const codigoSeguimiento= Math.random()
 if(!item || !cliente ){
     return res.status(404).json({ message: 'Compra o cliente no encontrado/a' });
 }
