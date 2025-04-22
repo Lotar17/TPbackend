@@ -2,6 +2,7 @@ import { HistoricoPrecio } from './historico_precio.entity.js';
 import { Request, Response, NextFunction } from 'express';
 import { orm } from '../shared/db/orm.js';
 import { Producto } from '../producto/producto.entity.js';
+import { ValidationError } from '../Errores/validationErrors.js';
 
 const em = orm.em;
 
@@ -120,12 +121,12 @@ async function remove(req: Request, res: Response) {
     return res.status(500).json({ message: 'Precio delete failed' });
   }
 }
-async function getPreciosHistoricos(req: Request, res: Response) {
+async function getPreciosHistoricos(req: Request, res: Response) { // VALIDADO
   
 
   try {
     const productoId = req.params.productoId;
- 
+
   
     const preciosHistoricos = await em.find(HistoricoPrecio, {
       producto: productoId, 
@@ -136,6 +137,7 @@ async function getPreciosHistoricos(req: Request, res: Response) {
       },
     });
 
+  
     if (preciosHistoricos.length === 0) {
       return res.status(404).json({ message: 'No se encontraron precios históricos para este producto' });
     }

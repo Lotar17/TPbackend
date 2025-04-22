@@ -4,6 +4,7 @@ import { orm } from '../shared/db/orm.js';
 import { Compra } from '../compra/compra.entity.js';
 import { Persona } from '../persona/persona.entity.js';
 import { Item } from '../item/item.entity.js';
+import { ValidationError } from '../Errores/validationErrors.js';
 const em = orm.em;
 
 function sanitizeSeguimientoInput(req: Request, res: Response, next: NextFunction) {
@@ -26,28 +27,38 @@ function sanitizeSeguimientoInput(req: Request, res: Response, next: NextFunctio
     next();
   }
 
-   async function  add(req:Request, res:Response){
+   async function  add(req:Request, res:Response){ // Validado
 try{
 
   const idCliente=req.body.sanitizedInput.cliente
-  const cliente = await em.findOne(Persona, { id: idCliente });
+  const cliente = await em.findOne(Persona, { id: idCliente },{populate:['direccion']});
+  if(!cliente){
+    throw new ValidationError('El cliente no se encontro')
+  }
     const  idItem = req.body.sanitizedInput.item;
-    const item = await em.findOne(Item, { id: idItem },{populate:['producto.persona.direccion']});
 
-    const codigoSeguimiento= Math.random()
-if(!item || !cliente ){
-    return res.status(404).json({ message: 'Compra o cliente no encontrado/a' });
+     const item = await em.findOne(Item, { id: idItem },{populate:['producto.persona.direccion']});
+if(!item){
+  throw new ValidationError('El item no se encontro')
 }
+     const codigoSeguimiento= Math.random()
+
 
      const seguimiento=em.create(Seguimiento,{
 codigoSeguimiento,
 item,
 cliente
   })
+  item.seguimiento=seguimiento 
   await em.persistAndFlush(seguimiento);
+  await em.persistAndFlush(item);
   return res.status(200).json({ message: 'Seguimiento creado', data: seguimiento });
   }
   catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
+
     console.error(error);
     res.status(500).json({ message: 'Error al crear Seguimiento', error });
   }
@@ -56,7 +67,7 @@ cliente
 
 
 }
-async function muestraEstados(req:Request,res:Response){
+async function muestraEstados(req:Request,res:Response){ //Ver como usarlo
 try{
 const codigo_seguimiento=req.body.sanitizedInput.codigoSeguimiento
 
@@ -83,7 +94,7 @@ async function getSeguimientosbyClient(req:Request, res:Response){
   const clienteId=req.params.idCliente
 
   const seguimientosCliente = await em.find(Seguimiento, {cliente:clienteId}, {
-    populate: ['estados','cliente','item','item.producto.persona','estados.localidad','estados.empleado']
+    populate: ['estados.localidad','cliente','item','item.producto.persona','estados.empleado']
   });
   
 
