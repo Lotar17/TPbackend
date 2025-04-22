@@ -1,0 +1,10 @@
+####
+POST http://localhost:3000/api/correo/
+Content-Type: application/json
+
+{
+  "origen":"claudiabaldelli208@gmail.com",
+  "destinatario":"nachojdimartino@gmail.com",
+  "asunto":"prueba",
+  "mensaje":"Hola ma"
+}

@@ -1,7 +1,8 @@
 import { HistoricoPrecio } from './historico_precio.entity.js';
 import { Request, Response, NextFunction } from 'express';
 import { orm } from '../shared/db/orm.js';
-
+import { Producto } from '../producto/producto.entity.js';
+import { ValidationError } from '../Errores/validationErrors.js';
 
 const em = orm.em;
 
@@ -9,7 +10,7 @@ function sanitizePrecioInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     valor: req.body.valor,
     fechaDesde: req.body.fechaDesde,
-    producto: req.body.producto,
+    productoId: req.body.producto,
   };
   //more checks here
 
@@ -20,6 +21,43 @@ function sanitizePrecioInput(req: Request, res: Response, next: NextFunction) {
   });
 
   next();
+}
+
+async function create(req: Request, res: Response) {
+  try {
+    console.log('📩 Datos recibidos:', req.body); // <-- Agregado para depurar
+    const { valor,  productoId } = req.body;
+
+   
+    if (!productoId) {
+      return res.status(400).json({ message: 'El productoId es obligatorio.' });
+    }
+
+    const producto = await em.findOne(Producto, { id: productoId });
+
+    if (!producto) {
+      return res.status(404).json({ message: 'Producto no encontrado.' });
+    }
+
+    
+    const fecha = new Date()
+   
+
+    
+    let newPrecio = em.create(HistoricoPrecio, {
+      valor,
+      fechaDesde: fecha,
+      producto,
+    });
+
+    await em.persistAndFlush(newPrecio);
+    return res.status(201).json({ message: 'Histórico de precios creado con éxito.', data: newPrecio });
+
+  } catch (error) {
+    console.error('Error en create:', error);
+    return res.status(500).json({ message: 'Error al crear el historial de precios.' });
+  }
+  
 }
 
 async function getAll(req: Request, res: Response) {
@@ -83,12 +121,12 @@ async function remove(req: Request, res: Response) {
     return res.status(500).json({ message: 'Precio delete failed' });
   }
 }
-async function getPreciosHistoricos(req: Request, res: Response) {
+async function getPreciosHistoricos(req: Request, res: Response) { // VALIDADO
   
 
   try {
     const productoId = req.params.productoId;
- 
+
   
     const preciosHistoricos = await em.find(HistoricoPrecio, {
       producto: productoId, 
@@ -99,6 +137,7 @@ async function getPreciosHistoricos(req: Request, res: Response) {
       },
     });
 
+  
     if (preciosHistoricos.length === 0) {
       return res.status(404).json({ message: 'No se encontraron precios históricos para este producto' });
     }
@@ -117,4 +156,4 @@ async function getPreciosHistoricos(req: Request, res: Response) {
 
 
 
-export { getAll, getOne, add, update, sanitizePrecioInput, remove,getPreciosHistoricos};
+export {create, getAll, getOne, add, update, sanitizePrecioInput, remove,getPreciosHistoricos};

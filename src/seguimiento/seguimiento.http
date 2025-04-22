@@ -1,0 +1,12 @@
+
+POST http://localhost:3000/api/seguimiento/
+Content-Type: application/json
+
+{
+  "cliente":"67fd126aae7e20251fc7c6eb",
+  "item": "67f82cbad37c0c4e163e03ab"
+}
+
+### GetSeguimientos por cliente
+
+GET http://localhost:3000/api/seguimiento/cliente/67fd126aae7e20251fc7c6eb

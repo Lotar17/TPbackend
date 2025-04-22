@@ -8,8 +8,7 @@ import {
 } from '@mikro-orm/core'
 import { BaseEntity } from '../shared/base-entity.entity.js'
 import { Compra } from '../compra/compra.entity.js'
-
-
+import { EstadoSeguimiento } from '../estado_seguimiento/estado_seguimiento.entity.js'
 @Entity()
 export class Empleado extends BaseEntity {
   @Property({ nullable: false })

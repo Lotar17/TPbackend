@@ -9,6 +9,7 @@ import { RequestContext } from '@mikro-orm/core';
 import { HistoricoPrecioRouter } from './historico_precio/historico_precio.routes.js';
 import { loginRouter } from './login/login.routes.js';
 import { CompraRouter } from './compra/compra.routes.js';
+import { DevolucionRouter } from './devolucion/devolucion.routes.js';
 import { METHODS } from 'http';
 import cors from 'cors';
 import { registerRouter } from './register/register.routes.js';
@@ -18,6 +19,11 @@ import session from 'express-session';
 import { SECRET_JWT_KEY } from './login/login.controller.js';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
+import { EstadoSeguimientoRouter } from './estado_seguimiento/estado_seguimiento.routes.js';
+import { SeguimientoRouter } from './seguimiento/seguimiento.routes.js';
+import { LocalidadRouter } from './localidad/localidad.routes.js';
+import { DireccionRouter } from './direccion/direccion.routes.js';
+import { CorreoRouter } from './correo/correo.routes.js';
 
 type UserCookie = {
   id: number;
@@ -46,7 +52,7 @@ app.use((req, res, next) => {
 app.use(
   cors({
     origin: ['http://localhost:4200'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT','PATCH', 'DELETE'],
     credentials: true,
   })
 );
@@ -90,6 +96,12 @@ app.use('/api/compras', CompraRouter);
 app.use('/register', registerRouter);
 app.use('/api/formas-de-pago', formaDePagoRouter);
 app.use('/api/item', ItemRouter);
+app.use('/api/devolucion',DevolucionRouter);
+app.use('/api/estado-seguimiento',EstadoSeguimientoRouter);
+app.use('/api/seguimiento',SeguimientoRouter)
+app.use('/api/localidad',LocalidadRouter)
+app.use('/api/direccion',DireccionRouter)
+app.use('/api/correo',CorreoRouter)
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });

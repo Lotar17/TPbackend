@@ -1,19 +1,9 @@
-#### add() Item
-POST http://localhost:3000/api/item/
-Content-Type: application/json
 
-{
- 
-  "producto": "674470dee02ee91fd1b5f449",
-  "persona": "67a12692fa0044f148f9b1fe"
-  
-
-}
 
 
 ### getCart
 
-GET http://localhost:3000/api/item/persona/67a12692fa0044f148f9b1fe
+GET http://localhost:3000/api/item/persona/67acbb331443b4bd7becf3b1
 
 ### decrementQuantity
 POST http://localhost:3000/api/item/decrementa
@@ -25,4 +15,53 @@ Content-Type: application/json
 }
 
 ### removeItem
-DELETE http://localhost:3000/api/item/67a2af573b4801a16d2f23d3
+DELETE http://localhost:3000/api/item/67a12692fa0044f148f9b1fe
+
+
+#### add() Item
+POST http://localhost:3000/api/item/create
+Content-Type: application/json
+
+{
+ 
+  "producto": "674470dee02ee91fd1b5f449",
+  "persona": "67a12692fa0044f148f9b1fe",
+  "cantidad_producto":10
+  
+
+}
+
+### getOne
+GET http://localhost:3000/api/item/67d9b373ea4ab65f935e5d74
+
+#### add() Item
+PUT  http://localhost:3000/api/item/update/67ee84759edb91a1d2da88d4
+Content-Type: application/json
+
+{
+ 
+  "cantidad_devuelta": 1
+ 
+  
+
+}
+
+### addTocart1
+POST  http://localhost:3000/api/item/add
+Content-Type: application/json
+
+{
+"persona":"67fd126aae7e20251fc7c6eb",
+"producto":"6801651961b63eafaa21c38f"
+
+}
+### incrementa
+PATCH  http://localhost:3000/api/item/incrementaItem
+Content-Type: application/json
+
+{
+"itemId":"6801700ce0e69203b0d2f33e"
+
+}
+### validoExistencia
+GET  http://localhost:3000/api/item/valido/67fd1d3ff60099932c4f5bf3/67fd126aae7e20251fc7c6eb

@@ -2,25 +2,26 @@
 GET http://localhost:3000/api/compras
 
 ### getOne() Compras
-GET http://localhost:3000/api/compras/
-
-#### add() Compras
+GET http://localhost:3000/api/compras/67b5fde6b00f16fc64739b48
+###
 POST http://localhost:3000/api/compras/
 Content-Type: application/json
 
 {
-  "direccion_entrega": "Zeballos 1281",
+  "personaId": "67fd126aae7e20251fc7c6eb",
+  
   "fecha_hora_compra": "17/8/2024-12:17",
-  "persona": "67a12692fa0044f148f9b1fe",
   "items": [
- 
-    { "producto":"674470dee02ee91fd1b5f449", "cantidad_producto":7}
-    
-  ]
+    { "producto": "67fd1d3ff60099932c4f5bf3", "cantidad_producto": 2 }
+    ],
+ "calle":"Pte Roca",
+ "numero":900,
+ "localidadId":"67f0395b6779d65a745c26f0"
 }
 
+
 ### update() Compras
-PUT http://localhost:3000/api/compras/66d1e4513f46336da71a26a2
+PUT http://localhost:3000/api/compras/67ec452c54d8f0019e5f0171
 Content-Type: application/json
 
 {
@@ -29,7 +30,7 @@ Content-Type: application/json
   "persona": "66abffd636c84d1bcc465c81",
   "empleado":"66c0bd7434088bbf80791762",
   "cantidad_producto":700,
-  "fecha_hora_compra":"17/8/2024-12:16",
+  "fecha_hora_compra":"17/8/2024-12:16"
   
 
 }
@@ -48,9 +49,33 @@ Content-Type: application/json
 
 ###GET
 
-GET http://localhost:3000/api/compras/67aa82aaa5d7f0cc58cd3826
+GET http://localhost:3000/api/compras/67fa5ca7f4d649dcd73ab40e
 
 DELETE http://localhost:3000/api/compras/67a8bfafbe12abfb5c8db158
 
 ###GETCOMPRAPERSONA
-GET http://localhost:3000/api/compras/persona/67a12692fa0044f148f9b1fe
+GET http://localhost:3000/api/compras/persona/67f81c2a10f4444c79f48086
+
+### update
+
+PUT   http://localhost:3000/api/compras/67aa82aaa5d7f0cc58cd3826
+Content-Type: application/json
+
+{
+   "direccion_entrega":"Laprida 900",
+  "persona":"67a12692fa0044f148f9b1fe",
+ "fecha_hora_compra":"2025/18/02",
+ "total_compra":1200
+
+  
+}
+###
+PUT  http://localhost:3000/api/compras/stock/67e85af67899f5b4c52b6f49
+
+###Remove
+
+DELETE   http://localhost:3000/api/compras/6805164eb8abab8d7f97a3ee
+
+###GetVentasByUser
+
+GET http://localhost:3000/api/compras/ventas/67fd1d0cf60099932c4f5bf2

@@ -92,6 +92,7 @@ async function getRolByCookie(req: Request, res: Response) {
 
 async function getUserInformation(req: Request, res: Response) {
   const sid = req.signedCookies.session_token;
+  console.log('Cookies recibidas:', req.signedCookies);
   console.log(sid);
   if (sid !== undefined) {
     req.sessionStore.get(sid, (error, session) => {
@@ -115,3 +116,4 @@ async function getUserInformation(req: Request, res: Response) {
 }
 
 export { sanitizeLoginInput, loginUser, getRolByCookie, getUserInformation };
+

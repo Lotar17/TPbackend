@@ -4,6 +4,8 @@ import { orm } from '../shared/db/orm.js';
 import { error } from 'console';
 import { Populate } from '@mikro-orm/core';
 import bcrypt from 'bcrypt';
+import { Localidad } from '../localidad/localidad.entity.js';
+import { Direccion } from '../direccion/direccion.entity.js';
 
 const em = orm.em;
 
@@ -16,7 +18,11 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
     prods_publicados: req.body.prods_publicados,
     password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined, // Si en el put o en el patch no se pone un password tira error
     rol: req.body.rol,
-    carrito:req.body.carrito
+    carrito:req.body.carrito,
+    direccion:req.body.direccion,
+    calle:req.body.calle,
+    numero:req.body.numero,
+    localidadId:req.body.localidadId
   };
   //more checks here
 
@@ -52,7 +58,7 @@ async function getOne(req: Request, res: Response) {
     const persona = await em.findOneOrFail(
       Persona,
       { id },
-      { populate: ['prods_publicados'] }
+      { populate: ['prods_publicados','estados_empleados.seguimiento.cliente.direccion.localidad','estados_empleados.localidad','direccion','compras.direccion'] }
     );
     // const { password, ...personaData } = persona;
     return res.status(200).json({ message: 'found person', data: persona });
@@ -63,8 +69,47 @@ async function getOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
-    const persona = em.create(Persona, req.body.sanitizedInput);
-    await em.flush();
+    const {
+      nombre,
+      apellido,
+      telefono,
+      mail,
+      prods_publicados,
+      password,
+      carrito,
+      rol,
+      calle,
+      numero,
+      localidadId,
+    } = req.body.sanitizedInput;
+
+    const localidad = await em.findOne(Localidad, { id: localidadId });
+    if (!localidad) {
+      return res.status(404).json({ message: 'Localidad no encontrada' });
+    }
+
+    const direccion = em.create(Direccion, {
+      calle,
+      numero,
+      localidad:localidadId,
+    });
+    await em.persistAndFlush(direccion);
+    
+    const persona = em.create(Persona, {
+      nombre,
+      apellido,
+      telefono,
+      mail,
+      prods_publicados,
+      password,
+      carrito,
+      rol,
+      direccion:direccion
+    })
+
+    await em.persistAndFlush(persona);
+
+    
     return res
       .status(200)
       .json({ message: 'Person Created succesfully !', data: persona });

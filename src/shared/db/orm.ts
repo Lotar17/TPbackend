@@ -15,7 +15,7 @@ export const orm = await MikroORM.init({
   entitiesTs: ['src/**/*.entity.ts'],
   dbName: 'tpbackend',
   type: 'mongo',
-  clientUrl: `${DB}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`,
+  clientUrl: `${DB}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`,  // Usando las variables de entorno
   highlighter: new MongoHighlighter(),
   debug: true,
   schemaGenerator: {

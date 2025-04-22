@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import {
   sanitizeCompraInput,
-
+updateStock,
   getOne,
   add,
   remove,
-  getComprasByPersona
+  getComprasByPersona,
+  update,
+  getVentasByUser
 } from './compra.controler.js';
 
 export const CompraRouter = Router();
@@ -14,5 +16,7 @@ export const CompraRouter = Router();
 CompraRouter.get('/:id', getOne);
 CompraRouter.post('/', sanitizeCompraInput, add);
 CompraRouter.delete('/:id', remove);
-
-CompraRouter.get('/persona/:personaId',getComprasByPersona)
+CompraRouter.put('/:id', sanitizeCompraInput, update);
+CompraRouter.get('/persona/:personaId',getComprasByPersona);
+CompraRouter.put('/stock/:id',sanitizeCompraInput,updateStock)
+CompraRouter.get('/ventas/:id',getVentasByUser)

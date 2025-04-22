@@ -1,0 +1,47 @@
+## createDevolution
+
+POST http://localhost:3000/api/devolucion/
+Content-Type: application/json
+
+{
+
+    "itemId":"68079abf5374cc841b07d831",
+
+    "motivo":"Realizo la devolucion porque encuentro defectos",
+    "cantidad_devuelta":1
+
+
+
+
+
+
+}
+
+###
+PUT http://localhost:3000/api/devolucion/67ed2f8812ebae29c0d58e0d
+Content-Type: application/json
+
+{
+
+"estado":"Aceptada"
+
+}
+
+### getByVendedor
+GET http://localhost:3000/api/devolucion/67fd1d0cf60099932c4f5bf2
+
+### getByVendedor
+GET http://localhost:3000/api/devolucion/comprador/67acbb331443b4bd7becf3b1
+
+###Actualiza solicitud
+PATCH  http://localhost:3000/api/devolucion/67fd1d90f60099932c4f5bf9
+Content-Type: application/json
+
+{
+    
+
+"fechaEnvioCliente":"15/04/2025",
+"mensajeCierre":"ab"
+
+
+}

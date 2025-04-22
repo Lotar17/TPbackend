@@ -2,16 +2,16 @@
 GET http://localhost:3000/api/historico-precios/
 
 ### GET ONE
-GET http://localhost:3000/api/historico-precios/66aa5c3a8b59051e68f40c4e
+GET http://localhost:3000/api/historico-precios/67e49a200abb8a3c72bf7f6d
 
 ### CREATE 
-POST http://localhost:3000/api/historico-precios/
+POST http://localhost:3000/api/historico-precios/create
 Content-Type: application/json
 
 {
   "valor": 4000,
-  "fechaDesde": "10/01/2024",
-  "producto": "673751ae6117b2ce291eae95"
+ 
+  "productoId":"67e1518c323f750865b11a5d"
 }
 
 ### UPDATE
@@ -27,4 +27,4 @@ DELETE http://localhost:3000/api/historico-precios/66a9987c052e5cf8f8f5d6c2
 Content-Type: application/json
 
 ###GETHISTORICOPRODUCTO
-GET http://localhost:3000/api/historico-precios/producto/673751ae6117b2ce291eae95
+GET http://localhost:3000/api/historico-precios/producto/67ec450c54d8f0019e5f016e
