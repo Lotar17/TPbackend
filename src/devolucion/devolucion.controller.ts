@@ -5,12 +5,14 @@ import { Item } from '../item/item.entity.js';
 import { Producto } from '../producto/producto.entity.js';
 import { Persona } from '../persona/persona.entity.js';
 import { populate } from 'dotenv';
+import { ValidationError } from '../Errores/validationErrors.js';
 const em = orm.em;
 
 function sanitizeDevolucionInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     
     item:req.body.item,
+    itemId:req.body.itemId,
     comprador:req.body.comprador,
     vendedor:req.body.vendedor,
     motivo:req.body.motivo,
@@ -19,8 +21,10 @@ codigoConfirmacion: req.body.codigoConfirmacion,
 fechaSolicitud:req.body.fechaSolicitud,
 fechaConfirmacion:req.body.fechaConfirmacion,
 cantidad_devuelta:req.body.cantidad_devuelta,
+fechaEnvioCliente:req.body.fechaEnvioCliente,
 fechaCierre:req.body.fechaCierre,
 mensajeCierre:req.body.mensajeCierre
+
     
   };
 
@@ -35,31 +39,63 @@ mensajeCierre:req.body.mensajeCierre
 
 
 
-async function CreateDevolutionRequest(req: Request, res: Response) {
-  try {
-    const { itemId, motivo,cantidad_devuelta } = req.body; // Ahora recibimos itemId en lugar de item completo
+async function CreateDevolutionRequest(req: Request, res: Response) { //Validado
+  try {    
+    let fechaCompraDate     
+    let diferenciaTiempo    
+    let diferenciaDias                                                  
+    const { itemId, motivo,cantidad_devuelta } = req.body.sanitizedInput; 
 
     if (!itemId || !motivo || !cantidad_devuelta) {
-      return res.status(400).json({ message: 'Item,cantidad devuelta y motivo son obligatorios' });
+throw new ValidationError('El item, motivo y cantidad a devolver son obligatorios')
     }
 
     // Buscar el item en la base de datos
-    const item = await em.findOne(Item, { id: itemId }, { populate: ['producto', 'persona','compra','compra.items'] });
+    const item = await em.findOne(Item, { id: itemId }, { populate: ['producto', 'persona','compra','compra.items','producto.persona','seguimiento.estados'] });
 
     if (!item) {
-      return res.status(400).json({ message: 'Item no encontrado' });
+      throw new ValidationError('El item no se encontro')
+    }
+    const fechaActual = new Date();
+    if(item.compra?.fecha_hora_compra)
+     fechaCompraDate = new Date(item.compra?.fecha_hora_compra);
+    
+    if(fechaCompraDate)
+   
+     diferenciaTiempo = fechaActual.getTime() - fechaCompraDate.getTime();
+    if(diferenciaTiempo)
+    
+     diferenciaDias = diferenciaTiempo / (1000 * 60 * 60 * 24);
+  
+    if(diferenciaDias)
+    
+    if (diferenciaDias>30){
+throw new ValidationError('La compra se realizo fuera del plazo de 30 dias de devolucion')
     }
 
+
+  
+if(cantidad_devuelta> item.cantidad_producto){
+  throw new ValidationError('No se puede devolver una cantidad mayor a la que tengo')
+}
+
+    if(item.seguimiento)
+    
+    if(item.seguimiento.estados.length !==4){
+throw new ValidationError('No se puede realizar una devolucion de una compra que todavia no se materializo')
+
+    }
+  
     const producto = item.producto;
     const comprador = item.persona;
     const vendedor = producto?.persona;
 
     if (!comprador || !vendedor) {
-      return res.status(400).json({ message: 'Datos del comprador o vendedor no encontrados' });
+      throw new ValidationError('El comprador o vendedor no se encontraron')
     }
 
     if (comprador.id === vendedor.id) {
-      return res.status(400).json({ message: 'El comprador y el vendedor no pueden ser la misma persona' });
+      throw new ValidationError('El comprador y vendedor no pueden ser la misma persona')
     }
 
     const fechaSolicitud = new Date().toISOString();
@@ -85,21 +121,28 @@ async function CreateDevolutionRequest(req: Request, res: Response) {
       data:solicitud
     });
 
-  } catch (error) {
+  } 
+    catch (error: any) {
+      if (error instanceof ValidationError) {
+        return res.status(400).json({ message: error.message });
+      }
+  
     console.error('Error al crear la solicitud de devolución:', error);
     return res.status(500).json({ message: 'Error interno del servidor' });
   }
 }
 
 
-async function makeDecission(req:Request, res:Response) {
+async function makeDecission(req:Request, res:Response) {//Validado
   try {
     const idSolicitud=req.params.id
-  const estado= req.body.estado
+  const estado= req.body.sanitizedInput.estado
+
+
 
   const solicitud= await em.findOne(Devolucion,{id: idSolicitud},{populate:['item']})
   if (!solicitud) {
-    return res.status(404).json({ message: "Solicitud de devolución no encontrada" });
+   throw new ValidationError('Solicitud devolucion no encontrada')
   }
 
 if(estado==='Aprobada'){
@@ -124,6 +167,10 @@ return res.status(200).json({
 
 }
 catch (error) {
+  if (error instanceof ValidationError) {
+    return res.status(400).json({ message: error.message });
+  }
+
   console.error("Error al procesar la decisión:", error);
   return res.status(500).json({ message: "Error interno del servidor" });
 }
@@ -131,14 +178,13 @@ catch (error) {
 }
 
 
-async function getRequestbyVendedor(req:Request, res:Response) {
+async function getRequestbyVendedor(req:Request, res:Response) {//Validado
   try{
 const idVendedor= req.params.idVendedor
-const solicitudesVendedor= await em.find(Devolucion,{vendedor:idVendedor},{ populate: ['vendedor','item','item.compra.items','item.producto',] })
+const solicitudesVendedor = await em.find(Devolucion, { vendedor: idVendedor }, { populate: ['item','item.compra','item.compra.items','item.producto','comprador'] });
+//,'item.compra.items','item.producto','comprador'
 
-if (solicitudesVendedor.length === 0) {
-  return res.status(404).json({ message: 'No se encontraron solicitudes de devolucion para este vendedor' });
-}
+
 
 return res.status(200).json({
   message: 'Solicitudes del vendedor encontradas',
@@ -153,10 +199,10 @@ return res.status(200).json({
 
   }
 }
-async function getRequestbyComprador(req:Request, res:Response) {
+async function getRequestbyComprador(req:Request, res:Response) {//Validado
   try{
 const idComprador= req.params.idComprador
-const solicitudesComprador= await em.find(Devolucion,{comprador:idComprador},{ populate: ['comprador','item','item.compra','item.producto'] })
+const solicitudesComprador= await em.find(Devolucion,{comprador:idComprador},{ populate: ['comprador','item','item.compra','item.producto','vendedor.direccion.localidad'] })
 
 if (solicitudesComprador.length === 0) {
   return res.status(404).json({ message: 'No se encontraron solicitudes de devolucion para este vendedor' });
@@ -176,10 +222,15 @@ return res.status(200).json({
   }
 }
 
-async function update(req: Request, res: Response) {
+async function update(req: Request, res: Response) {//Validado
   try {
     const id = req.params.id;
-    const devolucionToUpdate = await em.findOneOrFail(Devolucion, { id });
+    
+    const devolucionToUpdate = await em.findOne(Devolucion, { id });
+    console.log(req.body.sanitizedInput)
+    if(!devolucionToUpdate){
+      throw new ValidationError('No se encontro devolucion con ese id')
+    }
     em.assign(devolucionToUpdate, req.body.sanitizedInput);
     await em.flush();
     return res

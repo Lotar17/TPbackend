@@ -37,11 +37,13 @@ export class Devolucion extends BaseEntity {
   @Property({ nullable: true })
   cantidad_devuelta!: number;
 
+  @Property({ nullable: true })
+  fechaEnvioCliente?: string;
   
   @Property({ nullable: true })
-  fechaCierre?: string; 
+  fechaCierre?: string; // esto se genera cuando el vendededor afirma que el producto llego a destino
   
   @Property({ nullable: true })
-  mensajeCierre?: string;// esto se genera cuando el vendededor afirma que el producto llego a destino
+  mensajeCierre?: string;
 }
 

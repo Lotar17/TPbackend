@@ -3,8 +3,10 @@ import { Producto } from './producto.entity.js';
 import { orm } from '../shared/db/orm.js';
 import { HistoricoPrecio } from '../historico_precio/historico_precio.entity.js';
 import { ObjectId } from '@mikro-orm/mongodb';
-
+import { error } from 'console';
+import { ValidationError } from '../Errores/validationErrors.js';
 const em = orm.em;
+import { Persona } from '../persona/persona.entity.js';
 
 function sanitizeProductoInput(
   req: Request,
@@ -29,18 +31,29 @@ function sanitizeProductoInput(
   next();
 }
 
-async function getAll(req: Request, res: Response) {
+async function getAll(req: Request, res: Response) {//VALIDADO
     try {
       const descripcion = req.query.descripcion as string;
-  
+  const personaId=req.params.idPersona
+  if(!personaId){
+    throw new ValidationError('El parametro idPersona es requerido');
+  }
+  const persona = await em.findOne(Persona,{id:personaId})
       let productos;
+      if (!persona) {
+     throw new ValidationError('La persona no se encontro');
+      }
   
       if (descripcion) {
-        // Si se proporciona una descripción, buscar productos que coincidan parcialmente
+        
         productos = await em.find(
           Producto,
           {
-            descripcion: new RegExp(descripcion, 'i')// Coincidencia parcial, insensible a mayúsculas/minúsculas
+            descripcion: new RegExp(descripcion, 'i'),// Coincidencia parcial, insensible a mayúsculas/minúsculas
+             
+              persona: { $ne: personaId }
+            
+             // hace que traiga todos los productos que no son del cliente que inicio sesion
           },
           {
             populate: ['persona', 'categoria', 'hist_precios'],
@@ -50,47 +63,47 @@ async function getAll(req: Request, res: Response) {
         // Si no se proporciona descripción, devolver todos los productos
         productos = await em.find(
           Producto,
-          {},
+          {persona: { $ne: personaId }
+        },
           {
             populate: ['persona', 'categoria', 'hist_precios'],
           }
         );
       }
+
+      
   
       return res.status(200).json({ message: 'Productos encontrados', data: productos });
     } catch (error: any) {
-      return res.status(500).json({ message: 'Error al buscar productos', error: error.message });
+      if (error instanceof ValidationError) {
+        return res.status(401).json({ message: error.message });
+      }
+      console.error('Error al buscar productos:', error);
+    return res.status(500).json({ message: 'Error interno al buscar productos', error: error.message });
     }
   }
   
 
-async function getOne(req: Request, res: Response) {
+async function getOne(req: Request, res: Response) {//VALIDADO
   try {
     const id = req.params.id;
-    const producto = await em.findOneOrFail(
+    const producto = await em.findOne(
       Producto,
       { id },
       { populate: ['categoria', 'hist_precios','persona'] }
     );
+    if(!producto){
+      throw new ValidationError('Producto no encontrado')
+    }
     return res.status(200).json({ message: 'Producto finded', data: producto });
   } catch (error: any) {
-    return res.status(404).json({ message: 'Producto not found' });
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
+
   }
 }
 
-async function getbydescription(req:Request,res:Response){
-  try{
-    const descripcion = req.query.descripcion as string;
-    if(descripcion){
-    const producto = em.findOneOrFail(Producto,descripcion)
-    return res.status(200).json({ message: 'Productos found', data: producto });
-    }
-  }
-  catch (error: any) {
-    console.error(error);
-    return res.status(404).json({ message: 'Error al buscar productos' });
-  }
-}
 
 async function add(req: Request, res: Response) {
   try {
@@ -231,4 +244,4 @@ async function getProductsByUser(req:Request, res:Response) {
 
 
 
-export { sanitizeProductoInput,getbydescription, getAll, getOne,actualizarStock, add, update, remove,getProductsByUser};
+export { sanitizeProductoInput, getAll, getOne,actualizarStock, add, update, remove,getProductsByUser};

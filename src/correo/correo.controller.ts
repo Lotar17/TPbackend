@@ -1,8 +1,6 @@
 import nodemailer from 'nodemailer';
 import { Request,Response,NextFunction } from 'express';
-import { orm } from '../shared/db/orm';
-import { error } from 'console';
-import exp from 'constants';
+import { ValidationError } from '../Errores/validationErrors.js';
 
  function sanitizeCorreoInput(req: Request, res: Response, next: NextFunction) {
     req.body.sanitizedInput = {
@@ -30,15 +28,24 @@ import exp from 'constants';
 
   
 
-   async function enviarCorreo(req: Request, res: Response) {
+   async function enviarCorreo(req: Request, res: Response) {//Validado
   try{
     const {origen,destinatario,asunto,mensaje} = req.body.sanitizedInput;
   
-    // Valida los datos
-    if (!origen||!destinatario || !asunto || !mensaje) {
-        return res.status(404).json({ message: 'El correo no se envio' });
+    
+    if (!origen) {
+      throw new ValidationError('No se encontro origen')
     }
-  
+
+    if (!destinatario) {
+      throw new ValidationError('No se encontro destinatario')
+    }
+    if (!asunto) {
+      throw new ValidationError('No se encontro asunto')
+    }
+    if (!mensaje) {
+      throw new ValidationError('No se encontro mensaje')
+    }
     // Configura las opciones del correo
     const mailOptions = {
       from: origen,
@@ -51,6 +58,10 @@ import exp from 'constants';
       await transporter.sendMail(mailOptions);
       return res.status(200).json({ message: 'Correo enviado con éxito' });
     } catch (error) {
+      if (error instanceof ValidationError) {
+        return res.status(400).json({ message: error.message });
+      }
+  
       console.error('Error al enviar correo:', error);
       return res.status(500).json({ message: 'Error al enviar el correo' });
     }
