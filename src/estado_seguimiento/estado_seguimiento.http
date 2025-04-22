@@ -12,7 +12,9 @@ Content-Type: application/json
 }
 
 ### BUSCA EMPLEADO estado_seguimiento
+
 GET  http://localhost:3000/api/estado-seguimiento/67f039326779d65a745c26e
+
 
 
 ### BUSCA estados del empleado

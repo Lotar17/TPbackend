@@ -14,7 +14,7 @@ function sanitizeSeguimientoInput(req: Request, res: Response, next: NextFunctio
       calificacionServicio:req.body.calificacionServicio,
       estados: req.body.estados,
       compra: req.body.compra,
-  cliente:req.body.cliente,
+      cliente:req.body.cliente,
       item:req.body.item
     };
   
@@ -36,6 +36,7 @@ try{
     throw new ValidationError('El cliente no se encontro')
   }
     const  idItem = req.body.sanitizedInput.item;
+
      const item = await em.findOne(Item, { id: idItem },{populate:['producto.persona.direccion']});
 if(!item){
   throw new ValidationError('El item no se encontro')

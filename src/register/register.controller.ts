@@ -41,7 +41,6 @@ async function registerUser(req: Request, res: Response) {
             prods_publicados,
             password,
             carrito,
-            rol,
             calle,
             numero,
             localidadId,
@@ -71,7 +70,7 @@ const newUser = em.create(Persona, {
       prods_publicados,
       password,
       carrito,
-      rol,
+      rol: 'Usuario',
       direccion:direccion
     })
 

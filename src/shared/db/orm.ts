@@ -3,6 +3,7 @@ import { MongoHighlighter } from '@mikro-orm/mongo-highlighter';
 import dotenv from 'dotenv';
 
 dotenv.config();
+console.log(process.env)
 
 const DB = process.env.DB || 'mongodb';
 const DB_USER = process.env.DB_USER || '';
@@ -15,7 +16,7 @@ export const orm = await MikroORM.init({
   entitiesTs: ['src/**/*.entity.ts'],
   dbName: 'tpbackend',
   type: 'mongo',
-  clientUrl: `${DB}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`,  // Usando las variables de entorno
+  clientUrl: `${DB}://${DB_USER && DB_PASSWORD ? `${DB_USER}:${DB_PASSWORD}@` : ''}${DB_HOST}:${DB_PORT}`,
   highlighter: new MongoHighlighter(),
   debug: true,
   schemaGenerator: {
