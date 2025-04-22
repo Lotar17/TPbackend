@@ -3,9 +3,9 @@ POST http://localhost:3000/api/localidad/
 Content-Type: application/json
 
 {
-  "nombre": "Pergamino",
-"codigoPostal":3751,
-"provincia":"Buenos Aires"
+  "nombre": "Alcorta",
+"codigoPostal":2117,
+"provincia":"Santa Fe"
 }
 ###
 GET  http://localhost:3000/api/localidad

@@ -5,10 +5,10 @@ Content-Type: application/json
 
 {
 
-    "itemId":"67fa8276363631fb55894109",
+    "itemId":"68079abf5374cc841b07d831",
 
     "motivo":"Realizo la devolucion porque encuentro defectos",
-    "cantidad_devuelta":2
+    "cantidad_devuelta":1
 
 
 
@@ -28,19 +28,20 @@ Content-Type: application/json
 }
 
 ### getByVendedor
-GET http://localhost:3000/api/devolucion/67acbb331443b4bd7becf3b1
+GET http://localhost:3000/api/devolucion/67fd1d0cf60099932c4f5bf2
 
 ### getByVendedor
 GET http://localhost:3000/api/devolucion/comprador/67acbb331443b4bd7becf3b1
 
 ###Actualiza solicitud
-PATCH  http://localhost:3000/api/devolucion/67fafeb7310c509023a75f00
+PATCH  http://localhost:3000/api/devolucion/67fd1d90f60099932c4f5bf9
 Content-Type: application/json
 
 {
     
-"estado":"Cerrada",
-"fechaCierre":"14/04/2025",
-"mensajeCierre":"El producto llego con exito a su destino"
+
+"fechaEnvioCliente":"15/04/2025",
+"mensajeCierre":"ab"
+
 
 }

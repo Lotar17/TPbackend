@@ -6,7 +6,8 @@ updateStock,
   add,
   remove,
   getComprasByPersona,
-  update
+  update,
+  getVentasByUser
 } from './compra.controler.js';
 
 export const CompraRouter = Router();
@@ -18,3 +19,4 @@ CompraRouter.delete('/:id', remove);
 CompraRouter.put('/:id', sanitizeCompraInput, update);
 CompraRouter.get('/persona/:personaId',getComprasByPersona);
 CompraRouter.put('/stock/:id',sanitizeCompraInput,updateStock)
+CompraRouter.get('/ventas/:id',getVentasByUser)

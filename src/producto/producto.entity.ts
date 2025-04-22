@@ -23,9 +23,8 @@ export class Producto extends BaseEntity {
   @ManyToOne(() => Persona, { nullable: false })
   persona!: Rel<Persona>;
 
-  @Property()
-  stock?: number;
-
+  @Property({ nullable: false })
+  stock?: number
   @Property({ nullable: true })
   photoPath!: string
 

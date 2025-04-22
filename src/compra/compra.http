@@ -8,11 +8,11 @@ POST http://localhost:3000/api/compras/
 Content-Type: application/json
 
 {
-  "personaId": "67f81c2a10f4444c79f48086",
+  "personaId": "67fd126aae7e20251fc7c6eb",
   
   "fecha_hora_compra": "17/8/2024-12:17",
   "items": [
-    { "producto": "67f81c4510f4444c79f48087", "cantidad_producto": 2 }
+    { "producto": "67fd1d3ff60099932c4f5bf3", "cantidad_producto": 2 }
     ],
  "calle":"Pte Roca",
  "numero":900,
@@ -72,3 +72,10 @@ Content-Type: application/json
 ###
 PUT  http://localhost:3000/api/compras/stock/67e85af67899f5b4c52b6f49
 
+###Remove
+
+DELETE   http://localhost:3000/api/compras/6805164eb8abab8d7f97a3ee
+
+###GetVentasByUser
+
+GET http://localhost:3000/api/compras/ventas/67fd1d0cf60099932c4f5bf2
