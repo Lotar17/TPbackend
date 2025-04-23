@@ -3,9 +3,10 @@ POST http://localhost:3000/api/seguimiento/
 Content-Type: application/json
 
 {
-  "cliente":"67fd126aae7e20251fc7c6eb",
-  "item": "67f82cbad37c0c4e163e03ab"
-}
+
+  "cliente":"674470029142c2d96e868f6d",
+  "item": "67e56648cb324d92c0ea6b52"
+
 
 ### GetSeguimientos por cliente
 

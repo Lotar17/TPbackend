@@ -43,18 +43,6 @@ async function getOne(req: Request, res: Response) {
   }
 }
 
-async function remove(req: Request, res: Response) {
-  try {
-    const id = req.params.idItem;
-    const item = em.getReference(Item, id);
-    await em.removeAndFlush(item);
-    return res
-      .status(200)
-      .json({ message: 'Item deleted succesfully', data: item });
-  } catch (error: any) {
-    return res.status(500).json({ message: 'Item delete failed' });
-  }
-}
 
 
 async function validoExistencia(req: Request, res: Response) {//VALIDADO
@@ -347,20 +335,7 @@ item.cantidad_producto = nuevaCantidad;
   }
 }
 
-    await em.flush();
-
-    res.status(200).json({
-      message:
-        item.cantidad_producto > 0
-          ? 'Cantidad decrementada'
-          : 'Producto eliminado del carrito',
-      data: item,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error al actualizar el carrito', error });
-  }
-}
+   
 
 
       export{sanitizeItemInput,getOne, remove,getCarrito,decrementQuantity,createItem,updateItem,incrementarCantidad,addToCart1,validoExistencia}
