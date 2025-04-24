@@ -36,6 +36,13 @@ try{
     throw new ValidationError('El cliente no se encontro')
   }
     const  idItem = req.body.sanitizedInput.item;
+<<<<<<<<< Temporary merge branch 1
+    const item = await em.findOne(Item, { id: idItem },{populate:['producto.persona.direccion']});
+
+    const codigoSeguimiento= Math.random()
+if(!item || !cliente ){
+    return res.status(404).json({ message: 'Compra o cliente no encontrado/a' });
+=========
      const item = await em.findOne(Item, { id: idItem },{populate:['producto.persona.direccion']});
 if(!item){
   throw new ValidationError('El item no se encontro')
