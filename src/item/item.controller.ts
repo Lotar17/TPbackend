@@ -187,7 +187,7 @@ async function createItem(req:Request, res:Response) { //  Validado
     throw new ValidationError('Persona o producto no encontrados')
   }
   if(producto.stock)
-  if(cantidad_producto===0 || cantidad_producto>producto.stock){
+  if(cantidad_producto<=0 || cantidad_producto>producto.stock){
     throw new ValidationError('Cantidad de producto ingresada incorrecta')
   }
   const precioActual = producto.hist_precios

@@ -5,6 +5,7 @@ import { ValidationError } from './registerErrors.js';
 import bcrypt from 'bcrypt';
 import { Localidad } from '../localidad/localidad.entity.js';
 import { Direccion } from '../direccion/direccion.entity.js';
+import { update } from '../persona/persona.controller.js';
 
 const em = orm.em;
 
@@ -15,6 +16,7 @@ function sanitizeRegisterInput(req:Request,res:Response,next:NextFunction){
         telefono: req.body.telefono,
         mail: req.body.mail,
         password: bcrypt.hashSync(req.body.password, 10),
+       
         rol: req.body.rol,
         calle:req.body.calle,
         numero:req.body.numero,
@@ -85,6 +87,9 @@ const newUser = em.create(Persona, {
             res.status(500).send({ message: 'Error interno del servidor', result: false });
     }
 }
+
+
+  
 
 
 export { sanitizeRegisterInput, registerUser };
