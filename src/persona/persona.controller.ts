@@ -6,6 +6,7 @@ import { Populate } from '@mikro-orm/core';
 import bcrypt from 'bcrypt';
 import { Localidad } from '../localidad/localidad.entity.js';
 import { Direccion } from '../direccion/direccion.entity.js';
+import { ValidationError } from '../Errores/validationErrors.js';
 
 const em = orm.em;
 
@@ -16,7 +17,9 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
     telefono: req.body.telefono,
     mail: req.body.mail,
     prods_publicados: req.body.prods_publicados,
-    password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined, // Si en el put o en el patch no se pone un password tira error
+    password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined,// Si en el put o en el patch no se pone un password tira error
+    passwordAnterior:req.body.passwordAnterior,
+    passwordNueva:req.body.passwordNueva,
     rol: req.body.rol,
     carrito:req.body.carrito,
     direccion:req.body.direccion,
@@ -145,6 +148,40 @@ async function remove(req: Request, res: Response) {
   }
 }
 
+async function updatePassword(req: Request, res: Response) {
+  try {
+    const { mail, passwordAnterior, passwordNueva } = req.body.sanitizedInput;
+
+    const user = await em.findOne(Persona, { mail: mail });
+    if (!user) {
+      throw new ValidationError('El usuario es incorrecto');
+    }
+
+    const isValid = await bcrypt.compare(passwordAnterior, user.password);
+    if (!isValid) {
+      throw new ValidationError('La contraseña o el usuario es incorrecto');
+    }
+
+    user.password = await bcrypt.hash(passwordNueva, 10);
+    console.log("Nuevo hash:", user.password);
+em.persist(user); // Forzamos que MikroORM lo tome como una entidad a guardar
+await em.flush();
+
+
+    return res.status(200).json({
+      message: 'Password updated successfully!',
+      data: { id: user.id, mail: user.mail },
+    });
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      res.status(401).send({ message: error.message, result: false });
+    } else {
+      console.error(error);
+      res.status(500).send({ message: 'Error interno del servidor', result: false });
+    }
+  }
+}
+
 export {
   getAll,
   getOne,
@@ -152,4 +189,5 @@ export {
   update,
   sanitizePersonaInput as sanitizeCharacterInput,
   remove,
+  updatePassword
 };
