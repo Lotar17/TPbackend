@@ -41,7 +41,7 @@ async function getAll(req: Request, res: Response) {
       Persona,
       {},
       { populate: ['prods_publicados','carrito']
-       }
+    }
     );
 
     return res
