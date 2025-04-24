@@ -11,4 +11,8 @@ export const loginRouter = Router();
 loginRouter.post('/', sanitizeLoginInput, loginUser);
 loginRouter.get('/checkPermissions', getRolByCookie);
 loginRouter.get('/getUserInformation', getUserInformation);
+
 loginRouter.patch('/updatePassword',sanitizeLoginInput,updatePassword)
+
+
+
