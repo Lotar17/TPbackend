@@ -69,7 +69,9 @@ async function getOne(req: Request, res: Response) {
 
 async function getPersonaByEmail(req: Request, res: Response) {
   try {
-    const email = req.params.email;
+    const email = decodeURIComponent(req.params.email);
+    console.log('Email recibido en backend:', email);
+    
     const persona = await em.findOneOrFail(Persona, { mail: email });
     return res.status(200).json({ message: 'found person', data: persona });
   } catch (error: any) {
@@ -77,6 +79,7 @@ async function getPersonaByEmail(req: Request, res: Response) {
     return res.status(500).json({ message: 'Error inesperado', error: error.message });
   }
 }
+
 
 async function add(req: Request, res: Response) {
   try {
