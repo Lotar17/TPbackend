@@ -58,7 +58,7 @@ async function getOne(req: Request, res: Response) {
     const persona = await em.findOneOrFail(
       Persona,
       { id },
-      { populate: ['prods_publicados','estados_empleados.seguimiento.cliente.direccion.localidad','estados_empleados.localidad','direccion','compras.direccion','estados_empleados.seguimiento.item.compra.direccion.localidad'] }
+      { populate: ['prods_publicados','estados_empleados.seguimiento.cliente.direccion.localidad','estados_empleados.localidad','direccion','compras.direccion'] }
     );
     // const { password, ...personaData } = persona;
     return res.status(200).json({ message: 'found person', data: persona });
