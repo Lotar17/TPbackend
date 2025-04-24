@@ -67,6 +67,17 @@ async function getOne(req: Request, res: Response) {
   }
 }
 
+async function getPersonaByEmail(req: Request, res: Response) {
+  try {
+    const email = req.params.email;
+    const persona = await em.findOneOrFail(Persona, { mail: email });
+    return res.status(200).json({ message: 'found person', data: persona });
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error inesperado', error: error.message });
+  }
+}
+
 async function add(req: Request, res: Response) {
   try {
     const {
@@ -152,4 +163,5 @@ export {
   update,
   sanitizePersonaInput as sanitizeCharacterInput,
   remove,
+  getPersonaByEmail
 };
