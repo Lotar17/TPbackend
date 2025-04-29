@@ -20,6 +20,7 @@ function sanitizeProductoInput(
     stock: req.body.stock,
     categoria: req.body.categoriaId,
     persona: req.body.personaId,
+    personaMail: req.body.personaMail,
   };
   //more checks here
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -125,6 +126,17 @@ async function add(req: Request, res: Response) {
     console.log(req.body.sanitizedInput);
     const precio = req.body.sanitizedInput.precio;
     delete req.body.sanitizedInput.precio;
+    if (!req.body.sanitizedInput.persona) {
+      try {
+        const persona = await em.findOneOrFail(Persona, {
+          mail: req.body.sanitizedInput.personaMail,
+        });
+        req.body.sanitizedInput.persona = persona._id;
+      } catch (error: any) {
+        console.log(error);
+        delete req.body.sanitizedInput.personaMail;
+      }
+    }
     const producto = em.create(Producto, req.body.sanitizedInput);
     const histPrecio: HistoricoPrecio = {
       valor: precio,
@@ -152,6 +164,17 @@ async function update(req: Request, res: Response) {
     );
 
     // Actualizar el producto con los campos enviados en el cuerpo de la solicitud (parciales)
+    if (!req.body.sanitizedInput.persona) {
+      try {
+        const persona = await em.findOneOrFail(Persona, {
+          mail: req.body.sanitizedInput.personaMail,
+        });
+        req.body.sanitizedInput.persona = persona._id;
+      } catch (error: any) {
+        console.log(error);
+        delete req.body.sanitizedInput.personaMail;
+      }
+    }
     const sanitizedInput = req.body.sanitizedInput;
     em.assign(producto, sanitizedInput); // Asigna de forma parcial lo que se pasa en sanitizedInput
 
