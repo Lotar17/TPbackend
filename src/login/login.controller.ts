@@ -116,4 +116,65 @@ async function getUserInformation(req: Request, res: Response) {
   }
 }
 
-export { sanitizeLoginInput, loginUser, getRolByCookie, getUserInformation };
+
+
+async function updatePassword(req: Request, res: Response) {
+  try {
+    const { mail, password, passwordNueva } = req.body.sanitizedInput;
+
+    const user = await em.findOne(Persona, { mail: mail });
+    if (!user) {
+      throw new ValidationError('El usuario es incorrecto');
+    }
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      throw new ValidationError('La contraseña o el usuario es incorrecto');
+    }
+
+    user.password = await bcrypt.hash(passwordNueva, 10);
+    console.log("Nuevo hash:", user.password);
+em.persist(user); // Forzamos que MikroORM lo tome como una entidad a guardar
+await em.flush();
+
+
+    return res.status(200).json({
+      message: 'Password updated successfully!',
+      data: { id: user.id, mail: user.mail },
+    });
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      res.status(401).send({ message: error.message, result: false });
+    } else {
+      console.error(error);
+      res.status(500).send({ message: 'Error interno del servidor', result: false });
+    }
+  }
+}
+async function logout(req:Request,res:Response){
+try{
+  res.clearCookie('access_token', {
+    httpOnly: true,  
+    sameSite: 'none', 
+    secure: true,
+    signed: true,  
+  });
+ 
+
+  // Enviar respuesta de éxito
+  res.status(200).send({
+    message: 'Logout exitoso',
+    result: true,
+  });
+}
+
+catch(error){
+  console.error(error);
+  res.status(500).send({ message: 'Error interno del servidor', result: false });
+}
+}
+
+
+export { sanitizeLoginInput, loginUser, getRolByCookie, getUserInformation,updatePassword,logout };
+
+
