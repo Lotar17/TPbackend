@@ -151,6 +151,29 @@ await em.flush();
     }
   }
 }
+async function logout(req:Request,res:Response){
+try{
+  res.clearCookie('access_token', {
+    httpOnly: true,  
+    sameSite: 'none', 
+    secure: true,
+    signed: true,  
+  });
+ 
 
-export { sanitizeLoginInput, loginUser, getRolByCookie, getUserInformation,updatePassword };
+  // Enviar respuesta de éxito
+  res.status(200).send({
+    message: 'Logout exitoso',
+    result: true,
+  });
+}
+
+catch(error){
+  console.error(error);
+  res.status(500).send({ message: 'Error interno del servidor', result: false });
+}
+}
+
+
+export { sanitizeLoginInput, loginUser, getRolByCookie, getUserInformation,updatePassword,logout };
 

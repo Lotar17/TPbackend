@@ -23,8 +23,17 @@ function sanitizeDireccionInput(req: Request, res: Response, next: NextFunction)
     next();
   }
 
-    async function add(req: Request, res: Response) {
+    async function add(req: Request, res: Response) { //Validado
         try {
+          const{calle,numero}=req.body.sanitizedInput
+          if (typeof calle !== 'string' || calle.trim() === '') {
+            return res.status(400).json({ message: 'La calle debe ser un string no vacío.' });
+          }
+      
+          if (typeof numero !== 'number' || isNaN(numero)) {
+            return res.status(400).json({ message: 'El número debe ser un número válido.' });
+          }
+      
           const direccion= em.create(Direccion, req.body.sanitizedInput);
           await em.flush();
           return res

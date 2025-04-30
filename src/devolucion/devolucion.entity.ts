@@ -45,5 +45,8 @@ export class Devolucion extends BaseEntity {
   
   @Property({ nullable: true })
   mensajeCierre?: string;
+
+  @Property({ nullable: true })
+  actualizada?: boolean;
 }
 

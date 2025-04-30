@@ -61,7 +61,7 @@ async function getOne(req: Request, res: Response) {
     const persona = await em.findOneOrFail(
       Persona,
       { id },
-      { populate: ['prods_publicados','estados_empleados.seguimiento.cliente.direccion.localidad','estados_empleados.localidad','direccion','compras.direccion','estados_empleados.seguimiento.item.compra.direccion.localidad'] }
+      { populate: ['prods_publicados','estados_empleados.seguimiento.cliente.direccion.localidad','estados_empleados.seguimiento.item.producto.persona.direccion.localidad','estados_empleados.localidad','direccion.localidad','compras.direccion','estados_empleados.seguimiento.item.compra.direccion.localidad'] }
     );
     // const { password, ...personaData } = persona;
     return res.status(200).json({ message: 'found person', data: persona });
@@ -123,16 +123,34 @@ async function add(req: Request, res: Response) {
 
 async function update(req: Request, res: Response) {
   try {
+    console.log('Direccion',req.body.sanitizedInput.direccion)
     const id = req.params.id;
     const personaToUpdate = await em.findOneOrFail(Persona, { id });
+    const mail = req.body.sanitizedInput.mail;
+  
+    if (mail !== undefined) {
+      const mailRepetido = await em.findOne(Persona, { mail: mail });
+      if (mailRepetido && mailRepetido.id !== personaToUpdate.id) {
+        throw new ValidationError('No se puede actualizar con un mail ya existente');
+      }
+    }
+    
+
     em.assign(personaToUpdate, req.body.sanitizedInput);
     await em.flush();
     return res
       .status(200)
       .json({ message: 'Person updated succesfully !', data: personaToUpdate });
   } catch (error: any) {
-    return res.status(500).json({ message: 'error' });
+    if (error instanceof ValidationError) {
+      // Este es el mensaje específico que se pasará al frontend
+      res.status(400).send({ message: error.message, result: false });
+    } else {
+      // Otros tipos de errores generales
+      res.status(500).json({ message: 'Ocurrió un error en el servidor', result: false });
+    }
   }
+  
 }
 
 async function remove(req: Request, res: Response) {
@@ -174,7 +192,7 @@ await em.flush();
     });
   } catch (error) {
     if (error instanceof ValidationError) {
-      res.status(401).send({ message: error.message, result: false });
+      res.status(400).send({ message: error.message, result: false });
     } else {
       console.error(error);
       res.status(500).send({ message: 'Error interno del servidor', result: false });

@@ -105,10 +105,16 @@ async function getOne(req: Request, res: Response) {//VALIDADO
 }
 
 
-async function add(req: Request, res: Response) {
+async function add(req: Request, res: Response) { //Validado
   try {
     console.log(req.body.sanitizedInput);
     const precio = req.body.sanitizedInput.precio;
+    if(precio <= 0){
+throw new ValidationError('El precio debe ser positivo')
+    }
+    if(req.body.sanitizedInput.stock<=0){
+      throw new ValidationError('El stock ingresado debe ser positivo')
+    }
     delete req.body.sanitizedInput.precio;
     const producto = em.create(Producto, req.body.sanitizedInput);
     const histPrecio: HistoricoPrecio = {
@@ -120,14 +126,17 @@ async function add(req: Request, res: Response) {
     await em.flush();
     res.status(201).send({ message: 'Registro exitoso', result: true });
   } catch (error: any) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
     res.status(500).send({ message: 'Error interno del servidor', result: false })
   }
 }
-async function update(req: Request, res: Response) {
+async function update(req: Request, res: Response) { //Validado
   try {
     const id = req.params.id;
 
-    // Encuentra el producto por su ID, incluyendo su historial de precios
+    
     const producto = await em.findOneOrFail(
       Producto,
       { id },
@@ -136,6 +145,10 @@ async function update(req: Request, res: Response) {
 
     // Actualizar el producto con los campos enviados en el cuerpo de la solicitud (parciales)
     const sanitizedInput = req.body.sanitizedInput;
+    if ('stock' in sanitizedInput && (typeof sanitizedInput.stock !== 'number' || sanitizedInput.stock < 0)) {
+      return res.status(400).json({ message: 'El stock debe ser un número positivo' });
+    }
+
     em.assign(producto, sanitizedInput);  // Asigna de forma parcial lo que se pasa en sanitizedInput
 
     // Si el precio está siendo actualizado, maneja el historial de precios
@@ -183,7 +196,7 @@ async function remove(req: Request, res: Response) {
     return res.status(500).json({ message: 'Producto delete failed' });
   }
 }
-async function actualizarStock(req: Request, res: Response) {
+async function actualizarStock(req: Request, res: Response) {// Ver este metodo
   try {
     console.log("✅ Body recibido en el backend:");
     console.log(JSON.stringify(req.body, null, 2)); // Verifica qué datos llegan
