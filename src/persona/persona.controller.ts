@@ -21,11 +21,11 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
     passwordAnterior:req.body.passwordAnterior,
     passwordNueva:req.body.passwordNueva,
     rol: req.body.rol,
-    carrito:req.body.carrito,
-    direccion:req.body.direccion,
-    calle:req.body.calle,
-    numero:req.body.numero,
-    localidadId:req.body.localidadId
+    carrito: req.body.carrito,
+    direccion: req.body.direccion,
+    calle: req.body.calle,
+    numero: req.body.numero,
+    localidadId: req.body.localidadId,
   };
   //more checks here
 
@@ -43,8 +43,7 @@ async function getAll(req: Request, res: Response) {
     const persona = await em.find(
       Persona,
       {},
-      { populate: ['prods_publicados','carrito']
-       }
+      { populate: ['prods_publicados', 'carrito', 'direccion'] }
     );
 
     return res
@@ -94,10 +93,10 @@ async function add(req: Request, res: Response) {
     const direccion = em.create(Direccion, {
       calle,
       numero,
-      localidad:localidadId,
+      localidad: localidadId,
     });
     await em.persistAndFlush(direccion);
-    
+
     const persona = em.create(Persona, {
       nombre,
       apellido,
@@ -107,12 +106,11 @@ async function add(req: Request, res: Response) {
       password,
       carrito,
       rol,
-      direccion:direccion
-    })
+      direccion: direccion,
+    });
 
     await em.persistAndFlush(persona);
 
-    
     return res
       .status(200)
       .json({ message: 'Person Created succesfully !', data: persona });
@@ -125,12 +123,29 @@ async function update(req: Request, res: Response) {
   try {
     const id = req.params.id;
     const personaToUpdate = await em.findOneOrFail(Persona, { id });
+    const direccion: Direccion = {
+      calle: req.body.sanitizedInput.calle,
+      numero: req.body.sanitizedInput.numero,
+      localidad: req.body.sanitizedInput.localidadId,
+    };
+    const direccionExistente = await em.findOne(Direccion, {
+      calle: direccion.calle,
+      numero: direccion.numero,
+      localidad: direccion.localidad,
+    });
+    if (!direccionExistente) {
+      const direccionNueva = em.create(Direccion, direccion);
+      personaToUpdate.direccion = direccionNueva;
+      await em.persistAndFlush(direccionNueva);
+    }
+    console.log(req.body.sanitizedInput);
     em.assign(personaToUpdate, req.body.sanitizedInput);
     await em.flush();
     return res
       .status(200)
       .json({ message: 'Person updated succesfully !', data: personaToUpdate });
   } catch (error: any) {
+    console.log(error);
     return res.status(500).json({ message: 'error' });
   }
 }
