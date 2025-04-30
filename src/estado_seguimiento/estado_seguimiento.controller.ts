@@ -36,7 +36,7 @@ function sanitizeEstadoSeguimientoInput(req: Request, res: Response, next: NextF
       const id_seguimiento=req.body.sanitizedInput.seguimiento
 let localidad      
 let estado
-      const seguimiento= await em.findOne(Seguimiento,{id:id_seguimiento},{populate:['estados','item.producto.persona.direccion.localidad','item.persona.direccion.localidad','item.compra.direccion.localidad']})
+      const seguimiento= await em.findOne(Seguimiento,{id:id_seguimiento},{populate:['estados','item.producto.persona.direccion.localidad','item.persona.direccion.localidad']})
 if(!seguimiento){
   throw new ValidationError('Seguimiento no encontrado')
 }
@@ -56,7 +56,7 @@ if(!seguimiento){
  }
  else {
    estado= 'Cerrado'
-   localidad=seguimiento?.item?.compra?.direccion?.localidad?.id // Localidad de donde la persona quiere recibir el producto
+   localidad=seguimiento?.item?.persona.direccion?.localidad?.id // Localidad de la persona que compro el producto
  }
 const fecha= new Date().toString()
 
@@ -153,21 +153,7 @@ throw new ValidationError('Localidad no encontrada')
   async function getStatebyEmployee(req:Request, res:Response){//Validado
 try{
   const empleadoId= req.params.idEmpleado
-  const estadosEmpleado = await em.find(EstadoSeguimiento, { empleado: empleadoId }, {
-    populate: [
-      'empleado',
-      'seguimiento',
-      'seguimiento.item',
-      'seguimiento.item.producto',
-      'seguimiento.item.compra',
-      'seguimiento.item.compra.direccion',
-      'seguimiento.item.compra.direccion.localidad', // 👈 ¡Esta es clave!
-      'seguimiento.item.compra.persona',
-      'seguimiento.item.compra.persona.direccion',
-      'seguimiento.item.compra.persona.direccion.localidad'
-    ]
-  });
-  
+const estadosEmpleado= await em.find(EstadoSeguimiento,{empleado:empleadoId},{populate:['empleado','seguimiento.item.producto','seguimiento.cliente.direccion.localidad']})
 
 if (estadosEmpleado.length!==0){
   

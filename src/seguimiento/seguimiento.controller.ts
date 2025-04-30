@@ -36,7 +36,6 @@ try{
     throw new ValidationError('El cliente no se encontro')
   }
     const  idItem = req.body.sanitizedInput.item;
-
      const item = await em.findOne(Item, { id: idItem },{populate:['producto.persona.direccion']});
 if(!item){
   throw new ValidationError('El item no se encontro')

@@ -16,7 +16,6 @@ function sanitizeLoginInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     mail: req.body.mail,
     password: req.body.password,
-    passwordNueva:req.body.passwordNueva
   };
 
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -94,6 +93,7 @@ async function getRolByCookie(req: Request, res: Response) {
 async function getUserInformation(req: Request, res: Response) {
   const sid = req.signedCookies.session_token;
   console.log('Cookies recibidas:', req.signedCookies);
+
   console.log(sid);
   if (sid !== undefined) {
     req.sessionStore.get(sid, (error, session) => {
@@ -176,4 +176,5 @@ catch(error){
 
 
 export { sanitizeLoginInput, loginUser, getRolByCookie, getUserInformation,updatePassword,logout };
+
 

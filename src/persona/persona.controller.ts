@@ -4,11 +4,20 @@ import { orm } from '../shared/db/orm.js';
 import { error } from 'console';
 import { Populate } from '@mikro-orm/core';
 import bcrypt from 'bcrypt';
+import nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken'
 import { Localidad } from '../localidad/localidad.entity.js';
 import { Direccion } from '../direccion/direccion.entity.js';
 import { ValidationError } from '../Errores/validationErrors.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+
+
 
 const em = orm.em;
+export const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY || 'nachovalenlotar'
 
 function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
@@ -43,6 +52,7 @@ async function getAll(req: Request, res: Response) {
     const persona = await em.find(
       Persona,
       {},
+
       { populate: ['prods_publicados', 'carrito', 'direccion'] }
     );
 
@@ -60,7 +70,9 @@ async function getOne(req: Request, res: Response) {
     const persona = await em.findOneOrFail(
       Persona,
       { id },
+
       { populate: ['prods_publicados','estados_empleados.seguimiento.cliente.direccion.localidad','estados_empleados.seguimiento.item.producto.persona.direccion.localidad','estados_empleados.localidad','direccion.localidad','compras.direccion','estados_empleados.seguimiento.item.compra.direccion.localidad'] }
+
     );
     // const { password, ...personaData } = persona;
     return res.status(200).json({ message: 'found person', data: persona });
@@ -68,6 +80,39 @@ async function getOne(req: Request, res: Response) {
     return res.status(500).json({ message: error.data });
   }
 }
+
+async function getPersonaByEmail(req: Request, res: Response) {
+  try {
+    const email = decodeURIComponent(req.params.email);
+    console.log('Email recibido en backend:', email);
+    
+    const persona = await em.findOneOrFail(Persona, { mail: email });
+    const token = jwt.sign({id: persona.id}, SECRET_JWT_KEY, {expiresIn: '5m'});
+    const link = `http://localhost:4200/restablecer-contrasena?token=${token}`;
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+      },
+    });
+    
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
+      to: email,
+      subject: 'Restablecer contraseña',
+      text: 'Restablecer contraseña',
+      html: `<p>Hola ${persona.nombre},</p>
+      <a href="${link}">Hacé clic aqui para restablecer tu contraseña</a><p>El enlace vence en 5 minutos:</p>`,});
+    
+    return res.status(200).json({ message: 'Correo enviado', data: persona });
+  } catch (error: any) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error inesperado', error: error.message });
+  }
+}
+
 
 async function add(req: Request, res: Response) {
   try {
@@ -205,5 +250,7 @@ export {
   update,
   sanitizePersonaInput as sanitizeCharacterInput,
   remove,
+  getPersonaByEmail
   updatePassword
+
 };

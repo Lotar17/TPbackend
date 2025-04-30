@@ -6,6 +6,7 @@ import {
   update,
   sanitizeCharacterInput,
   remove,
+  getPersonaByEmail,
   updatePassword
 } from './persona.controller.js';
 
@@ -17,3 +18,4 @@ personaRouter.post('/', sanitizeCharacterInput, add);
 personaRouter.put('/:id', sanitizeCharacterInput, update);
 personaRouter.patch('/:id', sanitizeCharacterInput, update);
 personaRouter.delete('/:id', remove);
+personaRouter.get('/email/:email',getPersonaByEmail);

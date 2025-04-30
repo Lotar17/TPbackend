@@ -4,6 +4,7 @@ import {
   loginUser,
   getRolByCookie,
   getUserInformation,
+
   updatePassword,
   logout
 } from './login.controller.js';
@@ -11,6 +12,7 @@ import {
 export const loginRouter = Router();
 loginRouter.post('/', sanitizeLoginInput, loginUser);
 loginRouter.get('/checkPermissions', getRolByCookie);
+
 loginRouter.get('/getUserInformation', getUserInformation);
 loginRouter.post('/logout',sanitizeLoginInput,logout)
 loginRouter.patch('/updatePassword',sanitizeLoginInput,updatePassword)

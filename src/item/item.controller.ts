@@ -1,15 +1,16 @@
 import { Item } from './item.entity.js';
 import { Request, Response, NextFunction } from 'express';
 import { orm } from '../shared/db/orm.js';
-import { Persona } from '../persona/persona.entity.js';
+import { Persona} from '../persona/persona.entity.js';
 import { Producto } from '../producto/producto.entity.js';
 import { ValidationError } from '../Errores/validationErrors.js';
 const em = orm.em;
 
 function sanitizeItemInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
+    
     cantidad_producto: req.body.cantidad_producto,
-    precio: req.body.precio,
+    precio:req.body.precio,
     producto: req.body.producto,
     persona: req.body.persona,
     compra:req.body.compra,
@@ -28,8 +29,9 @@ function sanitizeItemInput(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-async function getOne(req: Request, res: Response) {
-  try {
+async function getOne(req:Request, res:Response) {
+  
+try {
     const id = req.params.id;
     const item = await em.findOneOrFail(
       Item,
@@ -40,9 +42,8 @@ async function getOne(req: Request, res: Response) {
   } catch (error: any) {
     return res.status(404).json({ message: 'item not found' });
   }
+
 }
-
-
 
 async function validoExistencia(req: Request, res: Response) {//VALIDADO
   try {
@@ -192,7 +193,9 @@ async function createItem(req:Request, res:Response) { //  Validado
     throw new ValidationError('Persona o producto no encontrados')
   }
   if(producto.stock)
+
   if(cantidad_producto<=0 || cantidad_producto > producto.stock){
+
     throw new ValidationError('Cantidad de producto ingresada incorrecta')
   }
   const precioActual = producto.hist_precios
@@ -341,7 +344,8 @@ item.cantidad_producto = nuevaCantidad;
   }
 }
 
-   
 
+    
+      
 
       export{sanitizeItemInput,getOne, remove,getCarrito,decrementQuantity,createItem,updateItem,incrementarCantidad,addToCart1,validoExistencia}

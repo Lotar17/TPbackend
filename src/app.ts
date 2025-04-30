@@ -24,7 +24,6 @@ import { SeguimientoRouter } from './seguimiento/seguimiento.routes.js';
 import { LocalidadRouter } from './localidad/localidad.routes.js';
 import { DireccionRouter } from './direccion/direccion.routes.js';
 import { CorreoRouter } from './correo/correo.routes.js';
-
 type UserCookie = {
   id: number;
   apellido: string;

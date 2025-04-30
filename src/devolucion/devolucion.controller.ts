@@ -191,7 +191,7 @@ catch (error) {
 async function getRequestbyVendedor(req:Request, res:Response) {//Validado
   try{
 const idVendedor= req.params.idVendedor
-const solicitudesVendedor = await em.find(Devolucion, { vendedor: idVendedor }, { populate: ['item.producto','item.compra.items','item.persona','comprador'] });
+const solicitudesVendedor = await em.find(Devolucion, { vendedor: idVendedor }, { populate: ['item','item.compra','item.compra.items','item.producto','comprador'] });
 //,'item.compra.items','item.producto','comprador'
 
 
