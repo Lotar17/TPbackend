@@ -80,7 +80,7 @@ async function getPersonaByEmail(req: Request, res: Response) {
     
     const persona = await em.findOneOrFail(Persona, { mail: email });
     const token = jwt.sign({id: persona.id}, SECRET_JWT_KEY, {expiresIn: '5m'});
-    const link = 'http://localhost:4200/restablecer-contrasena?token=${token}';
+    const link = `http://localhost:4200/restablecer-contrasena?token=${token}`;
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
