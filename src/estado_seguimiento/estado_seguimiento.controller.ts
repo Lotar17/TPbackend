@@ -103,11 +103,13 @@ throw new ValidationError('Localidad no encontrada')
       }
       
       const empleadosFiltrados = empleados.filter(e =>
-        e.direccion?.localidad?.id === idLocalidad
+        e.direccion?.localidad?.id?.toString() === idLocalidad
       );
-  if(!empleadosFiltrados){
-    throw new ValidationError('No se filtro ningun empleado')
-  }
+      
+      if (empleadosFiltrados.length === 0) {
+        throw new ValidationError('No se filtró ningún empleado');
+      }
+      
      
       const ahora = new Date();
       const sieteDiasAtras = new Date(ahora.getTime() - 7 * 24 * 60 * 60 * 1000);

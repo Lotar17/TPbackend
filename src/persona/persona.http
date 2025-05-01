@@ -46,8 +46,22 @@ PATCH  http://localhost:3000/api/personas/67fd126aae7e20251fc7c6eb
 Content-Type: application/json
 
 {
-  "nombre": "Ignacio"
+  "direccion":"67fa79a4363631fb558940e90"
 }
-###
+###""
 
 DELETE http://localhost:3000/api/personas/66f3e74a4be92d4d11263d9a
+
+
+###UpdatePassword
+
+PATCH http://localhost:3000/api/personas/updatePassword
+Content-Type: application/json
+
+{
+"mail":"nachojdimartino@gmail.com",
+"passwordAnterior":"nacho",
+"passwordNueva":"na"
+
+
+}

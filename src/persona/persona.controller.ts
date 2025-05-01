@@ -5,15 +5,16 @@ import { error } from 'console';
 import { Populate } from '@mikro-orm/core';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 import { Localidad } from '../localidad/localidad.entity.js';
 import { Direccion } from '../direccion/direccion.entity.js';
+import { ValidationError } from '../Errores/validationErrors.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const em = orm.em;
-export const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY || 'nachovalenlotar'
+export const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY || 'nachovalenlotar';
 
 function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
@@ -22,13 +23,17 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
     telefono: req.body.telefono,
     mail: req.body.mail,
     prods_publicados: req.body.prods_publicados,
-    password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined, // Si en el put o en el patch no se pone un password tira error
+    password: req.body.password
+      ? bcrypt.hashSync(req.body.password, 10)
+      : undefined, // Si en el put o en el patch no se pone un password tira error
+    passwordAnterior: req.body.passwordAnterior,
+    passwordNueva: req.body.passwordNueva,
     rol: req.body.rol,
-    carrito:req.body.carrito,
-    direccion:req.body.direccion,
-    calle:req.body.calle,
-    numero:req.body.numero,
-    localidadId:req.body.localidadId
+    carrito: req.body.carrito,
+    direccion: req.body.direccion,
+    calle: req.body.calle,
+    numero: req.body.numero,
+    localidadId: req.body.localidadId,
   };
   //more checks here
 
@@ -46,8 +51,8 @@ async function getAll(req: Request, res: Response) {
     const persona = await em.find(
       Persona,
       {},
-      { populate: ['prods_publicados','carrito']
-    }
+
+      { populate: ['prods_publicados', 'carrito', 'direccion'] }
     );
 
     return res
@@ -64,7 +69,18 @@ async function getOne(req: Request, res: Response) {
     const persona = await em.findOneOrFail(
       Persona,
       { id },
-      { populate: ['prods_publicados','estados_empleados.seguimiento.cliente.direccion.localidad','estados_empleados.localidad','direccion','compras.direccion'] }
+
+      {
+        populate: [
+          'prods_publicados',
+          'estados_empleados.seguimiento.cliente.direccion.localidad',
+          'estados_empleados.seguimiento.item.producto.persona.direccion.localidad',
+          'estados_empleados.localidad',
+          'direccion.localidad',
+          'compras.direccion',
+          'estados_empleados.seguimiento.item.compra.direccion.localidad',
+        ],
+      }
     );
     // const { password, ...personaData } = persona;
     return res.status(200).json({ message: 'found person', data: persona });
@@ -77,9 +93,11 @@ async function getPersonaByEmail(req: Request, res: Response) {
   try {
     const email = decodeURIComponent(req.params.email);
     console.log('Email recibido en backend:', email);
-    
+
     const persona = await em.findOneOrFail(Persona, { mail: email });
-    const token = jwt.sign({id: persona.id}, SECRET_JWT_KEY, {expiresIn: '5m'});
+    const token = jwt.sign({ id: persona.id }, SECRET_JWT_KEY, {
+      expiresIn: '5m',
+    });
     const link = `http://localhost:4200/restablecer-contrasena?token=${token}`;
 
     const transporter = nodemailer.createTransport({
@@ -89,22 +107,24 @@ async function getPersonaByEmail(req: Request, res: Response) {
         pass: process.env.GMAIL_PASS,
       },
     });
-    
+
     await transporter.sendMail({
       from: process.env.GMAIL_USER,
       to: email,
       subject: 'Restablecer contraseña',
       text: 'Restablecer contraseña',
       html: `<p>Hola ${persona.nombre},</p>
-      <a href="${link}">Hacé clic aqui para restablecer tu contraseña</a><p>El enlace vence en 5 minutos:</p>`,});
-    
+      <a href="${link}">Hacé clic aqui para restablecer tu contraseña</a><p>El enlace vence en 5 minutos:</p>`,
+    });
+
     return res.status(200).json({ message: 'Correo enviado', data: persona });
   } catch (error: any) {
     console.error(error);
-    return res.status(500).json({ message: 'Error inesperado', error: error.message });
+    return res
+      .status(500)
+      .json({ message: 'Error inesperado', error: error.message });
   }
 }
-
 
 async function add(req: Request, res: Response) {
   try {
@@ -130,10 +150,10 @@ async function add(req: Request, res: Response) {
     const direccion = em.create(Direccion, {
       calle,
       numero,
-      localidad:localidadId,
+      localidad: localidadId,
     });
     await em.persistAndFlush(direccion);
-    
+
     const persona = em.create(Persona, {
       nombre,
       apellido,
@@ -143,12 +163,11 @@ async function add(req: Request, res: Response) {
       password,
       carrito,
       rol,
-      direccion:direccion
-    })
+      direccion: direccion,
+    });
 
     await em.persistAndFlush(persona);
 
-    
     return res
       .status(200)
       .json({ message: 'Person Created succesfully !', data: persona });
@@ -159,15 +178,36 @@ async function add(req: Request, res: Response) {
 
 async function update(req: Request, res: Response) {
   try {
+    console.log('Direccion', req.body.sanitizedInput.direccion);
     const id = req.params.id;
     const personaToUpdate = await em.findOneOrFail(Persona, { id });
+
+    const mail = req.body.sanitizedInput.mail;
+
+    if (mail !== undefined) {
+      const mailRepetido = await em.findOne(Persona, { mail: mail });
+      if (mailRepetido && mailRepetido.id !== personaToUpdate.id) {
+        throw new ValidationError(
+          'No se puede actualizar con un mail ya existente'
+        );
+      }
+    }
+
     em.assign(personaToUpdate, req.body.sanitizedInput);
     await em.flush();
     return res
       .status(200)
       .json({ message: 'Person updated succesfully !', data: personaToUpdate });
   } catch (error: any) {
-    return res.status(500).json({ message: 'error' });
+    if (error instanceof ValidationError) {
+      // Este es el mensaje específico que se pasará al frontend
+      res.status(400).send({ message: error.message, result: false });
+    } else {
+      // Otros tipos de errores generales
+      res
+        .status(500)
+        .json({ message: 'Ocurrió un error en el servidor', result: false });
+    }
   }
 }
 
@@ -184,6 +224,41 @@ async function remove(req: Request, res: Response) {
   }
 }
 
+async function updatePassword(req: Request, res: Response) {
+  try {
+    const { mail, passwordAnterior, passwordNueva } = req.body.sanitizedInput;
+
+    const user = await em.findOne(Persona, { mail: mail });
+    if (!user) {
+      throw new ValidationError('El usuario es incorrecto');
+    }
+
+    const isValid = await bcrypt.compare(passwordAnterior, user.password);
+    if (!isValid) {
+      throw new ValidationError('La contraseña o el usuario es incorrecto');
+    }
+
+    user.password = await bcrypt.hash(passwordNueva, 10);
+    console.log('Nuevo hash:', user.password);
+    em.persist(user); // Forzamos que MikroORM lo tome como una entidad a guardar
+    await em.flush();
+
+    return res.status(200).json({
+      message: 'Password updated successfully!',
+      data: { id: user.id, mail: user.mail },
+    });
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      res.status(400).send({ message: error.message, result: false });
+    } else {
+      console.error(error);
+      res
+        .status(500)
+        .send({ message: 'Error interno del servidor', result: false });
+    }
+  }
+}
+
 export {
   getAll,
   getOne,
@@ -191,5 +266,6 @@ export {
   update,
   sanitizePersonaInput as sanitizeCharacterInput,
   remove,
-  getPersonaByEmail
+  getPersonaByEmail,
+  updatePassword,
 };

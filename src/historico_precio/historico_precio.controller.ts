@@ -10,7 +10,7 @@ function sanitizePrecioInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
     valor: req.body.valor,
     fechaDesde: req.body.fechaDesde,
-    productoId: req.body.producto,
+    productoId: req.body.productoId,
   };
   //more checks here
 
@@ -23,12 +23,14 @@ function sanitizePrecioInput(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-async function create(req: Request, res: Response) {
+async function create(req: Request, res: Response) {//Validado
   try {
-    console.log('📩 Datos recibidos:', req.body); // <-- Agregado para depurar
-    const { valor,  productoId } = req.body;
+    
+    const { valor,  productoId } = req.body.sanitizedInput;
 
-   
+   if(valor < 0){
+    return res.status(400).json({ message: 'No puede existir un valor de precio negativo' });
+   }
     if (!productoId) {
       return res.status(400).json({ message: 'El productoId es obligatorio.' });
     }

@@ -77,6 +77,14 @@ async function getOne(req: Request, res: Response) {//Validado
 calle=req.body.sanitizedInput.calle
 numero=req.body.sanitizedInput.numero
 localidad=req.body.sanitizedInput.localidadId
+if (typeof calle !== 'string' || calle.trim() === '') {
+  throw new ValidationError('Calle no ingresada como string')
+}
+
+if (typeof numero !== 'number' || isNaN(numero)) {
+  throw new ValidationError('numero no ingresado como tipo number')
+}
+
 if(!calle){
   throw new ValidationError('Calle no ingresada')
 }
@@ -117,6 +125,9 @@ await em.persistAndFlush(direccionExistente);
         const item = await em.findOne(Item, { id: itemData.id }, { populate: ['producto.persona.direccion.localidad'] });
 if(!item){
   throw new ValidationError('El item no existe')
+}
+if(item.producto.persona.id===personaId){
+  throw new ValidationError('La persona que realizo la compra no puede comprar un producto que ella misma publico')
 }
       
   
@@ -231,7 +242,7 @@ async function remove(req: Request, res: Response) {
         throw new ValidationError('Compra no ingresada')
       }
   
-      console.log('Datos de la compra:', compra);
+    
   
       if (!compra.items || compra.items.length === 0) {
         throw new ValidationError('Compra sin items')
