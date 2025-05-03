@@ -233,10 +233,11 @@ const cantidad_devuelta=req.body.sanitizedInput.cantidad_devuelta
 
 const item= await em.findOne(Item,{id:idItem})
 if(item?.cantidad_producto){
+  if(cantidad_devuelta<=item.cantidad_producto || cantidad_devuelta<= 0){
 const NuevaCantidad= item?.cantidad_producto - cantidad_devuelta
 
 if(item?.cantidad_producto && item)
-em.assign(item,{cantidad_producto:NuevaCantidad})}
+em.assign(item,{cantidad_producto:NuevaCantidad})}}
 await em.flush();
 
     return res.status(200).json({ message: 'Item updated successfully', data: item });

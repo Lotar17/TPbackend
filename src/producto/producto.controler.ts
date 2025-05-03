@@ -21,6 +21,7 @@ function sanitizeProductoInput(
     categoria: req.body.categoriaId,
     persona: req.body.personaId,
     personaMail: req.body.personaMail,
+    detalle:req.body.detalle
   };
   //more checks here
   Object.keys(req.body.sanitizedInput).forEach((key) => {

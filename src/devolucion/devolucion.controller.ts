@@ -21,8 +21,8 @@ cantidad_devuelta:req.body.cantidad_devuelta,
 fechaEnvioCliente:req.body.fechaEnvioCliente,
 fechaCierre:req.body.fechaCierre,
 mensajeCierre:req.body.mensajeCierre,
-cantidadAactualizar:req.body.cantidadAactualizar
-    
+cantidadAactualizar:req.body.cantidadAactualizar,
+  actualizada:req.body.actualizada  
   };
 
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -252,8 +252,9 @@ async function update(req: Request, res: Response) {//Validado
 }
 async function validoCantidad(req:Request, res:Response){ // valida la cantidad de stock a actualizar si el vendedor lo requiere
   try{
+    
 const {cantidad_devuelta,cantidadAactualizar}=req.body.sanitizedInput
-
+console.log(req.body.sanitizedInput)
 if(cantidadAactualizar>cantidad_devuelta || cantidadAactualizar <= 0){
   throw new ValidationError('No se puede actualizar el stock con mayor cantidad a la devuelta o cantidad devuelta menor igual a 0')
 }
@@ -303,6 +304,8 @@ catch(error){
 
 }
 }
+
+
 async function validaActualizacion(req:Request, res: Response){
 
 try{
@@ -331,6 +334,6 @@ catch(error){
 
 }
 
-export { sanitizeDevolucionInput,CreateDevolutionRequest,makeDecission,getRequestbyVendedor,getRequestbyComprador,update,validoCantidad,validoPendientes };
+export { sanitizeDevolucionInput,CreateDevolutionRequest,makeDecission,getRequestbyVendedor,getRequestbyComprador,update,validoCantidad,validoPendientes,validaActualizacion };
 
 

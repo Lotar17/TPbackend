@@ -165,7 +165,7 @@ async function getComprasByPersona(req: Request, res: Response) {//Validado
     const compras = await em.find(
       Compra,
       { persona: personaId },
-      { populate: ['items.producto.persona.direccion.localidad','items.persona.direccion.localidad','items.seguimiento.estados'] ,}
+      { populate: ['items.producto.persona.direccion.localidad','items.persona.direccion.localidad','items.seguimiento.estados','direccion.localidad'] ,}
     );
 
     // Filtrar compras que tienen items vacíos

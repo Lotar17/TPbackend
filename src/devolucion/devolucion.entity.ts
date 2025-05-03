@@ -47,6 +47,6 @@ export class Devolucion extends BaseEntity {
   mensajeCierre?: string;
 
   @Property({ nullable: true })
-  actualizada?: boolean;
+  actualizada?: boolean; // se pone true cuando el stock se actualiza
 }
 

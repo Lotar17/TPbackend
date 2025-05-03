@@ -22,7 +22,7 @@ import {
   ItemRouter.get('/persona/:personaId',getCarrito);
   ItemRouter.post('/decrementa',sanitizeItemInput,decrementQuantity);
   ItemRouter.post('/create',sanitizeItemInput,createItem);
-  ItemRouter.put('/update/:idItem',sanitizeItemInput,updateItem)
+  ItemRouter.patch('/update/:idItem',sanitizeItemInput,updateItem)
   ItemRouter.patch('/incrementaItem',sanitizeItemInput,incrementarCantidad)
   ItemRouter.post('/add',sanitizeItemInput,addToCart1)
   ItemRouter.get('/valido/:idProducto/:idPersona',validoExistencia)
