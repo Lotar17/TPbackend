@@ -34,6 +34,7 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
     calle: req.body.calle,
     numero: req.body.numero,
     localidadId: req.body.localidadId,
+    token: req.body.token
   };
   //more checks here
 
@@ -224,6 +225,36 @@ async function remove(req: Request, res: Response) {
   }
 }
 
+async function resetPassword(req: Request, res: Response) {
+  try {
+    const { token, passwordNueva } = req.body.sanitizedInput;
+
+    console.log('Token recibido:', token);
+    console.log('Password nueva (sin hashear):', passwordNueva);
+
+    const payload = jwt.verify(token, SECRET_JWT_KEY) as { id: string };
+    console.log('Payload JWT:', payload);
+
+    const persona = await em.findOneOrFail(Persona, { id: payload.id });
+
+    const hashedPassword = await bcrypt.hash(passwordNueva, 10); // agrego hash porque si no me deja cambiar contra, pero no iniciar sesion
+    persona.password = hashedPassword;
+
+    em.persist(persona);
+    await em.flush();
+
+    return res.status(200).json({
+      message: 'Contraseña actualizada con exito!',
+      data: { id: persona.id, mail: persona.mail },
+    });
+  } catch (error: any) {
+    console.error('Error en resetPassword:', error);
+    return res.status(500).json({ message: 'Ocurrió un error en el servidor', result: false });
+  }
+}
+
+
+
 async function updatePassword(req: Request, res: Response) {
   try {
     const { mail, passwordAnterior, passwordNueva } = req.body.sanitizedInput;
@@ -268,4 +299,5 @@ export {
   remove,
   getPersonaByEmail,
   updatePassword,
+  resetPassword
 };
