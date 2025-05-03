@@ -36,7 +36,7 @@ function sanitizeEstadoSeguimientoInput(req: Request, res: Response, next: NextF
       const id_seguimiento=req.body.sanitizedInput.seguimiento
 let localidad      
 let estado
-      const seguimiento= await em.findOne(Seguimiento,{id:id_seguimiento},{populate:['estados','item.producto.persona.direccion.localidad','item.persona.direccion.localidad']})
+      const seguimiento= await em.findOne(Seguimiento,{id:id_seguimiento},{populate:['estados','item.producto.persona.direccion.localidad','item.persona.direccion.localidad','item.compra.direccion.localidad']})
 if(!seguimiento){
   throw new ValidationError('Seguimiento no encontrado')
 }
@@ -56,7 +56,8 @@ if(!seguimiento){
  }
  else {
    estado= 'Cerrado'
-   localidad=seguimiento?.item?.persona.direccion?.localidad?.id // Localidad de la persona que compro el producto
+   if(seguimiento.item?.compra)
+   localidad=seguimiento?.item?.compra.direccion?.localidad?.id // Localidad donde se quiere recibir la compra
  }
 const fecha= new Date().toString()
 

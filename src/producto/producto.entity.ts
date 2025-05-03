@@ -28,6 +28,9 @@ export class Producto extends BaseEntity {
   @Property({ nullable: true })
   photoPath!: string
 
+  @Property({ nullable: true })
+  detalle!: string
+
   @ManyToOne(() => Categoria, { nullable: false })
   categoria!: Categoria;
 

@@ -6,7 +6,8 @@ import { CreateDevolutionRequest
   getRequestbyComprador,
    update,
   validoCantidad,
-validoPendientes} from "./devolucion.controller.js";
+validoPendientes,
+validaActualizacion} from "./devolucion.controller.js";
 
   export const DevolucionRouter= Router();
 
@@ -18,3 +19,4 @@ validoPendientes} from "./devolucion.controller.js";
   DevolucionRouter.get('/comprador/:idComprador',sanitizeDevolucionInput,getRequestbyComprador)
   DevolucionRouter.patch('/:id',sanitizeDevolucionInput,update)
   DevolucionRouter.post('/valido/', sanitizeDevolucionInput,validoCantidad );
+  DevolucionRouter.get('/validaActualizacion/:idSolicitud',validaActualizacion)

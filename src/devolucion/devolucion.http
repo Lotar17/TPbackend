@@ -34,14 +34,13 @@ GET http://localhost:3000/api/devolucion/67fd1d0cf60099932c4f5bf2
 GET http://localhost:3000/api/devolucion/comprador/67acbb331443b4bd7becf3b1
 
 ###Actualiza solicitud
-PATCH  http://localhost:3000/api/devolucion/67fd1d90f60099932c4f5bf9
+PATCH  http://localhost:3000/api/devolucion/6810d7abf775af9a96e1bcf9
 Content-Type: application/json
 
 {
     
 
-"fechaEnvioCliente":"15/04/2025",
-"mensajeCierre":"ab"
+"actualizada":true
 
 
 }
@@ -53,3 +52,7 @@ Content-Type: application/json
 {
     "itemId":"680bf3a4c3365a03c55f9f68"
 }
+
+###ValidoActualizacion
+
+GET http://localhost:3000/api/devolucion/validaActualizacion/6810d815f775af9a96e1bcfa
