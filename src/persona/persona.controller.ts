@@ -27,13 +27,15 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
       ? bcrypt.hashSync(req.body.password, 10)
       : undefined, // Si en el put o en el patch no se pone un password tira error
     passwordAnterior: req.body.passwordAnterior,
-    passwordNueva: req.body.passwordNueva,
+    passwordNueva: req.body.passwordNueva? bcrypt.hashSync(req.body.passwordNueva, 10)
+    : undefined,
     rol: req.body.rol,
     carrito: req.body.carrito,
     direccion: req.body.direccion,
     calle: req.body.calle,
     numero: req.body.numero,
     localidadId: req.body.localidadId,
+    token: req.body.token
   };
   //more checks here
 
@@ -224,6 +226,31 @@ async function remove(req: Request, res: Response) {
   }
 }
 
+async function resetPassword(req: Request, res: Response) {
+  try {
+    const { token,passwordNueva } = req.body.sanitizedInput;
+    
+    console.log(passwordNueva); //quiero ver si esta hasheada aqui por el sanitized
+
+    const payload = jwt.verify(token,SECRET_JWT_KEY) as { id: string };
+
+    const persona = await em.findOneOrFail(Persona, { id: payload.id });
+    persona.password = passwordNueva
+
+    em.persist(persona); // Forzamos que MikroORM lo tome como una entidad a guardar
+    await em.flush();
+
+    return res.status(200).json({
+      message: 'Contraseña actualizada con exito!',
+      data: { id: persona.id, mail: persona.mail },
+    });
+  } catch (error: any) {
+    console.error('Error en resetPassword:', error);
+    return res.status(500).json({ message: 'Ocurrió un error en el servidor', result: false });
+  }
+  
+}
+
 async function updatePassword(req: Request, res: Response) {
   try {
     const { mail, passwordAnterior, passwordNueva } = req.body.sanitizedInput;
@@ -268,4 +295,5 @@ export {
   remove,
   getPersonaByEmail,
   updatePassword,
+  resetPassword
 };

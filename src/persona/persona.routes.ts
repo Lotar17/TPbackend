@@ -7,10 +7,12 @@ import {
   sanitizeCharacterInput,
   remove,
   getPersonaByEmail,
-  updatePassword
+  updatePassword,
+  resetPassword
 } from './persona.controller.js';
 
 export const personaRouter = Router();
+personaRouter.patch('/resetPassword', sanitizeCharacterInput,resetPassword);
 personaRouter.patch('/updatePassword', sanitizeCharacterInput,updatePassword);
 personaRouter.get('/', getAll);
 personaRouter.get('/:id', getOne);
