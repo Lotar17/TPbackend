@@ -24,6 +24,9 @@ import { SeguimientoRouter } from './seguimiento/seguimiento.routes.js';
 import { LocalidadRouter } from './localidad/localidad.routes.js';
 import { DireccionRouter } from './direccion/direccion.routes.js';
 import { CorreoRouter } from './correo/correo.routes.js';
+import { upload } from './middleware/upload.js';
+import path from 'path';
+
 type UserCookie = {
   id: number;
   apellido: string;
@@ -40,6 +43,10 @@ declare module 'express-session' {
 }
 
 const app = express();
+// al final del middleware de express
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+
 app.use(cookieParser(SECRET_JWT_KEY));
 
 app.use(express.json());

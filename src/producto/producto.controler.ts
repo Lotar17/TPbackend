@@ -5,7 +5,7 @@ import { HistoricoPrecio } from '../historico_precio/historico_precio.entity.js'
 import { ObjectId } from '@mikro-orm/mongodb';
 import { error } from 'console';
 import { ValidationError } from '../Errores/validationErrors.js';
-const em = orm.em;
+const em = orm.em.fork();
 import { Persona } from '../persona/persona.entity.js';
 
 function sanitizeProductoInput(
@@ -21,7 +21,9 @@ function sanitizeProductoInput(
     categoria: req.body.categoriaId,
     persona: req.body.personaId,
     personaMail: req.body.personaMail,
-    detalle:req.body.detalle
+    detalle:req.body.detalle,
+    photoPath: req.file?.filename, // lo pongo opcional pq puede no cargarle imagenes
+
   };
   //more checks here
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -124,11 +126,10 @@ async function getOne(req: Request, res: Response) {
 
 
 
-async function add(req: Request, res: Response) { //Validado
-
-
+async function add(req: Request, res: Response) { 
   try {
-    console.log(req.body.sanitizedInput);
+    console.log("pasa por el sanitized",req.body.sanitizedInput);
+    console.log(req.file);
     const precio = req.body.sanitizedInput.precio;
     if(precio <= 0){
 throw new ValidationError('El precio debe ser positivo')
@@ -156,9 +157,9 @@ throw new ValidationError('El precio debe ser positivo')
     };
     const historicoPrecioNuevo = em.create(HistoricoPrecio, histPrecio);
     await em.flush();
-    res.status(201).send({ message: 'Registro exitoso', result: true });
+    res.status(201).send({ message: 'Registro exitoso', result: true,data: producto });
   } catch (error: any) {
-
+    console.log(error);
     if (error instanceof ValidationError) {
       return res.status(400).json({ message: error.message });
     }

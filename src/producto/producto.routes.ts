@@ -11,10 +11,12 @@ import {
   getAllAdmin,
 } from './producto.controler.js';
 
+import { upload } from '../middleware/upload.js';
+
 export const ProductoRouter = Router();
 
 ProductoRouter.get('/:id', getOne);
-ProductoRouter.post('/', sanitizeProductoInput, add);
+ProductoRouter.post('/', upload.single('imagen'), sanitizeProductoInput, add);
 ProductoRouter.put('/:id', sanitizeProductoInput, update);
 ProductoRouter.patch('/:id', sanitizeProductoInput, update);
 ProductoRouter.delete('/:id', remove);
