@@ -56,7 +56,8 @@ if(!seguimiento){
  }
  else {
    estado= 'Cerrado'
-   localidad=seguimiento?.item?.compra?.direccion?.localidad?.id // Localidad de donde la persona quiere recibir el producto
+   if(seguimiento.item?.compra)
+   localidad=seguimiento?.item?.compra.direccion?.localidad?.id // Localidad donde se quiere recibir la compra
  }
 const fecha= new Date().toString()
 
@@ -103,11 +104,13 @@ throw new ValidationError('Localidad no encontrada')
       }
       
       const empleadosFiltrados = empleados.filter(e =>
-        e.direccion?.localidad?.id === idLocalidad
+        e.direccion?.localidad?.id?.toString() === idLocalidad
       );
-  if(!empleadosFiltrados){
-    throw new ValidationError('No se filtro ningun empleado')
-  }
+      
+      if (empleadosFiltrados.length === 0) {
+        throw new ValidationError('No se filtró ningún empleado');
+      }
+      
      
       const ahora = new Date();
       const sieteDiasAtras = new Date(ahora.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -151,21 +154,7 @@ throw new ValidationError('Localidad no encontrada')
   async function getStatebyEmployee(req:Request, res:Response){//Validado
 try{
   const empleadoId= req.params.idEmpleado
-  const estadosEmpleado = await em.find(EstadoSeguimiento, { empleado: empleadoId }, {
-    populate: [
-      'empleado',
-      'seguimiento',
-      'seguimiento.item',
-      'seguimiento.item.producto',
-      'seguimiento.item.compra',
-      'seguimiento.item.compra.direccion',
-      'seguimiento.item.compra.direccion.localidad', // 👈 ¡Esta es clave!
-      'seguimiento.item.compra.persona',
-      'seguimiento.item.compra.persona.direccion',
-      'seguimiento.item.compra.persona.direccion.localidad'
-    ]
-  });
-  
+const estadosEmpleado= await em.find(EstadoSeguimiento,{empleado:empleadoId},{populate:['empleado','seguimiento.item.producto','seguimiento.cliente.direccion.localidad']})
 
 if (estadosEmpleado.length!==0){
   

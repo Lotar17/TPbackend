@@ -3,16 +3,16 @@ import { BaseEntity } from '../shared/base-entity.entity.js';
 import { Producto } from '../producto/producto.entity.js';
 import { Compra } from '../compra/compra.entity.js';
 import { Persona } from '../persona/persona.entity.js';
-import { compare } from 'bcrypt';
+
 import { Devolucion } from '../devolucion/devolucion.entity.js';
 import { Seguimiento } from '../seguimiento/seguimiento.entity.js';
 
 @Entity()
 export class Item extends BaseEntity {
-  @Property({ nullable: true })
+  @Property({ nullable: false })
   cantidad_producto!: number;
 
-  @Property({ nullable: true })
+  @Property({ nullable: false })
   precioUnitario?: number;
 
 

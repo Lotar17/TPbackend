@@ -6,16 +6,3 @@ Content-Type: application/json
   "mail": "roman",
   "password": "12345678910"
 }
-
-
-###
-PATCH http://localhost:3000/login/updatePassword
-Content-Type: application/json
-
-{
-"mail":"claudiabaldelli208@gmail.com",
-"password":"andisol2013",
-"passwordNueva":"andisol2013"
-
-
-}

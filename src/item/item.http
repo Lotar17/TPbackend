@@ -3,7 +3,7 @@
 
 ### getCart
 
-GET http://localhost:3000/api/item/persona/67acbb331443b4bd7becf3b1
+GET http://localhost:3000/api/item/persona/67fd126aae7e20251fc7c6eb
 
 ### decrementQuantity
 POST http://localhost:3000/api/item/decrementa

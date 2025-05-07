@@ -30,7 +30,7 @@ Content-Type: application/json
 }
 
 ### REMOVE 
-DELETE http://localhost:3000/api/productos/67e49a200abb8a3c72bf7f6d
+DELETE http://localhost:3000/api/productos/681924b89ee1476d0c7b6aca
 ### UPDATE
 PUT    http://localhost:3000/api/productos/stock
 Content-Type: application/json

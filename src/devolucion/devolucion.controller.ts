@@ -2,9 +2,6 @@ import { Devolucion } from './devolucion.entity.js';
 import { Request, Response, NextFunction } from 'express';
 import { orm } from '../shared/db/orm.js';
 import { Item } from '../item/item.entity.js';
-import { Producto } from '../producto/producto.entity.js';
-import { Persona } from '../persona/persona.entity.js';
-import { populate } from 'dotenv';
 import { ValidationError } from '../Errores/validationErrors.js';
 const em = orm.em;
 
@@ -23,9 +20,9 @@ fechaConfirmacion:req.body.fechaConfirmacion,
 cantidad_devuelta:req.body.cantidad_devuelta,
 fechaEnvioCliente:req.body.fechaEnvioCliente,
 fechaCierre:req.body.fechaCierre,
-mensajeCierre:req.body.mensajeCierre
-
-    
+mensajeCierre:req.body.mensajeCierre,
+cantidadAactualizar:req.body.cantidadAactualizar,
+  actualizada:req.body.actualizada  
   };
 
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -45,6 +42,15 @@ async function CreateDevolutionRequest(req: Request, res: Response) { //Validado
     let diferenciaTiempo    
     let diferenciaDias                                                  
     const { itemId, motivo,cantidad_devuelta } = req.body.sanitizedInput; 
+
+    
+  if (typeof cantidad_devuelta !== 'number' || isNaN(cantidad_devuelta)) {
+    throw new ValidationError('cantidad_devuelta no ingresado como tipo number')
+  }
+
+  if (typeof motivo !== 'string' || motivo === '') {
+    throw new ValidationError('Motivo no ingresado, o no se ingreso como string')
+  }
 
     if (!itemId || !motivo || !cantidad_devuelta) {
 throw new ValidationError('El item, motivo y cantidad a devolver son obligatorios')
@@ -75,8 +81,8 @@ throw new ValidationError('La compra se realizo fuera del plazo de 30 dias de de
 
 
   
-if(cantidad_devuelta> item.cantidad_producto){
-  throw new ValidationError('No se puede devolver una cantidad mayor a la que tengo')
+if(cantidad_devuelta> item.cantidad_producto || cantidad_devuelta<=0){
+  throw new ValidationError('No se puede devolver una cantidad mayor a la que tengo o la cantidad debe ser positiva')
 }
 
     if(item.seguimiento)
@@ -138,6 +144,10 @@ async function makeDecission(req:Request, res:Response) {//Validado
     const idSolicitud=req.params.id
   const estado= req.body.sanitizedInput.estado
 
+  if(!estado){
+    throw new ValidationError('Ingresar el estado ')
+  }
+
 
 
   const solicitud= await em.findOne(Devolucion,{id: idSolicitud},{populate:['item']})
@@ -151,7 +161,7 @@ if(estado==='Aprobada'){
  
 }
 else{
-solicitud.codigoConfirmacion=0;
+solicitud.codigoConfirmacion=0; // esto es si el estado ingresado es rechazada
 
 }
 solicitud.estado=estado;
@@ -181,7 +191,7 @@ catch (error) {
 async function getRequestbyVendedor(req:Request, res:Response) {//Validado
   try{
 const idVendedor= req.params.idVendedor
-const solicitudesVendedor = await em.find(Devolucion, { vendedor: idVendedor }, { populate: ['item.producto','item.compra.items','item.persona','comprador'] });
+const solicitudesVendedor = await em.find(Devolucion, { vendedor: idVendedor }, { populate: ['item','item.compra','item.compra.items','item.producto','comprador'] });
 //,'item.compra.items','item.producto','comprador'
 
 
@@ -240,7 +250,90 @@ async function update(req: Request, res: Response) {//Validado
     return res.status(500).json({ message: 'error' });
   }
 }
+async function validoCantidad(req:Request, res:Response){ // valida la cantidad de stock a actualizar si el vendedor lo requiere
+  try{
+    
+const {cantidad_devuelta,cantidadAactualizar}=req.body.sanitizedInput
+console.log(req.body.sanitizedInput)
+if(cantidadAactualizar>cantidad_devuelta || cantidadAactualizar <= 0){
+  throw new ValidationError('No se puede actualizar el stock con mayor cantidad a la devuelta o cantidad devuelta menor igual a 0')
+}
+return res
+      .status(200)
+      .json({ message: 'Devolucion updated succesfully !', data: true });
 
-export { sanitizeDevolucionInput,CreateDevolutionRequest,makeDecission,getRequestbyVendedor,getRequestbyComprador,update };
+}
+catch(error){
+  if (error instanceof ValidationError) {
+    return res.status(400).json({ message: error.message });
+  }
+  else{
+    return res.status(500).json({ message: 'error' });
+  }
+}
+
+}
+async function validoPendientes(req:Request, res:Response) {
+ try{ 
+  console.log('Dentro del try')
+  const idItem = req.body.sanitizedInput.itemId;
+  console.log('Id del item')
+
+
+ 
+const devolucionExistente= await em.findOne(Devolucion,{
+  item:idItem,
+  estado:'pendiente'
+})
+console.log('Devolucion',devolucionExistente)
+if (devolucionExistente) {
+  throw new ValidationError('Ya existe una solicitud de devolución pendiente para este ítem.');
+  }
+  return res
+      .status(200)
+      .json({ message: 'Devolucion updated succesfully !', data: true });
+
+}
+catch(error){
+  if (error instanceof ValidationError) {
+    return res.status(400).json({ message: error.message });
+  }
+  else{
+    return res.status(500).json({ message: 'error' });
+  }
+
+}
+}
+
+
+async function validaActualizacion(req:Request, res: Response){
+
+try{
+  const idSolicitud= req.params.idSolicitud
+
+  const solicitud = await em.findOne(Devolucion,{id:idSolicitud,actualizada:true})
+
+  if(solicitud){
+    throw new ValidationError('El stock del producto asociado a la solicitud ya fue actualizado')
+  }
+  return res
+  .status(200)
+  .json({ message: 'La solicitud no se actualizo !', data: true });
+
+
+}
+catch(error){
+  if (error instanceof ValidationError) {
+    return res.status(400).json({ message: error.message });
+  }
+  else{
+    return res.status(500).json({ message: 'error' });
+  }
+
+}
+
+}
+
+export { sanitizeDevolucionInput,CreateDevolutionRequest,makeDecission,getRequestbyVendedor,getRequestbyComprador,update,validoCantidad,validoPendientes,validaActualizacion };
 
 

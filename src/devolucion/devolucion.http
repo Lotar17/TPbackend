@@ -1,22 +1,22 @@
 ## createDevolution
-
 POST http://localhost:3000/api/devolucion/
 Content-Type: application/json
 
 {
-
     "itemId":"68079abf5374cc841b07d831",
-
     "motivo":"Realizo la devolucion porque encuentro defectos",
     "cantidad_devuelta":1
-
-
-
-
-
-
 }
 
+
+###
+POST http://localhost:3000/api/devolucion/valido/
+Content-Type: application/json
+
+{
+    "cantidad_devuelta": 7,
+    "cantidadAactualizar": 3
+}
 ###
 PUT http://localhost:3000/api/devolucion/67ed2f8812ebae29c0d58e0d
 Content-Type: application/json
@@ -34,14 +34,25 @@ GET http://localhost:3000/api/devolucion/67fd1d0cf60099932c4f5bf2
 GET http://localhost:3000/api/devolucion/comprador/67acbb331443b4bd7becf3b1
 
 ###Actualiza solicitud
-PATCH  http://localhost:3000/api/devolucion/67fd1d90f60099932c4f5bf9
+PATCH  http://localhost:3000/api/devolucion/6810d7abf775af9a96e1bcf9
 Content-Type: application/json
 
 {
     
 
-"fechaEnvioCliente":"15/04/2025",
-"mensajeCierre":"ab"
+"actualizada":true
 
 
 }
+
+###ValidoPendientes
+POST http://localhost:3000/api/devolucion/pendiente/
+Content-Type: application/json
+
+{
+    "itemId":"680bf3a4c3365a03c55f9f68"
+}
+
+###ValidoActualizacion
+
+GET http://localhost:3000/api/devolucion/validaActualizacion/6810d815f775af9a96e1bcfa

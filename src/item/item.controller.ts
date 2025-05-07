@@ -1,16 +1,16 @@
 import { Item } from './item.entity.js';
 import { Request, Response, NextFunction } from 'express';
 import { orm } from '../shared/db/orm.js';
-import { Persona } from '../persona/persona.entity.js';
+import { Persona} from '../persona/persona.entity.js';
 import { Producto } from '../producto/producto.entity.js';
-import { HistoricoPrecio } from '../historico_precio/historico_precio.entity.js';
 import { ValidationError } from '../Errores/validationErrors.js';
 const em = orm.em;
 
 function sanitizeItemInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
+    
     cantidad_producto: req.body.cantidad_producto,
-    precio: req.body.precio,
+    precio:req.body.precio,
     producto: req.body.producto,
     persona: req.body.persona,
     compra:req.body.compra,
@@ -29,8 +29,9 @@ function sanitizeItemInput(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-async function getOne(req: Request, res: Response) {
-  try {
+async function getOne(req:Request, res:Response) {
+  
+try {
     const id = req.params.id;
     const item = await em.findOneOrFail(
       Item,
@@ -41,9 +42,8 @@ async function getOne(req: Request, res: Response) {
   } catch (error: any) {
     return res.status(404).json({ message: 'item not found' });
   }
+
 }
-
-
 
 async function validoExistencia(req: Request, res: Response) {//VALIDADO
   try {
@@ -101,9 +101,12 @@ async function validoExistencia(req: Request, res: Response) {//VALIDADO
       }
     
       async function getCarrito(req: Request, res: Response) { //VALIDADO
-        const personaId = req.params.personaId;
-      
-        try {
+        try {  const personaId = req.params.personaId;
+        console.log('id',personaId)
+      if (!personaId){ 
+        throw new ValidationError('No se envio el id de persona como parametro')
+      }
+       
           const items = await em.find(
             Item,
             { persona: personaId, compra: null },
@@ -112,13 +115,15 @@ async function validoExistencia(req: Request, res: Response) {//VALIDADO
             }
           );
       
-          // Ya no devolvemos 404 si no hay items
           return res.status(200).json({
             message: items.length > 0 ? 'Carrito encontrado' : 'El carrito está vacío',
             data: items,
           });
       
         } catch (error:any) {
+          if (error instanceof ValidationError) {
+            return res.status(400).json({ message: error.message });
+          }
           console.error('Error al obtener carrito:', error);
           return res.status(500).json({ message: 'Error al obtener carrito', error: error.message });
         }
@@ -152,7 +157,7 @@ async function validoExistencia(req: Request, res: Response) {//VALIDADO
                 item.cantidad_producto -= 1;
             } else {
                 
-                await em.remove(item); 
+               throw new ValidationError('No puede haber una cantidad 0 de productos en un item') 
             }
     
             
@@ -178,7 +183,9 @@ async function createItem(req:Request, res:Response) { //  Validado
   const productoId=req.body.sanitizedInput.producto;
   const cantidad_producto=req.body.sanitizedInput.cantidad_producto
 
-
+  if (typeof cantidad_producto !== 'number' || isNaN(cantidad_producto)) {
+    throw new ValidationError('cantidad_producto no ingresado como tipo number')
+  }
 
   const persona = await em.findOne(Persona, { id: personaId });
   const producto = await em.findOne(Producto, { id: productoId },{populate:['hist_precios']});
@@ -186,7 +193,9 @@ async function createItem(req:Request, res:Response) { //  Validado
     throw new ValidationError('Persona o producto no encontrados')
   }
   if(producto.stock)
-  if(cantidad_producto<=0 || cantidad_producto>producto.stock){
+
+  if(cantidad_producto<=0 || cantidad_producto > producto.stock){
+
     throw new ValidationError('Cantidad de producto ingresada incorrecta')
   }
   const precioActual = producto.hist_precios
@@ -224,10 +233,11 @@ const cantidad_devuelta=req.body.sanitizedInput.cantidad_devuelta
 
 const item= await em.findOne(Item,{id:idItem})
 if(item?.cantidad_producto){
+  if(cantidad_devuelta<=item.cantidad_producto || cantidad_devuelta<= 0){
 const NuevaCantidad= item?.cantidad_producto - cantidad_devuelta
 
 if(item?.cantidad_producto && item)
-em.assign(item,{cantidad_producto:NuevaCantidad})}
+em.assign(item,{cantidad_producto:NuevaCantidad})}}
 await em.flush();
 
     return res.status(200).json({ message: 'Item updated successfully', data: item });
@@ -335,7 +345,8 @@ item.cantidad_producto = nuevaCantidad;
   }
 }
 
-   
 
+    
+      
 
       export{sanitizeItemInput,getOne, remove,getCarrito,decrementQuantity,createItem,updateItem,incrementarCantidad,addToCart1,validoExistencia}
