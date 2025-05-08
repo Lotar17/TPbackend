@@ -60,6 +60,4 @@ describe('POST /login', () => {
     const token = response.headers['set-cookie'][0]
     expect(token).toMatch(/access_token/)
   },10000)
-
-  
 })
