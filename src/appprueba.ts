@@ -41,6 +41,17 @@ declare module 'express-session' {
 
 const app = express();
 
+app.use((req, res, next) => {
+  if (req.body && req.body.mail && req.body.password) {
+    req.body.sanitizedInput = {
+      mail: req.body.mail,
+      password: req.body.password,
+    };
+  }
+  next();
+});
+
+
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 

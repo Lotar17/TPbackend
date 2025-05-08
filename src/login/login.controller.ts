@@ -9,7 +9,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const em = orm.em;
 export const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY || 'nachovalenlotar';
 
 function sanitizeLoginInput(req: Request, res: Response, next: NextFunction) {
@@ -29,14 +28,17 @@ function sanitizeLoginInput(req: Request, res: Response, next: NextFunction) {
 
 async function loginUser(req: Request, res: Response) {
   const { mail, password } = req.body.sanitizedInput;
+  const em = orm.em.fork();
   console.log(mail);
   try {
+    console.log('previo a buscar');
     const user = await em.findOne(Persona, { mail: mail });
+    console.log('despues de buscar',user);
     if (!user)
       throw new ValidationError('La contraseña o el usuario es incorrecto');
     const isValid = await bcrypt.compare(password, user.password);
+    console.log('isValid:', isValid);
     if (!isValid)
-      // || !user
       throw new ValidationError('La contraseña o el usuario es incorrecto');
     const token = jwt.sign(
       {
@@ -65,8 +67,10 @@ async function loginUser(req: Request, res: Response) {
       userRol: user.rol?.toString(),
     });
   } catch (error) {
+    console.log(' Error capturado en login:', error);
     if (error instanceof ValidationError)
       res.status(401).send({ message: error.message, result: false });
+    return res.status(500).send({ message: 'Error interno', result: false });
   }
 }
 
@@ -121,13 +125,14 @@ async function getUserInformation(req: Request, res: Response) {
 async function updatePassword(req: Request, res: Response) {
   try {
     const { mail, password, passwordNueva } = req.body.sanitizedInput;
-
+    const em = orm.em.fork();
     const user = await em.findOne(Persona, { mail: mail });
     if (!user) {
       throw new ValidationError('El usuario es incorrecto');
     }
-
+    console.log('llega al is valid', user);
     const isValid = await bcrypt.compare(password, user.password);
+    console.log('isValid:', isValid);
     if (!isValid) {
       throw new ValidationError('La contraseña o el usuario es incorrecto');
     }
