@@ -1,0 +1,194 @@
+openapi: 3.0.0
+info:
+  title: "API de Compras - Gaucho Buy"
+  description: "Endpoints para la gestión de compras dentro de la plataforma Gaucho Buy"
+  version: "1.0.0"
+
+paths:
+  /api/compras/{id}:
+    get:
+      summary: "Obtener una compra"
+      description: "Devuelve una compra por su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Compra obtenida exitosamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Compra"
+        404:
+          description: "Compra no encontrada"
+
+    put:
+      summary: "Actualizar una compra"
+      description: "Actualiza los datos de una compra por su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Compra"
+      responses:
+        200:
+          description: "Compra actualizada exitosamente"
+        400:
+          description: "Datos inválidos"
+
+    delete:
+      summary: "Eliminar una compra"
+      description: "Elimina una compra por su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: "Compra eliminada exitosamente"
+        404:
+          description: "Compra no encontrada"
+
+  /api/compras:
+    post:
+      summary: "Crear una nueva compra"
+      description: "Crea una compra con los datos proporcionados"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Compra"
+      responses:
+        201:
+          description: "Compra creada exitosamente"
+        400:
+          description: "Datos inválidos"
+
+  /api/compras/persona/{personaId}:
+    get:
+      summary: "Obtener compras por persona"
+      description: "Devuelve todas las compras realizadas por un usuario específico"
+      parameters:
+        - in: path
+          name: personaId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Compras del usuario obtenidas exitosamente"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Compra"
+        404:
+          description: "Usuario no encontrado"
+
+  /api/compras/stock/{id}:
+    put:
+      summary: "Actualizar stock de los productos en una compra"
+      description: "Actualiza el stock de todos los ítems pertenecientes a la compra especificada"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productoId:
+                        type: string
+                      cantidad:
+                        type: integer
+      responses:
+        200:
+          description: "Stock actualizado exitosamente"
+        400:
+          description: "Datos inválidos"
+        404:
+          description: "Compra no encontrada"
+
+  /api/compras/ventas/{id}:
+    get:
+      summary: "Obtener ventas por vendedor"
+      description: "Devuelve todas las compras que contienen productos vendidos por un usuario específico (vendedor)"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Ventas del vendedor obtenidas exitosamente"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Compra"
+        404:
+          description: "Vendedor no encontrado"
+
+components:
+  schemas:
+    Compra:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "ObjectId de MongoDB"
+        persona:
+          type: string
+          description: "ID del usuario que realizó la compra"
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              productoId:
+                type: string
+              cantidad:
+                type: integer
+        fecha_hora_compra:
+          type: string
+          format: date-time
+        total_compra:
+          type: number
+        estado:
+          type: string
+          nullable: true
+        direccion:
+          type: string
+          nullable: true
+          description: "ID de la dirección de entrega"
+      required:
+        - persona
+        - items
+        - fecha_hora_compra
+        - total_compra

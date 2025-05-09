@@ -1,0 +1,102 @@
+openapi: 3.0.0
+info:
+  title: "API de Estado de Seguimiento - Gaucho Buy"
+  description: "Endpoints para gestionar los estados de seguimiento de los pedidos"
+  version: "1.0.0"
+
+paths:
+  /api/estado-seguimiento:
+    post:
+      summary: "Crear nuevo estado de seguimiento"
+      description: "Crea un nuevo registro de estado de seguimiento para un pedido"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoSeguimientoInput"
+      responses:
+        201:
+          description: "Estado de seguimiento creado exitosamente"
+        400:
+          description: "Datos inválidos o incompletos"
+
+  /api/estado-seguimiento/{idLocalidad}:
+    get:
+      summary: "Buscar empleado con menos estados en los últimos 7 días"
+      description: "Busca el empleado de la localidad ingresada con la menor cantidad de estados de seguimiento asociados en los últimos 7 días"
+      parameters:
+        - in: path
+          name: idLocalidad
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Empleado encontrado exitosamente"
+        404:
+          description: "No se encontró un empleado para esa localidad"
+
+  /api/estado-seguimiento/empleado/{idEmpleado}:
+    get:
+      summary: "Obtener estados por empleado"
+      description: "Devuelve todos los estados de seguimiento asociados a un empleado específico"
+      parameters:
+        - in: path
+          name: idEmpleado
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Estados recuperados exitosamente"
+
+  /api/estado-seguimiento/{id}:
+    patch:
+      summary: "Actualizar estado de seguimiento"
+      description: "Actualiza la condición del estado, como pendiente o cerrado"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoSeguimientoInput"
+      responses:
+        200:
+          description: "Estado actualizado exitosamente"
+        400:
+          description: "Datos inválidos"
+
+components:
+  schemas:
+    EstadoSeguimientoInput:
+      type: object
+      properties:
+        condicion:
+          type: string
+          description: "Condición del estado (pendiente o cerrado)"
+        estado:
+          type: string
+          description: "Estado del seguimiento (En clasificación, Listo para reparto, En camino, Entregado)"
+        fecha:
+          type: string
+          format: date
+        empleado:
+          type: string
+          description: "ObjectID MongoDB del empleado asignado"
+        seguimiento:
+          type: string
+          description: "ObjectID MongoDB del seguimiento relacionado"
+        localidad:
+          type: string
+          description: "ObjectID MongoDB de la localidad relacionada"
+      required:
+        - condicion
+        - estado
+        - fecha

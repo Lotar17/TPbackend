@@ -12,6 +12,7 @@ import {
 } from './persona.controller.js';
 
 export const personaRouter = Router();
+personaRouter.patch('/resetPassword', sanitizeCharacterInput,resetPassword);
 personaRouter.patch('/updatePassword', sanitizeCharacterInput,updatePassword);
 personaRouter.get('/', getAll);
 personaRouter.get('/:id', getOne);
@@ -21,4 +22,3 @@ personaRouter.patch('/resetPassword', sanitizeCharacterInput,resetPassword);
 personaRouter.patch('/:id', sanitizeCharacterInput, update);
 personaRouter.delete('/:id', remove);
 personaRouter.get('/email/:email',getPersonaByEmail);
-;

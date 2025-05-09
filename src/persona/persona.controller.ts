@@ -27,7 +27,8 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
       ? bcrypt.hashSync(req.body.password, 10)
       : undefined, // Si en el put o en el patch no se pone un password tira error
     passwordAnterior: req.body.passwordAnterior,
-    passwordNueva: req.body.passwordNueva,
+    passwordNueva: req.body.passwordNueva? bcrypt.hashSync(req.body.passwordNueva, 10)
+    : undefined,
     rol: req.body.rol,
     carrito: req.body.carrito,
     direccion: req.body.direccion,
@@ -227,20 +228,16 @@ async function remove(req: Request, res: Response) {
 
 async function resetPassword(req: Request, res: Response) {
   try {
-    const { token, passwordNueva } = req.body.sanitizedInput;
+    const { token,passwordNueva } = req.body.sanitizedInput;
+    
+    console.log(passwordNueva); //quiero ver si esta hasheada aqui por el sanitized
 
-    console.log('Token recibido:', token);
-    console.log('Password nueva (sin hashear):', passwordNueva);
-
-    const payload = jwt.verify(token, SECRET_JWT_KEY) as { id: string };
-    console.log('Payload JWT:', payload);
+    const payload = jwt.verify(token,SECRET_JWT_KEY) as { id: string };
 
     const persona = await em.findOneOrFail(Persona, { id: payload.id });
+    persona.password = passwordNueva
 
-    const hashedPassword = await bcrypt.hash(passwordNueva, 10); // agrego hash porque si no me deja cambiar contra, pero no iniciar sesion
-    persona.password = hashedPassword;
-
-    em.persist(persona);
+    em.persist(persona); // Forzamos que MikroORM lo tome como una entidad a guardar
     await em.flush();
 
     return res.status(200).json({
@@ -251,9 +248,8 @@ async function resetPassword(req: Request, res: Response) {
     console.error('Error en resetPassword:', error);
     return res.status(500).json({ message: 'Ocurrió un error en el servidor', result: false });
   }
+  
 }
-
-
 
 async function updatePassword(req: Request, res: Response) {
   try {

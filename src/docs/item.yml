@@ -1,0 +1,195 @@
+openapi: 3.0.0
+info:
+  title: "Gestión de Items - Gaucho Buy"
+  description: "API para manejar los items del carrito y compras directas"
+  version: "1.0.0"
+
+paths:
+  /api/item/{id}:
+    get:
+      summary: "Obtener un item por ID"
+      description: "Devuelve los datos de un item específico"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Item encontrado"
+        404:
+          description: "Item no encontrado"
+
+  /api/item/{idItem}:
+    delete:
+      summary: "Eliminar un item"
+      description: "Elimina un item por su ID"
+      parameters:
+        - in: path
+          name: idItem
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: "Item eliminado exitosamente"
+
+  /api/item/persona/{personaId}:
+    get:
+      summary: "Obtener carrito de un usuario"
+      description: "Devuelve todos los items con compra en null asociados a una persona (su carrito actual)"
+      parameters:
+        - in: path
+          name: personaId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Items del carrito obtenidos"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Item"
+
+  /api/item/decrementa:
+    post:
+      summary: "Decrementar cantidad de un item"
+      description: "Reduce en uno la cantidad de producto de un item específico"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemAction"
+
+  /api/item/incrementaItem:
+    patch:
+      summary: "Incrementar cantidad de un item"
+      description: "Incrementa en uno la cantidad de producto de un item específico"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemAction"
+
+  /api/item/create:
+    post:
+      summary: "Crear item en compra directa"
+      description: "Crea un item directamente relacionado con una compra (no desde el carrito)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemCreate"
+
+  /api/item/update/{idItem}:
+    patch:
+      summary: "Actualizar un item"
+      description: "Actualiza los campos de un item dado su ID"
+      parameters:
+        - in: path
+          name: idItem
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemUpdate"
+
+  /api/item/add:
+    post:
+      summary: "Agregar item al carrito"
+      description: "Crea un item en el carrito asignándole compra null"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemCreate"
+
+  /api/item/valido/{idProducto}/{idPersona}:
+    get:
+      summary: "Validar existencia de item en carrito"
+      description: "Valida si el item ya existe en el carrito (compra = null); si existe, incrementa su cantidad, si no, lo crea"
+      parameters:
+        - in: path
+          name: idProducto
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: idPersona
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Validación completada exitosamente"
+
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+        cantidad_producto:
+          type: integer
+        precioUnitario:
+          type: number
+        producto:
+          type: string
+        persona:
+          type: string
+        compra:
+          type: string
+        devolucion:
+          type: string
+        seguimiento:
+          type: string
+
+    ItemAction:
+      type: object
+      properties:
+        id:
+          type: string
+        cantidad_producto:
+          type: integer
+      required:
+        - id
+
+    ItemCreate:
+      type: object
+      properties:
+        cantidad_producto:
+          type: integer
+        precioUnitario:
+          type: number
+        producto:
+          type: string
+        persona:
+          type: string
+        compra:
+          type: string
+      required:
+        - cantidad_producto
+        - precioUnitario
+        - producto
+        - persona
+
+    ItemUpdate:
+      type: object
+      properties:
+        cantidad_producto:
+          type: integer
+        precioUnitario:
+          type: number

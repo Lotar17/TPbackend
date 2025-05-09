@@ -1,0 +1,198 @@
+openapi: 3.0.0
+info:
+  title: "Gaucho Buy API"
+  description: "API para la gestión de precios históricos de productos"
+  version: "1.0.0"
+
+paths:
+  /api/historico-precios:
+    get:
+      summary: "Obtener todos los precios históricos"
+      description: "Recupera una lista de todos los precios históricos"
+      responses:
+        200:
+          description: "Lista de precios históricos"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HistoricoPrecio"
+
+    post:
+      summary: "Agregar un nuevo precio histórico"
+      description: "Agrega una nueva entrada de precio histórico"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HistoricoPrecioInput"
+      responses:
+        201:
+          description: "Precio histórico agregado correctamente"
+        400:
+          description: "Entrada inválida"
+
+  /api/historico-precios/create:
+    post:
+      summary: "Crear un precio histórico (ruta alternativa)"
+      description: "Crea un nuevo precio histórico usando un endpoint dedicado"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HistoricoPrecioInput"
+      responses:
+        201:
+          description: "Precio histórico creado correctamente"
+        400:
+          description: "Entrada inválida"
+
+  /api/historico-precios/{id}:
+    get:
+      summary: "Obtener precio histórico por ID"
+      description: "Recupera un precio histórico específico por su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "El ID del precio histórico (ObjectId)"
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Precio histórico encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoricoPrecio"
+        404:
+          description: "Precio histórico no encontrado"
+
+    put:
+      summary: "Actualizar precio histórico por ID"
+      description: "Actualiza una entrada de precio histórico"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: "El ID del precio histórico (ObjectId)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HistoricoPrecioInput"
+      responses:
+        200:
+          description: "Precio histórico actualizado"
+        400:
+          description: "Entrada inválida"
+        404:
+          description: "Precio histórico no encontrado"
+
+    patch:
+      summary: "Actualizar parcialmente precio histórico"
+      description: "Actualiza campos específicos de una entrada de precio histórico"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: "El ID del precio histórico (ObjectId)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HistoricoPrecioInput"
+      responses:
+        200:
+          description: "Precio histórico actualizado"
+        400:
+          description: "Entrada inválida"
+        404:
+          description: "Precio histórico no encontrado"
+
+    delete:
+      summary: "Eliminar precio histórico"
+      description: "Elimina una entrada de precio histórico por ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: "El ID del precio histórico (ObjectId)"
+      responses:
+        204:
+          description: "Precio histórico eliminado"
+        404:
+          description: "Precio histórico no encontrado"
+
+  /api/historico-precios/producto/{productoId}:
+    get:
+      summary: "Obtener precios históricos de un producto"
+      description: "Recupera el precios histórico mas reciente para un producto específico"
+      parameters:
+        - in: path
+          name: productoId
+          required: true
+          schema:
+            type: string
+          description: "El ObjectId del producto"
+      responses:
+        200:
+          description: "Lista de precios históricos del producto"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HistoricoPrecio"
+        404:
+          description: "Producto no encontrado"
+
+components:
+  schemas:
+    HistoricoPrecio:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "ObjectId de MongoDB"
+        valor:
+          type: number
+          format: float
+        fechaDesde:
+          type: string
+          format: date-time
+        producto:
+          type: string
+          description: "ObjectId del producto relacionado"
+      required:
+        - valor
+        - fechaDesde
+        - producto
+
+    HistoricoPrecioInput:
+      type: object
+      properties:
+        valor:
+          type: number
+          format: float
+        fechaDesde:
+          type: string
+          format: date-time
+        producto:
+          type: string
+          description: "ObjectId del producto relacionado"
+      required:
+        - valor
+        - fechaDesde
+        - producto

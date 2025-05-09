@@ -1,0 +1,139 @@
+openapi: 3.0.0
+info:
+  title: "Gaucho Buy API"
+  description: "API para la gestión de Gaucho Buy"
+  version: "1.0.0"
+
+paths:
+  /api/personas:
+    get:
+      summary: "Obtener todas las personas"
+      description: "Recupera una lista de todas las personas"
+      responses:
+        200:
+          description: "Una lista de personas"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Persona"
+
+    post:
+      summary: "Crear una persona"
+      description: "Crear una nueva persona"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Persona"
+      responses:
+        201:
+          description: "Persona creada exitosamente"
+
+  /api/personas/{id}:
+    get:
+      summary: "Obtener persona por ID"
+      description: "Recupera una persona por su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "Un objeto persona"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Persona"
+
+    put:
+      summary: "Actualizar una persona"
+      description: "Actualizar los datos de una persona por ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Persona"
+      responses:
+        200:
+          description: "Persona actualizada exitosamente"
+
+    patch:
+      summary: "Actualizar parcialmente una persona"
+      description: "Actualizar solo campos específicos de una persona"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Persona"
+      responses:
+        200:
+          description: "Persona actualizada parcialmente con éxito"
+
+    delete:
+      summary: "Eliminar una persona"
+      description: "Eliminar una persona por ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: "Persona eliminada exitosamente"
+
+  /api/personas/email/{email}:
+    get:
+      summary: "Obtener persona por email"
+      description: "Recupera una persona por su correo electrónico"
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Un objeto persona"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Persona"
+
+components:
+  schemas:
+    Persona:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "ObjectId de MongoDB"
+        nombre:
+          type: string
+        apellido:
+          type: string
+        mail:
+          type: string
+        rol:
+          type: string
+        telefono:
+          type: integer

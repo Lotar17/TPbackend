@@ -25,6 +25,7 @@ export class Producto extends BaseEntity {
 
   @Property({ nullable: false })
   stock?: number
+  
   @Property({ nullable: true })
   photoPath!: string
 
