@@ -1,0 +1,45 @@
+openapi: 3.0.0
+info:
+  title: "Localidades - Gaucho Buy"
+  description: "Rutas para gestionar las localidades disponibles en el sistema"
+  version: "1.0.0"
+
+paths:
+  /api/localidad:
+    post:
+      summary: "Agregar nueva localidad"
+      description: "Crea una nueva localidad con nombre, código postal y provincia"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LocalidadInput"
+      responses:
+        201:
+          description: "Localidad creada"
+        400:
+          description: "Datos inválidos"
+
+    get:
+      summary: "Obtener todas las localidades"
+      description: "Devuelve una lista de todas las localidades registradas"
+      responses:
+        200:
+          description: "Lista de localidades"
+
+components:
+  schemas:
+    LocalidadInput:
+      type: object
+      properties:
+        nombre:
+          type: string
+        codigoPostal:
+          type: integer
+        provincia:
+          type: string
+      required:
+        - nombre
+        - codigoPostal
+        - provincia

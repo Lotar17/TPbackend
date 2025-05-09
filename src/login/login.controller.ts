@@ -67,10 +67,12 @@ async function loginUser(req: Request, res: Response) {
       userRol: user.rol?.toString(),
     });
   } catch (error) {
-    console.log(' Error capturado en login:', error);
-    if (error instanceof ValidationError)
+    if (error instanceof ValidationError) {
       res.status(401).send({ message: error.message, result: false });
-    return res.status(500).send({ message: 'Error interno', result: false });
+    } else {
+      console.error(error);
+      res.status(500).send({ message: 'Error interno del servidor', result: false });
+    }
   }
 }
 
@@ -159,6 +161,13 @@ await em.flush();
 async function logout(req:Request,res:Response){
 try{
   res.clearCookie('access_token', {
+    httpOnly: true,  
+    sameSite: 'none', 
+    secure: true,
+    signed: true,  
+  });
+ 
+  res.clearCookie('session_token', {
     httpOnly: true,  
     sameSite: 'none', 
     secure: true,

@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  title: "Seguimiento de Envíos - Gaucho Buy"
+  description: "Rutas para gestionar seguimientos de envíos y calificaciones del servicio"
+  version: "1.0.0"
+
+paths:
+  /api/seguimiento:
+    post:
+      summary: "Crear seguimiento"
+      description: "Crea un nuevo seguimiento asociado a un ítem"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SeguimientoInput"
+      responses:
+        201:
+          description: "Seguimiento creado exitosamente"
+        400:
+          description: "Datos inválidos"
+
+  /api/seguimiento/cliente/{idCliente}:
+    get:
+      summary: "Obtener seguimientos por cliente"
+      description: "Devuelve todos los seguimientos asociados a un cliente específico"
+      parameters:
+        - in: path
+          name: idCliente
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Lista de seguimientos"
+
+components:
+  schemas:
+    SeguimientoInput:
+      type: object
+      properties:
+        codigoSeguimiento:
+          type: integer
+        calificacionServicio:
+          type: integer
+        item:
+          type: string
+          description: "ObjectId del item asociado"
+        cliente:
+          type: string
+          description: "ObjectId del cliente asociado"
+      required:
+        - codigoSeguimiento

@@ -64,7 +64,6 @@ async function validoExistencia(req: Request, res: Response) {//VALIDADO
       compra: null
     });
 
-    // Si no existe, devolvemos null explícitamente sin error
     return res.status(200).json({ message: 'Consulta realizada', data: item || null });
 
   } catch (error: any) {

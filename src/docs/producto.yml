@@ -1,0 +1,219 @@
+openapi: 3.0.0
+info:
+  title: "Gaucho Buy API"
+  description: "API para la gestión de Gaucho Buy"
+  version: "1.0.0"
+
+paths:
+  /api/productos/{id}:
+    get:
+      summary: "Obtener producto por ID"
+      description: "Recupera un solo producto por su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "El ID del producto"
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "Un objeto producto"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Producto"
+        404:
+          description: "Producto no encontrado"
+
+    post:
+      summary: "Crear un nuevo producto"
+      description: "Crear un nuevo producto con los detalles proporcionados"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagen:
+                  type: string
+                  format: binary
+                producto:
+                  $ref: "#/components/schemas/Producto"
+      responses:
+        201:
+          description: "Producto creado exitosamente"
+        400:
+          description: "Entrada inválida"
+
+    put:
+      summary: "Actualizar producto por ID"
+      description: "Actualizar los detalles del producto por su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "El ID del producto"
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Producto"
+      responses:
+        200:
+          description: "Producto actualizado exitosamente"
+        404:
+          description: "Producto no encontrado"
+        400:
+          description: "Entrada inválida"
+
+    patch:
+      summary: "Actualizar parcialmente el producto"
+      description: "Actualizar campos específicos de un producto por su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "El ID del producto"
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Producto"
+      responses:
+        200:
+          description: "Producto actualizado parcialmente con éxito"
+        404:
+          description: "Producto no encontrado"
+        400:
+          description: "Entrada inválida"
+
+    delete:
+      summary: "Eliminar producto por ID"
+      description: "Eliminar un producto por su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "El ID del producto"
+          schema:
+            type: integer
+      responses:
+        204:
+          description: "Producto eliminado exitosamente"
+        404:
+          description: "Producto no encontrado"
+
+  /api/productos/stock:
+    put:
+      summary: "Actualizar stock del producto"
+      description: "Actualizar el stock de un producto"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                stock:
+                  type: integer
+      responses:
+        200:
+          description: "Stock actualizado exitosamente"
+        400:
+          description: "Entrada inválida"
+
+  /api/productos/persona/{idPersona}:
+    get:
+      summary: "Obtener productos por usuario"
+      description: "Recupera todos los productos asociados a un usuario específico"
+      parameters:
+        - in: path
+          name: idPersona
+          required: true
+          description: "El ID de la persona (usuario)"
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "Una lista de productos del usuario"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Producto"
+        404:
+          description: "Usuario no encontrado"
+
+  /api/productos/todos/{idPersona}:
+    get:
+      summary: "Obtener todos los productos para admin"
+      description: "Recupera todos los productos de un usuario específico (Solo admin)"
+      parameters:
+        - in: path
+          name: idPersona
+          required: true
+          description: "El ID de la persona (usuario)"
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "Una lista de todos los productos"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Producto"
+        404:
+          description: "Usuario no encontrado"
+
+  /api/productos:
+    get:
+      summary: "Obtener todos los productos"
+      description: "Recupera todos los productos (Solo admin)"
+      responses:
+        200:
+          description: "Una lista de todos los productos"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Producto"
+
+components:
+  schemas:
+    Producto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "ObjectId de MongoDB"
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        stock:
+          type: integer
+        imagen:
+          type: string
+          format: uri
+        detalle:
+          type: string
+        persona:
+          type: string
+          description: "ObjectId de la persona relacionada"
+        categoria:
+          type: string
+          description: "ObjectId de la categoría relacionada"

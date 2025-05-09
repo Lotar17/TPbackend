@@ -1,0 +1,48 @@
+openapi: 3.0.0
+info:
+  title: "Registro de Usuario - Gaucho Buy"
+  description: "Endpoint para registrar nuevos usuarios en el sistema Gaucho Buy"
+  version: "1.0.0"
+
+paths:
+  /api/register:
+    post:
+      summary: "Registrar nuevo usuario"
+      description: "Registra un nuevo usuario con los datos provistos"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        201:
+          description: "Usuario registrado exitosamente"
+        400:
+          description: "Datos inválidos o incompletos"
+
+components:
+  schemas:
+    RegisterInput:
+      type: object
+      properties:
+        nombre:
+          type: string
+        apellido:
+          type: string
+        mail:
+          type: string
+          format: email
+        password:
+          type: string
+        telefono:
+          type: integer
+        direccion:
+          type: string
+          description: "ObjectId de MongoDB de la entidad Dirección"
+      required:
+        - nombre
+        - apellido
+        - mail
+        - password
+        - telefono
