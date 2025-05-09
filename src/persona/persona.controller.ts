@@ -9,7 +9,11 @@ import jwt from 'jsonwebtoken';
 import { Localidad } from '../localidad/localidad.entity.js';
 import { Direccion } from '../direccion/direccion.entity.js';
 import { ValidationError } from '../Errores/validationErrors.js';
+import { z, ZodError } from 'zod';
 import dotenv from 'dotenv';
+import { Producto } from '../producto/producto.entity.js';
+import { Item } from '../item/item.entity.js';
+import { fromError } from 'zod-validation-error';
 
 dotenv.config();
 
@@ -27,15 +31,16 @@ function sanitizePersonaInput(req: Request, res: Response, next: NextFunction) {
       ? bcrypt.hashSync(req.body.password, 10)
       : undefined, // Si en el put o en el patch no se pone un password tira error
     passwordAnterior: req.body.passwordAnterior,
-    passwordNueva: req.body.passwordNueva? bcrypt.hashSync(req.body.passwordNueva, 10)
-    : undefined,
+    passwordNueva: req.body.passwordNueva
+      ? bcrypt.hashSync(req.body.passwordNueva, 10)
+      : undefined,
     rol: req.body.rol,
     carrito: req.body.carrito,
     direccion: req.body.direccion,
     calle: req.body.calle,
     numero: req.body.numero,
     localidadId: req.body.localidadId,
-    token: req.body.token
+    token: req.body.token,
   };
   //more checks here
 
@@ -129,7 +134,25 @@ async function getPersonaByEmail(req: Request, res: Response) {
 }
 
 async function add(req: Request, res: Response) {
+  const FormularioAgregarPersona = z.object({
+    nombre: z.string().min(1),
+    apellido: z.string().min(1),
+    telefono: z.string().min(10),
+    mail: z.string().email(),
+    rol: z.union([
+      z.literal('Administrador'),
+      z.literal('Usuario'),
+      z.literal('Empleado'),
+    ]),
+    calle: z.string(),
+    numero: z.number(),
+    localidadId: z.string(),
+    prods_publicados: z.array(z.instanceof(Producto)).optional(),
+    password: z.string().min(1),
+    carrito: z.array(z.instanceof(Item)).optional(),
+  });
   try {
+    const parsedInput = FormularioAgregarPersona.parse(req.body.sanitizedInput);
     const {
       nombre,
       apellido,
@@ -142,7 +165,7 @@ async function add(req: Request, res: Response) {
       calle,
       numero,
       localidadId,
-    } = req.body.sanitizedInput;
+    } = parsedInput;
 
     const localidad = await em.findOne(Localidad, { id: localidadId });
     if (!localidad) {
@@ -174,6 +197,11 @@ async function add(req: Request, res: Response) {
       .status(200)
       .json({ message: 'Person Created succesfully !', data: persona });
   } catch (error: any) {
+    if (error instanceof ZodError) {
+      const validationError = fromError(error);
+      console.log(validationError.toString());
+      return res.status(422).json({ message: validationError.toString() });
+    }
     return res.status(500).json({ message: error.data });
   }
 }
@@ -228,14 +256,14 @@ async function remove(req: Request, res: Response) {
 
 async function resetPassword(req: Request, res: Response) {
   try {
-    const { token,passwordNueva } = req.body.sanitizedInput;
-    
+    const { token, passwordNueva } = req.body.sanitizedInput;
+
     console.log(passwordNueva); //quiero ver si esta hasheada aqui por el sanitized
 
-    const payload = jwt.verify(token,SECRET_JWT_KEY) as { id: string };
+    const payload = jwt.verify(token, SECRET_JWT_KEY) as { id: string };
 
     const persona = await em.findOneOrFail(Persona, { id: payload.id });
-    persona.password = passwordNueva
+    persona.password = passwordNueva;
 
     em.persist(persona); // Forzamos que MikroORM lo tome como una entidad a guardar
     await em.flush();
@@ -246,9 +274,10 @@ async function resetPassword(req: Request, res: Response) {
     });
   } catch (error: any) {
     console.error('Error en resetPassword:', error);
-    return res.status(500).json({ message: 'Ocurrió un error en el servidor', result: false });
+    return res
+      .status(500)
+      .json({ message: 'Ocurrió un error en el servidor', result: false });
   }
-  
 }
 
 async function updatePassword(req: Request, res: Response) {
@@ -295,5 +324,5 @@ export {
   remove,
   getPersonaByEmail,
   updatePassword,
-  resetPassword
+  resetPassword,
 };

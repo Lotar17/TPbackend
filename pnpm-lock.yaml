@@ -62,6 +62,12 @@ importers:
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
+      zod:
+        specifier: ^3.24.4
+        version: 3.24.4
+      zod-validation-error:
+        specifier: ^3.4.1
+        version: 3.4.1(zod@3.24.4)
     devDependencies:
       '@types/express':
         specifier: 4.17.21
@@ -1775,6 +1781,15 @@ packages:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
     engines: {node: '>=6'}
 
+  zod-validation-error@3.4.1:
+    resolution: {integrity: sha512-1KP64yqDPQ3rupxNv7oXhf7KdhHHgaqbKuspVoiN93TT0xrBjql+Svjkdjq/Qh/7GSMmgQs3AfvBT0heE35thw==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      zod: ^3.24.4
+
+  zod@3.24.4:
+    resolution: {integrity: sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==}
+
 snapshots:
 
   '@cspotcode/source-map-support@0.8.1':
@@ -3366,3 +3381,9 @@ snapshots:
   yallist@4.0.0: {}
 
   yn@3.1.1: {}
+
+  zod-validation-error@3.4.1(zod@3.24.4):
+    dependencies:
+      zod: 3.24.4
+
+  zod@3.24.4: {}
