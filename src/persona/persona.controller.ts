@@ -208,10 +208,24 @@ async function add(req: Request, res: Response) {
 
 async function update(req: Request, res: Response) {
   try {
-    console.log('Direccion', req.body.sanitizedInput.direccion);
     const id = req.params.id;
     const personaToUpdate = await em.findOneOrFail(Persona, { id });
-
+    const direccion: Direccion = {
+      calle: req.body.sanitizedInput.calle,
+      numero: req.body.sanitizedInput.numero,
+      localidad: req.body.sanitizedInput.localidadId,
+    };
+    const direccionExistente = await em.findOne(Direccion, {
+      calle: direccion.calle,
+      numero: direccion.numero,
+      localidad: direccion.localidad,
+    });
+    if (!direccionExistente) {
+      const direccionNueva = em.create(Direccion, direccion);
+      personaToUpdate.direccion = direccionNueva;
+      await em.persistAndFlush(direccionNueva);
+    }
+    console.log(req.body.sanitizedInput);
     const mail = req.body.sanitizedInput.mail;
 
     if (mail !== undefined) {
@@ -222,22 +236,17 @@ async function update(req: Request, res: Response) {
         );
       }
     }
-
     em.assign(personaToUpdate, req.body.sanitizedInput);
     await em.flush();
     return res
       .status(200)
       .json({ message: 'Person updated succesfully !', data: personaToUpdate });
   } catch (error: any) {
+    console.log(error);
     if (error instanceof ValidationError) {
-      // Este es el mensaje específico que se pasará al frontend
-      res.status(400).send({ message: error.message, result: false });
-    } else {
-      // Otros tipos de errores generales
-      res
-        .status(500)
-        .json({ message: 'Ocurrió un error en el servidor', result: false });
+      return res.status(409).json({ message: error.message });
     }
+    return res.status(500).json({ message: 'error' });
   }
 }
 
