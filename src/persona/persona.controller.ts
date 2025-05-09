@@ -265,8 +265,8 @@ async function updatePassword(req: Request, res: Response) {
       throw new ValidationError('La contraseña o el usuario es incorrecto');
     }
 
-    user.password = await bcrypt.hash(passwordNueva, 10);
-    console.log('Nuevo hash:', user.password);
+    user.password = passwordNueva
+   
     em.persist(user); // Forzamos que MikroORM lo tome como una entidad a guardar
     await em.flush();
 
