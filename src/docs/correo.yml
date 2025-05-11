@@ -1,0 +1,39 @@
+openapi: 3.0.0
+info:
+  title: "Correo Electrónico - Gaucho Buy"
+  description: "Envío de correos mediante Nodemailer"
+  version: "1.0.0"
+
+paths:
+  /api/correo:
+    post:
+      summary: "Enviar correo"
+      description: "Envía un correo electrónico utilizando Nodemailer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CorreoInput"
+      responses:
+        200:
+          description: "Correo enviado exitosamente"
+        400:
+          description: "Datos inválidos"
+
+components:
+  schemas:
+    CorreoInput:
+      type: object
+      properties:
+        destinatario:
+          type: string
+          format: email
+        asunto:
+          type: string
+        mensaje:
+          type: string
+      required:
+        - destinatario
+        - asunto
+        - mensaje

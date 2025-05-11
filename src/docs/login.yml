@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: "API de Autenticación - Gaucho Buy"
+  description: "Endpoints para login, logout y verificación de sesión en Gaucho Buy"
+  version: "1.0.0"
+
+paths:
+  /login:
+    post:
+      summary: "Iniciar sesión"
+      description: "Autentica al usuario con email y contraseña. Devuelve cookies de sesión si es exitoso."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        200:
+          description: "Autenticación exitosa"
+        401:
+          description: "Credenciales incorrectas"
+        400:
+          description: "Datos inválidos"
+
+  /login/checkPermissions:
+    get:
+      summary: "Obtener el rol del usuario"
+      description: "Obtiene el rol del usuario autenticado a través de la cookie"
+      responses:
+        200:
+          description: "Rol obtenido exitosamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RolResponse"
+        401:
+          description: "No autorizado"
+
+  /login/getUserInformation:
+    get:
+      summary: "Obtener información del usuario"
+      description: "Devuelve la información del usuario autenticado a partir de la cookie"
+      responses:
+        200:
+          description: "Datos del usuario obtenidos exitosamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+        401:
+          description: "No autorizado"
+
+  /login/logout:
+    post:
+      summary: "Cerrar sesión"
+      description: "Cierra la sesión del usuario y elimina los tokens de acceso y sesión"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LogoutInput"
+      responses:
+        200:
+          description: "Sesión cerrada correctamente"
+        400:
+          description: "Solicitud inválida"
+
+components:
+  schemas:
+    LoginInput:
+      type: object
+      properties:
+        mail:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - mail
+        - password
+
+   
