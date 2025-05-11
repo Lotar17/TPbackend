@@ -105,7 +105,6 @@ if(!localidad){
 throw new ValidationError('Localidad no ingresada')
 }
 
-
 direccionExistente= em.create(Direccion, {
 calle:calle,
 numero:numero,
