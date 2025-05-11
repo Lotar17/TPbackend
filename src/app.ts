@@ -26,9 +26,14 @@ import { DireccionRouter } from './direccion/direccion.routes.js';
 import { CorreoRouter } from './correo/correo.routes.js';
 import { upload } from './middleware/upload.js';
 import path from 'path';
+import swaggerUI from "swagger-ui-express";
+import specs from '../swagger/swagger.js';
+
+
+
 
 type UserCookie = {
-  id: number;
+  id: number
   apellido: string;
   nombre: string;
   mail: string;
@@ -108,6 +113,9 @@ app.use('/api/seguimiento',SeguimientoRouter)
 app.use('/api/localidad',LocalidadRouter)
 app.use('/api/direccion',DireccionRouter)
 app.use('/api/correo',CorreoRouter)
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
+
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });

@@ -1,0 +1,134 @@
+openapi: 3.0.0
+info:
+  title: "Gaucho Buy API"
+  description: "API para la gestión de categorías en Gaucho Buy"
+  version: "1.0.0"
+
+paths:
+  /api/categorias:
+    get:
+      summary: "Obtener todas las categorías"
+      description: "Recupera una lista de todas las categorías"
+      responses:
+        200:
+          description: "Lista de categorías"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Categoria"
+
+    post:
+      summary: "Crear una nueva categoría"
+      description: "Crear una nueva categoría proporcionando la descripción"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Categoria"
+      responses:
+        201:
+          description: "Categoría creada exitosamente"
+        400:
+          description: "Entrada inválida"
+
+  /api/categorias/{id}:
+    get:
+      summary: "Obtener categoría por ID"
+      description: "Recupera una categoría utilizando su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "El ID de la categoría"
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Objeto de categoría"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Categoria"
+        404:
+          description: "Categoría no encontrada"
+
+    put:
+      summary: "Actualizar categoría por ID"
+      description: "Actualiza los datos de una categoría utilizando su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "El ID de la categoría"
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Categoria"
+      responses:
+        200:
+          description: "Categoría actualizada exitosamente"
+        404:
+          description: "Categoría no encontrada"
+        400:
+          description: "Entrada inválida"
+
+    patch:
+      summary: "Actualizar parcialmente una categoría"
+      description: "Actualiza campos específicos de una categoría por su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "El ID de la categoría"
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Categoria"
+      responses:
+        200:
+          description: "Categoría actualizada parcialmente con éxito"
+        404:
+          description: "Categoría no encontrada"
+        400:
+          description: "Entrada inválida"
+
+    delete:
+      summary: "Eliminar categoría por ID"
+      description: "Elimina una categoría utilizando su ID"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: "El ID de la categoría"
+          schema:
+            type: string
+      responses:
+        204:
+          description: "Categoría eliminada exitosamente"
+        404:
+          description: "Categoría no encontrada"
+
+components:
+  schemas:
+    Categoria:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "ObjectId de MongoDB"
+        descripcion:
+          type: string
+          description: "Descripción de la categoría"
+      required:
+        - descripcion

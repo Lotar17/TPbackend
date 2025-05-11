@@ -1,0 +1,194 @@
+openapi: 3.0.0
+info:
+  title: "Gestión de Devoluciones - Gaucho Buy"
+  description: "Documentación de los endpoints para gestionar solicitudes de devolución de productos."
+  version: "1.0.0"
+
+paths:
+  /api/devolucion:
+    post:
+      summary: "Crear solicitud de devolución"
+      description: "Crea una nueva solicitud de devolución de un item de producto."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DevolucionInput'
+      responses:
+        201:
+          description: "Solicitud creada exitosamente."
+        400:
+          description: "Datos inválidos."
+
+  /api/devolucion/pendiente:
+    post:
+      summary: "Validar solicitudes pendientes"
+      description: "Valida si un item ya tiene una solicitud de devolución pendiente para evitar devoluciones fantasmas, de productos que el cliente nunca adquirio."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DevolucionInput'
+      responses:
+        200:
+          description: "Validación exitosa."
+        409:
+          description: "Ya existe una devolución pendiente para este item."
+
+  /api/devolucion/{id}:
+    put:
+      summary: "Decisión del vendedor"
+      description: "El vendedor acepta o rechaza una solicitud de devolución."
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DevolucionInput'
+      responses:
+        200:
+          description: "Decisión procesada."
+
+    patch:
+      summary: "Actualizar solicitud de devolución"
+      description: "Actualiza campos de una solicitud de devolución."
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DevolucionInput'
+      responses:
+        200:
+          description: "Solicitud actualizada."
+
+  /api/devolucion/{idVendedor}:
+    get:
+      summary: "Obtener devoluciones por vendedor"
+      description: "Devuelve todas las devoluciones asociadas a un vendedor específico."
+      parameters:
+        - in: path
+          name: idVendedor
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Lista de devoluciones"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Devolucion'
+
+  /api/devolucion/comprador/{idComprador}:
+    get:
+      summary: "Obtener devoluciones por comprador"
+      description: "Devuelve todas las devoluciones asociadas a un comprador específico."
+      parameters:
+        - in: path
+          name: idComprador
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Lista de devoluciones"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Devolucion'
+
+  /api/devolucion/valido:
+    post:
+      summary: "Validar cantidad devuelta en el caso que vendedor requiera actualizar stock"
+      description: "Valida que la cantidad ingresada no sea mayor a la devuelta ni negativa."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DevolucionInput'
+      responses:
+        200:
+          description: "Cantidad válida."
+        400:
+          description: "Cantidad inválida."
+
+  /api/devolucion/validaActualizacion/{idSolicitud}:
+    get:
+      summary: "Validar actualización de stock"
+      description: "Evita actualizar el stock más de una vez para una misma devolución.Con el fin de evitar solicitudes fantasmas"
+      parameters:
+        - in: path
+          name: idSolicitud
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Validación realizada."
+        409:
+          description: "Ya se ha actualizado el stock para esta devolución."
+
+components:
+  schemas:
+    DevolucionInput:
+      type: object
+      properties:
+        item:
+          type: string
+          description: "ObjectId del item relacionado"
+        comprador:
+          type: string
+          description: "ObjectId del comprador"
+        vendedor:
+          type: string
+          description: "ObjectId del vendedor"
+        motivo:
+          type: string
+        estado:
+          type: string
+        codigoConfirmacion:
+          type: integer
+        fechaSolicitud:
+          type: string
+        fechaConfirmacion:
+          type: string
+          nullable: true
+        cantidad_devuelta:
+          type: integer
+        fechaEnvioCliente:
+          type: string
+        fechaCierre:
+          type: string
+        mensajeCierre:
+          type: string
+        actualizada:
+          type: boolean
+
+    Devolucion:
+      allOf:
+        - $ref: '#/components/schemas/DevolucionInput'
+        - type: object
+          properties:
+            id:
+              type: string
+              description: "ObjectId de la devolución"

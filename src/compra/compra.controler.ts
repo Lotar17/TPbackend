@@ -63,6 +63,7 @@ async function getOne(req: Request, res: Response) {//Validado
   let localidad
   let calle
   let numero
+  let nuevoStock
       console.log('Datos recibidos para la compra:', req.body.sanitizedInput);
   
     
@@ -129,7 +130,12 @@ if(!item){
 if(item.producto.persona.id===personaId){
   throw new ValidationError('La persona que realizo la compra no puede comprar un producto que ella misma publico')
 }
-      
+   if(item){
+    nuevoStock=(item.producto.stock||0)-item.cantidad_producto
+    if(nuevoStock<0){
+      throw new ValidationError('No hay stock suficiente para realizar la compra')
+    }
+   }   
   
        
   

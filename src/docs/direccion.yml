@@ -1,0 +1,47 @@
+openapi: 3.0.0
+info:
+  title: "Direcciones - Gaucho Buy"
+  description: "Endpoint para registrar direcciones de usuarios"
+  version: "1.0.0"
+
+paths:
+  /api/direccion:
+    post:
+      summary: "Agregar nueva dirección"
+      description: "Crea una nueva dirección asociada a un usuario"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DireccionInput"
+      responses:
+        201:
+          description: "Dirección registrada exitosamente"
+        400:
+          description: "Datos inválidos"
+
+components:
+  schemas:
+    DireccionInput:
+      type: object
+      properties:
+        calle:
+          type: string
+        numero:
+          type: string
+        localidad:
+          type: string
+          description: "ObjectId de la localidad"
+        piso:
+          type: string
+        departamento:
+          type: string
+        persona:
+          type: string
+          description: "ObjectId de la persona asociada"
+      required:
+        - calle
+        - numero
+        - localidad
+        - persona
