@@ -50,13 +50,21 @@ async function getAll(req: Request, res: Response) {
   }
 }
 
-async function getOne(req: Request, res: Response) {//Validado
+async function getOne(req: Request, res: Response) {
+  //Validado
   try {
     const id = req.params.id;
     const compra = await em.findOneOrFail(
       Compra,
       { id },
-      { populate: [ 'persona','items.producto.persona.direccion.localidad','direccion.localidad','items.seguimiento.estados'] }
+      {
+        populate: [
+          'persona',
+          'items.producto.persona.direccion.localidad',
+          'direccion.localidad',
+          'items.seguimiento.estados',
+        ],
+      }
     );
     return res.status(200).json({ message: 'Compra finded', data: compra });
   } catch (error: any) {
@@ -64,95 +72,99 @@ async function getOne(req: Request, res: Response) {//Validado
   }
 }
 
-
-async function add(req: Request, res: Response) { // Validado
+async function add(req: Request, res: Response) {
+  // Validado
   try {
-    const { personaId, items,direccionId } = req.body.sanitizedInput;
-let direccionExistente
-let localidad
-let calle
-let numero
-let nuevoStock
+    const { personaId, items, direccionId } = req.body.sanitizedInput;
+    let direccionExistente;
+    let localidad;
+    let calle;
+    let numero;
+    let nuevoStock;
     console.log('Datos recibidos para la compra:', req.body.sanitizedInput);
 
-  
     const personaExistente = await em.findOne(Persona, { id: personaId });
     if (!personaExistente) {
-   throw new ValidationError('La persona no se encontro')
+      throw new ValidationError('La persona no se encontro');
     }
 
-     direccionExistente= await em.findOne(Direccion,{id:direccionId},{populate:['localidad']})
+    direccionExistente = await em.findOne(
+      Direccion,
+      { id: direccionId },
+      { populate: ['localidad'] }
+    );
     if (!direccionExistente) {
+      calle = req.body.sanitizedInput.calle;
+      numero = req.body.sanitizedInput.numero;
+      localidad = req.body.sanitizedInput.localidadId;
+      if (typeof calle !== 'string' || calle.trim() === '') {
+        throw new ValidationError('Calle no ingresada como string');
+      }
 
-calle=req.body.sanitizedInput.calle
-numero=req.body.sanitizedInput.numero
-localidad=req.body.sanitizedInput.localidadId
-if (typeof calle !== 'string' || calle.trim() === '') {
-throw new ValidationError('Calle no ingresada como string')
-}
+      if (typeof numero !== 'number' || isNaN(numero)) {
+        throw new ValidationError('numero no ingresado como tipo number');
+      }
 
-if (typeof numero !== 'number' || isNaN(numero)) {
-throw new ValidationError('numero no ingresado como tipo number')
-}
+      if (!calle) {
+        throw new ValidationError('Calle no ingresada');
+      }
+      if (!numero) {
+        throw new ValidationError('Numero no ingresado');
+      }
+      if (!localidad) {
+        throw new ValidationError('Localidad no ingresada');
+      }
 
-if(!calle){
-throw new ValidationError('Calle no ingresada')
-}
-if(!numero){
-throw new ValidationError('Numero no ingresado')
-}
-if(!localidad){
-throw new ValidationError('Localidad no ingresada')
-}
-
-direccionExistente= em.create(Direccion, {
-calle:calle,
-numero:numero,
-localidad:localidad
-});
-await em.persistAndFlush(direccionExistente);
-
-}
-    const fecha_hora_compra= new Date().toISOString()
+      direccionExistente = em.create(Direccion, {
+        calle: calle,
+        numero: numero,
+        localidad: localidad,
+      });
+      await em.persistAndFlush(direccionExistente);
+    }
+    const fecha_hora_compra = new Date().toISOString();
     const compra = em.create(Compra, {
-
       fecha_hora_compra,
       persona: personaExistente,
       total_compra: 0,
       estado: 'en curso',
-      direccion:direccionExistente
-      
+      direccion: direccionExistente,
     });
 
     let totalCompra = 0;
 
     for (const itemData of items) {
-      const precioUnitario = itemData.precioUnitario 
+      const precioUnitario = itemData.precioUnitario;
       const cantidad_producto = itemData.cantidad_producto;
 
-    
-      const item = await em.findOne(Item, { id: itemData.id }, { populate: ['producto.persona.direccion.localidad'] });
-if(!item){
-throw new ValidationError('El item no existe')
-}
-if(item.producto.persona.id===personaId){
-throw new ValidationError('La persona que realizo la compra no puede comprar un producto que ella misma publico')
-}
- if(item){
-  nuevoStock=(item.producto.stock||0)-item.cantidad_producto
-  if(nuevoStock<0){
-    throw new ValidationError('No hay stock suficiente para realizar la compra')
-  }
- }   
-
-     
+      const item = await em.findOne(
+        Item,
+        { id: itemData.id },
+        { populate: ['producto.persona.direccion.localidad'] }
+      );
+      if (!item) {
+        throw new ValidationError('El item no existe');
+      }
+      if (item.producto.persona.id === personaId) {
+        throw new ValidationError(
+          'La persona que realizo la compra no puede comprar un producto que ella misma publico'
+        );
+      }
+      if (item) {
+        nuevoStock = (item.producto.stock || 0) - item.cantidad_producto;
+        if (nuevoStock < 0) {
+          throw new ValidationError(
+            'No hay stock suficiente para realizar la compra'
+          );
+        }
+      }
 
       const totalItem = cantidad_producto * precioUnitario;
       totalCompra += totalItem;
 
       item.compra = compra;
       compra.items.add(item); // Ahora sí, es una entidad válida
-    
+
       await em.persistAndFlush(item);
     }
 
@@ -160,8 +172,9 @@ throw new ValidationError('La persona que realizo la compra no puede comprar un 
     compra.total_compra = totalCompra;
     await em.persistAndFlush(compra);
 
-    return res.status(201).json({ message: 'Compra creada exitosamente', data: compra });
-
+    return res
+      .status(201)
+      .json({ message: 'Compra creada exitosamente', data: compra });
   } catch (error: any) {
     if (error instanceof ValidationError) {
       return res.status(400).json({ message: error.message });
