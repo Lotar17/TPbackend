@@ -26,14 +26,13 @@ import { DireccionRouter } from './direccion/direccion.routes.js';
 import { CorreoRouter } from './correo/correo.routes.js';
 import { upload } from './middleware/upload.js';
 import path from 'path';
-import swaggerUI from "swagger-ui-express";
+import swaggerUI from 'swagger-ui-express';
 import specs from '../swagger/swagger.js';
-
-
-
+import { Persona } from './persona/persona.entity.js';
+import bcrypt from 'bcrypt';
 
 type UserCookie = {
-  id: number
+  id: number;
   apellido: string;
   nombre: string;
   mail: string;
@@ -51,7 +50,6 @@ const app = express();
 // al final del middleware de express
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-
 app.use(cookieParser(SECRET_JWT_KEY));
 
 app.use(express.json());
@@ -63,7 +61,7 @@ app.use((req, res, next) => {
 app.use(
   cors({
     origin: ['http://localhost:4200'],
-    methods: ['GET', 'POST', 'PUT','PATCH', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   })
 );
@@ -107,19 +105,31 @@ app.use('/api/compras', CompraRouter);
 app.use('/register', registerRouter);
 app.use('/api/formas-de-pago', formaDePagoRouter);
 app.use('/api/item', ItemRouter);
-app.use('/api/devolucion',DevolucionRouter);
-app.use('/api/estado-seguimiento',EstadoSeguimientoRouter);
-app.use('/api/seguimiento',SeguimientoRouter)
-app.use('/api/localidad',LocalidadRouter)
-app.use('/api/direccion',DireccionRouter)
-app.use('/api/correo',CorreoRouter)
+app.use('/api/devolucion', DevolucionRouter);
+app.use('/api/estado-seguimiento', EstadoSeguimientoRouter);
+app.use('/api/seguimiento', SeguimientoRouter);
+app.use('/api/localidad', LocalidadRouter);
+app.use('/api/direccion', DireccionRouter);
+app.use('/api/correo', CorreoRouter);
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
-
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Resource not found' });
 });
+
+const em = orm.em.fork();
+const admin = await em.findOne(Persona, { mail: 'admin@admin.com' });
+if (!admin) {
+  const admin = em.create(Persona, {
+    nombre: 'Admin',
+    apellido: 'Admin',
+    mail: 'admin@admin.com',
+    rol: 'Administrador',
+    password: bcrypt.hashSync('admin', 10),
+  });
+  await em.persistAndFlush(admin);
+}
 
 app.listen(3000, () => {
   console.log('Server running on http://localhost:3000');
